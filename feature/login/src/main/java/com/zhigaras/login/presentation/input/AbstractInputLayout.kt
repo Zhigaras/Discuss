@@ -1,19 +1,18 @@
-package com.zhigaras.login.presentation
+package com.zhigaras.login.presentation.input
 
 import android.content.Context
 import android.util.AttributeSet
 import com.google.android.material.textfield.TextInputLayout
 
-abstract class CustomInputLayout @JvmOverloads constructor(
+abstract class AbstractInputLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : TextInputLayout(context, attrs, defStyleAttr), Validation {
+) : TextInputLayout(context, attrs, defStyleAttr), InputValidation {
     
     protected abstract val errorMessageId: Int
-    protected open val textWatcher = RegistrationTextWatcher { error = "" }
-    
-    open fun text(): String = (editText?.text ?: "").toString()
+    private val textWatcher = AuthTextWatcher { error = "" }
+    fun text(): String = (editText?.text ?: "").toString()
     
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -29,7 +28,7 @@ abstract class CustomInputLayout @JvmOverloads constructor(
     protected abstract fun innerIsValid(): Boolean
 }
 
-interface Validation {
+interface InputValidation {
     
     fun isValid(): Boolean
 }

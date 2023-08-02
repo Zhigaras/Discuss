@@ -1,8 +1,9 @@
-package com.zhigaras.login.presentation
+package com.zhigaras.login.presentation.input
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import com.zhigaras.login.R
 import com.zhigaras.login.databinding.PasswordLayoutBinding
 
@@ -10,15 +11,20 @@ class PasswordLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : CustomInputLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr), InputValidation {
     
     private val binding: PasswordLayoutBinding
     
     init {
         binding = PasswordLayoutBinding.inflate(LayoutInflater.from(context), this, true)
+        listOf(binding.passwordEdittext, binding.confirmPasswordEdittext).forEach {
+            it.addTextChangedListener(AuthTextWatcher {
+                binding.passwordMismatchErrorView.visibility = GONE
+            })
+        }
     }
     
-    override val errorMessageId: Int = R.string.password_matching_error
+    private val errorMessageId: Int = R.string.password_matching_error
     
     override fun isValid(): Boolean {
         val isValid = innerIsValid()
@@ -27,7 +33,7 @@ class PasswordLayout @JvmOverloads constructor(
         return isValid
     }
     
-    override fun innerIsValid(): Boolean {
+    private fun innerIsValid(): Boolean {
         with(binding) {
             passwordLayout.isValid()
             confirmPasswordLayout.isValid()
@@ -35,7 +41,7 @@ class PasswordLayout @JvmOverloads constructor(
         }
     }
     
-    override fun text(): String {
+    fun text(): String {
         return binding.passwordLayout.text()
     }
 }

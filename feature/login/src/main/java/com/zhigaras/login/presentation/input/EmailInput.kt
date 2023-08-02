@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation
+package com.zhigaras.login.presentation.input
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,7 @@ class EmailInput @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : CustomInputLayout(context, attrs, defStyleAttr) {
+) : AbstractInputLayout(context, attrs, defStyleAttr) {
     
     override val errorMessageId = R.string.email_input_error
     

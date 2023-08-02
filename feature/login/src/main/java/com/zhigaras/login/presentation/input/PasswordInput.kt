@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation
+package com.zhigaras.login.presentation.input
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,8 @@ class PasswordInput @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : CustomInputLayout(context, attrs, defStyleAttr) {
+) : AbstractInputLayout(context, attrs, defStyleAttr) {
+    
     override val errorMessageId: Int = R.string.password_input_error
     
     override fun innerIsValid(): Boolean {
