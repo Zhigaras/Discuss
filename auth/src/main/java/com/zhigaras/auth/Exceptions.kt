@@ -1,6 +1,4 @@
-package com.zhigaras.auth.model
-
-import com.zhigaras.auth.R
+package com.zhigaras.auth
 
 abstract class FiveLettersException : Exception() {
     

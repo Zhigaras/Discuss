@@ -5,22 +5,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.zhigaras.auth.model.EmailIsUsed
-import com.zhigaras.auth.model.InvalidCredentials
-import com.zhigaras.auth.model.InvalidUser
-import com.zhigaras.auth.model.NoSuchUser
-import com.zhigaras.auth.model.RegistrationFailed
-import com.zhigaras.auth.model.SigningInFailed
-import com.zhigaras.auth.model.TooManyRequests
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
-class AuthRepository(private val auth: FirebaseAuth): Auth {
+class AuthRepository: Auth {
     
-    override suspend fun signUpWithEmailAndPassword(email: String, password: String) {
+    private val auth: FirebaseAuth = Firebase.auth
+    
+    override suspend fun signUpWithEmailAndPassword(email: String, password: String): FirebaseUser {
         try {
-            val user = auth.createUserWithEmailAndPassword(email, password).await().user
-            user!!.sendEmailVerification()
+            val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
+            user.sendEmailVerification()
+            return user
         } catch (e: FirebaseAuthUserCollisionException) {
             throw EmailIsUsed()
         } catch (e: Exception) {
@@ -28,9 +27,9 @@ class AuthRepository(private val auth: FirebaseAuth): Auth {
         }
     }
     
-    override suspend fun signInWithEmailAndPassword(email: String, password: String) {
+    override suspend fun signInWithEmailAndPassword(email: String, password: String): FirebaseUser {
         try {
-            auth.signInWithEmailAndPassword(email, password).await().user
+            return auth.signInWithEmailAndPassword(email, password).await().user!!
         } catch (e: FirebaseAuthInvalidUserException) {
             throw InvalidUser()
         } catch (e: FirebaseAuthInvalidCredentialsException) {
@@ -42,10 +41,10 @@ class AuthRepository(private val auth: FirebaseAuth): Auth {
         }
     }
     
-    override suspend fun signUpWithGoogle(token: String) {
+    override suspend fun signUpWithGoogle(token: String): FirebaseUser {
         val firebaseCredentials = GoogleAuthProvider.getCredential(token, null)
         try {
-            val user = auth.signInWithCredential(firebaseCredentials).await().user!!
+            return auth.signInWithCredential(firebaseCredentials).await().user!!
         } catch (e: Exception) {
             throw SigningInFailed()
         }
