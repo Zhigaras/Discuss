@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id(Plugins.library)
+    id(Plugins.android)
 }
 
 android {
     namespace = "com.zhigaras.auth"
-    compileSdk = 33
+    compileSdk = Config.compileSdk
     
     defaultConfig {
-        minSdk = 24
+        minSdk = Config.minSdk
         
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = Config.testInstrumentationRunner
         consumerProguardFiles("consumer-rules.pro")
     }
     
@@ -24,18 +24,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = Config.javaVersion
+        targetCompatibility = Config.javaVersion
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = Config.jvmTarget
     }
 }
 
 dependencies {
-    
+
 //    implementation("androidx.core:core-ktx:1.10.1") TODO remove?
     
-    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(platform(Dependencies.firebaseBom))
+    implementation(Dependencies.firebaseAuth)
 }

@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id(Plugins.library)
+    id(Plugins.android)
 }
 
 android {
     namespace = "com.zhigaras.login"
-    compileSdk = 33
+    compileSdk = Config.compileSdk
     
     defaultConfig {
-        minSdk = 24
+        minSdk = Config.minSdk
         
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = Config.testInstrumentationRunner
         consumerProguardFiles("consumer-rules.pro")
     }
     
@@ -24,11 +24,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = Config.javaVersion
+        targetCompatibility = Config.javaVersion
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = Config.jvmTarget
     }
     
     buildFeatures { viewBinding = true }
@@ -38,10 +38,10 @@ dependencies {
     
     implementation(project(":core"))
     
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(Dependencies.coreKtx)
+    implementation(Dependencies.appcompat)
+    implementation(Dependencies.material)
+    testImplementation(Dependencies.jUnit) //TODO remove?
+    androidTestImplementation(Dependencies.androidJUnit) //TODO remove?
+    androidTestImplementation(Dependencies.espresso) //TODO remove?
 }
