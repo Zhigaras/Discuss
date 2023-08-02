@@ -6,4 +6,7 @@
     <string name="sign_in">Sign In</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="or">OR</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="email_hint" translatable="false">Email</string>
+    <string name="password_hint">Password</string>
 </resources>
