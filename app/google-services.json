@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "82587152369",
+    "project_id": "discuss-b336c",
+    "storage_bucket": "discuss-b336c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82587152369:android:a15747227933256edfde50",
+        "android_client_info": {
+          "package_name": "com.zhigaras.discuss"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82587152369-tc3lro8hdqon7sctd1mpujgmcjmg0ira.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zhigaras.discuss",
+            "certificate_hash": "300701376425a1845d833d343a9f40319c5af0f9"
+          }
+        },
+        {
+          "client_id": "82587152369-tend6g68s4u1b09ktjl3rd1u5hg7jahp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXMqvXXZ6LSjT-aivw7J3-kpJwedCY_I0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82587152369-tend6g68s4u1b09ktjl3rd1u5hg7jahp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

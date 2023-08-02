@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Discuss"
 include(":app")
- 
+include(":auth")
