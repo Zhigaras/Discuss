@@ -16,7 +16,7 @@ class PasswordLayout @JvmOverloads constructor(
     private val binding: PasswordLayoutBinding
     
     init {
-        binding = PasswordLayoutBinding.inflate(LayoutInflater.from(context), this, true)
+        binding = PasswordLayoutBinding.inflate(LayoutInflater.from(context), this)
         listOf(binding.passwordEdittext, binding.confirmPasswordEdittext).forEach {
             it.addTextChangedListener(AuthTextWatcher {
                 binding.passwordMismatchErrorView.visibility = GONE
