@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="password_input_error">Password is invalid</string>
+    <string name="email_input_error">Password is invalid</string>
+    <string name="password_matching_error">Password mismatch</string>
+</resources>
