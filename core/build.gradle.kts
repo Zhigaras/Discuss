@@ -39,6 +39,7 @@ dependencies {
     implementation(Dependencies.coreKtx) //TODO remove?
     implementation(Dependencies.appcompat) //TODO remove?
     implementation(Dependencies.material) //TODO remove?
+    implementation(Dependencies.lificycle)
     
     implementation(Dependencies.koinAndroid)
     
