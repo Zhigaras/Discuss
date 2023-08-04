@@ -5,21 +5,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
-class AuthRepository: Auth {
+class AuthRepository : Auth {
     
     private val auth: FirebaseAuth = Firebase.auth
     
-    override suspend fun signUpWithEmailAndPassword(email: String, password: String): FirebaseUser {
+    override suspend fun signUpWithEmailAndPassword(email: String, password: String): UserDto {
         try {
             val user = auth.createUserWithEmailAndPassword(email, password).await().user!!
             user.sendEmailVerification()
-            return user
+            return UserDto(user)
         } catch (e: FirebaseAuthUserCollisionException) {
             throw EmailIsUsed()
         } catch (e: Exception) {
@@ -27,9 +26,10 @@ class AuthRepository: Auth {
         }
     }
     
-    override suspend fun signInWithEmailAndPassword(email: String, password: String): FirebaseUser {
+    override suspend fun signInWithEmailAndPassword(email: String, password: String): UserDto {
         try {
-            return auth.signInWithEmailAndPassword(email, password).await().user!!
+            val user = auth.signInWithEmailAndPassword(email, password).await().user!!
+            return UserDto(user)
         } catch (e: FirebaseAuthInvalidUserException) {
             throw InvalidUser()
         } catch (e: FirebaseAuthInvalidCredentialsException) {
@@ -41,10 +41,11 @@ class AuthRepository: Auth {
         }
     }
     
-    override suspend fun signUpWithGoogle(token: String): FirebaseUser {
+    override suspend fun signUpWithGoogle(token: String): UserDto {
         val firebaseCredentials = GoogleAuthProvider.getCredential(token, null)
         try {
-            return auth.signInWithCredential(firebaseCredentials).await().user!!
+            val user = auth.signInWithCredential(firebaseCredentials).await().user!!
+            return UserDto(user)
         } catch (e: Exception) {
             throw SigningInFailed()
         }

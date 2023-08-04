@@ -40,12 +40,11 @@ android {
 dependencies {
     
     implementation(project(":feature:login"))
-    implementation(project(":core"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)
     
-    implementation(Dependencies.koin)
+    implementation(Dependencies.koinAndroid)
     
     implementation(platform(Dependencies.firebaseBom))
     implementation(Dependencies.crashlytics)

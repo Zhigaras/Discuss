@@ -5,12 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 abstract class BaseFragment<B : ViewBinding> : Fragment() {
     
     private var _binding: B? = null
     protected val binding get() = _binding!!
+    
+    inline fun <reified VM : ViewModel> initViewModel(): VM {
+        val viewModel by viewModel<VM>()
+        return viewModel
+    }
     
     protected abstract fun initBinding(inflater: LayoutInflater): B?
     

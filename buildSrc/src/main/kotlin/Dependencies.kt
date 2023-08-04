@@ -1,6 +1,6 @@
 object Dependencies {
     
-    const val koin = "io.insert-koin:koin-android:${Versions.koin}"
+    const val koinAndroid = "io.insert-koin:koin-android:${Versions.koin}"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
     const val firebaseBom = "com.google.firebase:firebase-bom:${Versions.firebaseBom}"
@@ -8,6 +8,7 @@ object Dependencies {
     const val analytics = "com.google.firebase:firebase-analytics-ktx"
     const val firebaseAuth = "com.google.firebase:firebase-auth-ktx"
     const val material = "com.google.android.material:material:${Versions.material}"
+    const val lificycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
     
     const val jUnit = "junit:junit:${Versions.jUnit}"
     const val androidJUnit = "androidx.test.ext:junit:${Versions.androidJUnit}"
@@ -20,6 +21,7 @@ object Dependencies {
         const val coreKtx = "1.10.1"
         const val firebaseBom = "32.2.0"
         const val material = "1.9.0"
+        const val lifecycleVersion = "2.6.1"
         
         const val jUnit = "4.13.2"
         const val androidJUnit = "1.1.5"
