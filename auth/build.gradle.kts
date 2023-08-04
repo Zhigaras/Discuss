@@ -33,8 +33,6 @@ android {
 }
 
 dependencies {
-
-//    implementation("androidx.core:core-ktx:1.10.1") TODO remove?
     
     implementation(platform(Dependencies.firebaseBom))
     implementation(Dependencies.firebaseAuth)

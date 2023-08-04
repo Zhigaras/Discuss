@@ -37,11 +37,14 @@ android {
 dependencies {
     
     implementation(project(":core"))
+    implementation(project(":auth"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)
     implementation(Dependencies.material)
-    testImplementation(Dependencies.jUnit) //TODO remove?
-    androidTestImplementation(Dependencies.androidJUnit) //TODO remove?
-    androidTestImplementation(Dependencies.espresso) //TODO remove?
+    implementation(Dependencies.koinAndroid)
+    
+    testImplementation(Dependencies.jUnit)
+    androidTestImplementation(Dependencies.androidJUnit)
+    androidTestImplementation(Dependencies.espresso)
 }

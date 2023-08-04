@@ -57,6 +57,7 @@
     <include layout="@layout/spacer16dp" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/sign_in_with_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sign_in" />
@@ -68,6 +69,7 @@
         android:layout_margin="8dp" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/sign_in_with_google"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/continue_with_google"

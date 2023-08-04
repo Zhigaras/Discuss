@@ -36,9 +36,12 @@ android {
 
 dependencies {
     
-    implementation(Dependencies.coreKtx)
+    implementation(Dependencies.coreKtx) //TODO remove?
     implementation(Dependencies.appcompat) //TODO remove?
     implementation(Dependencies.material) //TODO remove?
+    
+    implementation(Dependencies.koinAndroid)
+    
     testImplementation(Dependencies.jUnit) //TODO remove?
     androidTestImplementation(Dependencies.androidJUnit) //TODO remove?
     androidTestImplementation(Dependencies.espresso) //TODO remove?
