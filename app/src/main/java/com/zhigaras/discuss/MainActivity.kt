@@ -1,8 +1,8 @@
 package com.zhigaras.discuss
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.zhigaras.login.presentation.SignInFragment
+import androidx.appcompat.app.AppCompatActivity
+import com.zhigaras.login.presentation.signup.SignUpFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, SignInFragment())
+                .replace(R.id.container, SignUpFragment())
                 .commit()
     }
 }

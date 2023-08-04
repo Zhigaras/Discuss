@@ -7,43 +7,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.zhigaras.login.presentation.input.EmailInput
-        android:id="@+id/email_input_layout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/email_hint"
-        app:endIconDrawable="@drawable/baseline_clear_24"
-        app:endIconMode="clear_text"
-        app:startIconDrawable="@drawable/baseline_email_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/email_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
-
-    </com.zhigaras.login.presentation.input.EmailInput>
+    <include
+        android:id="@+id/email_input"
+        layout="@layout/email_input_layout" />
 
     <include layout="@layout/spacer16dp" />
 
-    <com.zhigaras.login.presentation.input.PasswordInput
-        android:id="@+id/password_input_layout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password_hint"
-        app:endIconDrawable="@drawable/baseline_eye_24"
-        app:endIconMode="password_toggle"
-        app:startIconDrawable="@drawable/baseline_lock_24">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/password_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword" />
-
-    </com.zhigaras.login.presentation.input.PasswordInput>
+    <include
+        android:id="@+id/password_input"
+        layout="@layout/single_password_input_layout" />
 
 
     <TextView
@@ -51,6 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="end"
         android:text="@string/forgot_password" />
 

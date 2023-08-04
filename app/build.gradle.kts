@@ -40,6 +40,7 @@ android {
 dependencies {
     
     implementation(project(":feature:login"))
+    implementation(project(":core"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

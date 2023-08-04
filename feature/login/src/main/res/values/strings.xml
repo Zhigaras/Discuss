@@ -4,9 +4,10 @@
     <string name="email_input_error">Email is invalid</string>
     <string name="password_matching_error">Password mismatch</string>
     <string name="sign_in">Sign In</string>
-    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password"><u>Forgot password?</u></string>
     <string name="or">OR</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="email_hint" translatable="false">Email</string>
     <string name="password_hint">Password</string>
+    <string name="sign_up">Sign Up</string>
 </resources>

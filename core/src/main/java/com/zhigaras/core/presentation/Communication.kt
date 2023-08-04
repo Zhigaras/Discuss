@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 interface Communication {
     
     interface Put<T : Any> {
-        fun put(item: T)
+        fun post(item: T)
     }
     
     interface Observe<T : Any> {
@@ -17,10 +17,10 @@ interface Communication {
     
     interface Mutable<T : Any> : Put<T>, Observe<T>
     
-    class Base<T : Any>(private val liveData: MutableLiveData<T>) : Mutable<T> {
+    class Base<T : Any>(private val liveData: MutableLiveData<T> = MutableLiveData()) : Mutable<T> {
         
         @MainThread
-        override fun put(item: T) {
+        override fun post(item: T) {
             liveData.value = item
         }
         

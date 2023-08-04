@@ -13,12 +13,16 @@ class PasswordLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InputValidation {
     
-    private val binding: PasswordLayoutBinding
+    private val binding = PasswordLayoutBinding.inflate(LayoutInflater.from(context), this)
+    private val passwordLayout = // TODO: refactor
+        binding.passwordLayout.findViewById<AbstractInputLayout>(R.id.password_layout)
+    private val confirmPasswordLayout =
+        binding.confirmPasswordLayout.findViewById<AbstractInputLayout>(R.id.password_layout)
     
     init {
-        binding = PasswordLayoutBinding.inflate(LayoutInflater.from(context), this)
-        listOf(binding.passwordEdittext, binding.confirmPasswordEdittext).forEach {
-            it.addTextChangedListener(AuthTextWatcher {
+        orientation = VERTICAL
+        listOf(passwordLayout.editText, confirmPasswordLayout.editText).forEach {
+            it?.addTextChangedListener(AuthTextWatcher {
                 binding.passwordMismatchErrorView.visibility = GONE
             })
         }
@@ -34,14 +38,13 @@ class PasswordLayout @JvmOverloads constructor(
     }
     
     private fun innerIsValid(): Boolean {
-        with(binding) {
-            passwordLayout.isValid()
-            confirmPasswordLayout.isValid()
-            return passwordLayout.text() == confirmPasswordLayout.text()
-        }
+        passwordLayout.isValid()
+        confirmPasswordLayout.isValid()
+        return passwordLayout.text() == confirmPasswordLayout.text()
     }
     
+    
     fun text(): String {
-        return binding.passwordLayout.text()
+        return passwordLayout.text()
     }
 }
