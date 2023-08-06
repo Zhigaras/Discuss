@@ -1,16 +1,16 @@
 package com.zhigaras.auth
 
-abstract class FiveLettersException : Exception() {
+abstract class DiscussException : Exception() {
     
     abstract val messageId: Int
     
 }
 
-class NetworkException : FiveLettersException() {
+class NetworkException : DiscussException() {
     override val messageId: Int = R.string.check_internet_connection
 }
 
-abstract class AuthException : FiveLettersException()
+abstract class AuthException : DiscussException()
 
 class NoSuchUser : AuthException() {
     override val messageId = R.string.no_such_user

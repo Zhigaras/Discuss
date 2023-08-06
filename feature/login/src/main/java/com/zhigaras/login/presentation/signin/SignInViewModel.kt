@@ -1,8 +1,8 @@
 package com.zhigaras.login.presentation.signin
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.zhigaras.auth.Auth
+import com.zhigaras.auth.DiscussException
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.login.domain.NavigateToSignUp
 import com.zhigaras.login.domain.SignInCommunication
@@ -16,9 +16,13 @@ class SignInViewModel(
     
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
-            val result = auth.signInWithEmailAndPassword(email, password)
-            communication.post(SignInUiState.Success()) // TODO: fix
-            Log.d("AAA from viewModel", result.toString())
+            try {
+                val result = auth.signInWithEmailAndPassword(email, password)
+                communication.post(SignInUiState.Success(result)) // TODO: fix
+            } catch (e: DiscussException) {
+                communication.post(SignInUiState.Error(e.messageId))
+            }
+            
         }
     }
     

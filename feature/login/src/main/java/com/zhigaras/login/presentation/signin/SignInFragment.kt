@@ -1,7 +1,6 @@
 package com.zhigaras.login.presentation.signin
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.core.BaseFragment
@@ -16,20 +15,20 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInUiState>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        binding.signInWithPassword.setOnClickListener {
-            viewModel.signIn(
-                binding.emailInput.inputLayout.text(),
-                binding.passwordInput.inputLayout.text()
-            )
-        }
+        val inputList = listOf(binding.emailInput.inputLayout, binding.passwordInput.inputLayout)
         
+        binding.signInWithPassword.setOnClickListener {
+            val isAllValid = inputList.map { it.isValid() }.all { it }
+            if (isAllValid) {
+                viewModel.signIn(inputList.first().text(), inputList.last().text())
+            }
+        }
         binding.signUpWithPassword.setOnClickListener {
             viewModel.navigateToSignUp()
         }
         
         viewModel.observe(this) {
-            Log.d("AAA from fragment", it.toString())
-            
+            // TODO: observe errors
         }
     }
 }
