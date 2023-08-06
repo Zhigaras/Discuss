@@ -36,6 +36,14 @@
         android:layout_height="wrap_content"
         android:text="@string/sign_in" />
 
+    <include layout="@layout/spacer16dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sign_up_with_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up" />
+
     <include
         layout="@layout/or_spacer"
         android:layout_width="match_parent"

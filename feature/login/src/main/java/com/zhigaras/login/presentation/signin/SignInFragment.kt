@@ -23,6 +23,10 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInUiState>() {
             )
         }
         
+        binding.signUpWithPassword.setOnClickListener {
+            viewModel.navigateToSignUp()
+        }
+        
         viewModel.observe(this) {
             Log.d("AAA from fragment", it.toString())
             

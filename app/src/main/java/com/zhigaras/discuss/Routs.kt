@@ -1,6 +1,6 @@
 package com.zhigaras.discuss
 
-interface MainRouts : NavigateToHome, NavigateToSignIn, NavigateToSignUp
+interface MainRouts : NavigateToHome, NavigateToSignIn
 
 interface NavigateToHome {
     
@@ -10,9 +10,4 @@ interface NavigateToHome {
 interface NavigateToSignIn {
     
     fun navigateToSignIn()
-}
-
-interface NavigateToSignUp {
-    
-    fun navigateToSignUp()
 }
