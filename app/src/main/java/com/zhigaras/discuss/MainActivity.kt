@@ -2,15 +2,20 @@ package com.zhigaras.discuss
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.zhigaras.login.presentation.signup.SignUpFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
+    
+    private val viewModel by viewModel<MainViewModel>()
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (savedInstanceState == null)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, SignUpFragment())
-                .commit()
+        
+        viewModel.observe(this) {
+            it.show(supportFragmentManager, R.id.container)
+        }
+        viewModel.init(savedInstanceState == null)
+        
     }
 }

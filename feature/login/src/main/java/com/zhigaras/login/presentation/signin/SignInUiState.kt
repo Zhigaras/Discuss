@@ -1,6 +1,6 @@
 package com.zhigaras.login.presentation.signin
 
-import com.zhigaras.core.presentation.UiState
+import com.zhigaras.core.UiState
 
 interface SignInUiState : UiState {
     

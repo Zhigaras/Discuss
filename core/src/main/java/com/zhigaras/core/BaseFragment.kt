@@ -1,4 +1,4 @@
-package com.zhigaras.core.presentation
+package com.zhigaras.core
 
 import android.os.Bundle
 import android.view.LayoutInflater
