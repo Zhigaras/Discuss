@@ -10,22 +10,29 @@ interface Communication {
     
     interface Post<T : Any> {
         fun post(item: T)
+        
+        fun singleEvent(item: T)
     }
     
     interface Observe<T : Any> {
-        fun observe(owner: LifecycleOwner, observer: Observer<T>)
+        fun observe(owner: LifecycleOwner, observer: Observer<T?>)
     }
     
     interface Mutable<T : Any> : Post<T>, Observe<T>
     
-    abstract class Abstract<T : Any>(private val liveData: MutableLiveData<T> = MutableLiveData()) :
+    abstract class Abstract<T : Any>(private val liveData: MutableLiveData<T?> = MutableLiveData()) :
         Mutable<T> {
         
         override fun post(item: T) {
             liveData.value = item
         }
         
-        override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
+        override fun singleEvent(item: T) {
+            liveData.value = item
+            liveData.value = null
+        }
+        
+        override fun observe(owner: LifecycleOwner, observer: Observer<T?>) {
             liveData.observe(owner, observer)
         }
     }

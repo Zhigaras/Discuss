@@ -1,14 +1,32 @@
 package com.zhigaras.login.presentation.signin
 
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.annotation.StringRes
-import com.zhigaras.auth.UserDto
 import com.zhigaras.core.UiState
 
 interface SignInUiState : UiState {
     
-    class Progress : SignInUiState
+    fun update(progressLayout: FrameLayout)
     
-    class Success(private val data: UserDto) : SignInUiState
+    object Progress : SignInUiState {
+        override fun update(progressLayout: FrameLayout) {
+            progressLayout.visibility = View.VISIBLE
+        }
+    }
     
-    class Error(@StringRes private val messageId: Int) : SignInUiState
+    object Success : SignInUiState {
+        override fun update(progressLayout: FrameLayout) {
+            progressLayout.visibility = View.GONE
+        }
+    }
+    
+    class Error(@StringRes val messageId: Int) : SignInUiState {
+        override fun update(progressLayout: FrameLayout) {
+            val context = progressLayout.context
+            Toast.makeText(context, context.getString(messageId), Toast.LENGTH_LONG).show()
+            progressLayout.visibility = View.GONE
+        }
+    }
 }

@@ -13,7 +13,7 @@ class MainViewModel(
 //    private val navigateToHome: NavigateToHome
 ) : ViewModel(), NavigationCommunication.Observe {
     
-    override fun observe(owner: LifecycleOwner, observer: Observer<Screen>) {
+    override fun observe(owner: LifecycleOwner, observer: Observer<Screen?>) {
         navigation.observe(owner, observer)
     }
     

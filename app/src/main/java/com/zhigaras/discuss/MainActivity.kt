@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         
         viewModel.observe(this) {
-            it.show(supportFragmentManager, R.id.container)
+            it?.show(supportFragmentManager, R.id.container)
         }
         viewModel.init(savedInstanceState == null)
         

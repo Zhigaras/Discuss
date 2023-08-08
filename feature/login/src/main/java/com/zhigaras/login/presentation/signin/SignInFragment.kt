@@ -28,7 +28,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInUiState>() {
         }
         
         viewModel.observe(this) {
-            // TODO: observe errors
+            it?.update(binding.progressLayout)
         }
     }
 }
