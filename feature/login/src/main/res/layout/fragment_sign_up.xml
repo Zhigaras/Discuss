@@ -7,14 +7,14 @@
     android:padding="16dp">
 
     <include
-        android:id="@+id/email_input"
+        android:id="@+id/email_input_layout"
         layout="@layout/email_input_layout" />
 
     <include layout="@layout/spacer16dp" />
 
     <include
-        android:id="@+id/password_input"
-        layout="@layout/single_password_input_layout" />
+        android:id="@+id/password_input_layout"
+        layout="@layout/password_layout" />
 
     <include layout="@layout/spacer16dp" />
 

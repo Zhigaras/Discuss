@@ -15,7 +15,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding, SignInUiState>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val inputList = listOf(binding.emailInput.inputLayout, binding.passwordInput.inputLayout)
+        val inputList = listOf(binding.emailInput.root, binding.passwordInput.root)
         
         binding.signInWithPassword.setOnClickListener {
             val isAllValid = inputList.map { it.isValid() }.all { it }
