@@ -11,7 +11,11 @@ class SignUpViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<SignUpUiState>(communication, dispatchers) {
     
-    fun signUp(email: String, password: String) {
-    
+    fun signUp(email: String, password: String) = scopeLaunch(
+        onLoading = { communication.post(SignUpUiState.Progress) },
+        onSuccess = { communication.post(SignUpUiState.Success) },
+        onError = { communication.singleEvent(SignUpUiState.Error(it.errorId())) }
+    ) {
+        auth.signUpWithEmailAndPassword(email, password)
     }
 }
