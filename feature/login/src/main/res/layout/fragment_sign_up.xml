@@ -3,32 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
 
-        <include
-            android:id="@+id/email_input_layout"
-            layout="@layout/email_input_layout" />
-
-        <include layout="@layout/spacer16dp" />
-
-        <include
-            android:id="@+id/password_input_layout"
-            layout="@layout/password_layout" />
-
-        <include layout="@layout/spacer16dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/sign_up"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up" />
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    </LinearLayout>
+            <include
+                android:id="@+id/email_input_layout"
+                layout="@layout/email_input_layout" />
+
+            <include layout="@layout/spacer8dp" />
+
+            <com.zhigaras.login.presentation.input.PasswordLayout
+                android:id="@+id/password_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include layout="@layout/spacer8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <include
         android:id="@+id/progress_layout"

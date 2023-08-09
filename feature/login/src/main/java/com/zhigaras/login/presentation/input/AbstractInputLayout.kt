@@ -12,17 +12,17 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : TextInputLayout(context, attrs, defStyleAttr), InputValidation, Init {
+) : TextInputLayout(context, attrs, defStyleAttr), InputValidation {
     
     protected abstract val errorMessageId: Int
-    protected abstract var textWatcher: TextWatcher
+    private val textWatcher: TextWatcher = AuthTextWatcher { error = "" }
     
     protected abstract fun innerIsValid(): Boolean
     
     fun text(): String = (editText?.text ?: "").toString()
     
-    override fun initTextWatcher(textWatcher: TextWatcher) {
-        this.textWatcher = textWatcher
+    override fun addTextWatcher(textWatcher: TextWatcher) {
+        editText?.addTextChangedListener(textWatcher)
     }
     
     override fun onAttachedToWindow() {
@@ -57,9 +57,6 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
 interface InputValidation {
     
     fun isValid(): Boolean
-}
-
-interface Init {
     
-    fun initTextWatcher(textWatcher: TextWatcher)
+    fun addTextWatcher(textWatcher: TextWatcher)
 }

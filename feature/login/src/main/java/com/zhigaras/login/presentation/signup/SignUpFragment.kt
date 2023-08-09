@@ -15,14 +15,14 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpUiState>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val inputList = listOf(binding.emailInputLayout.root, binding.passwordInputLayout.root)
+        val inputList = listOf(binding.emailInputLayout.root, binding.passwordInputLayout)
         
         binding.signUp.setOnClickListener {
             val isValid = inputList.map { it.isValid() }
             if (isValid.all { it })
                 viewModel.signUp(
                     binding.emailInputLayout.root.text(),
-                    binding.passwordInputLayout.root.text()
+                    binding.passwordInputLayout.text()
                 )
         }
         

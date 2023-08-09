@@ -1,7 +1,6 @@
 package com.zhigaras.login.presentation.input
 
 import android.content.Context
-import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Patterns
 import com.zhigaras.login.R
@@ -13,8 +12,6 @@ class EmailInput @JvmOverloads constructor(
 ) : AbstractInputLayout(context, attrs, defStyleAttr) {
     
     override val errorMessageId = R.string.email_input_error
-    
-    override var textWatcher: TextWatcher = AuthTextWatcher { error = "" }
     
     override fun innerIsValid(): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(text()).matches()
