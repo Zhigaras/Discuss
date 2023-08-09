@@ -5,11 +5,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.zhigaras.core.NavigationCommunication
 import com.zhigaras.core.Screen
+import com.zhigaras.login.domain.IsUserAuthorized
 import com.zhigaras.login.domain.NavigateToHome
 
 class MainViewModel(
     private val navigation: NavigationCommunication.Observe,
-//    private val isUserAuthorized: IsUserAuthorized,
+    private val isUserAuthorized: IsUserAuthorized,
     private val navigateToSignIn: NavigateToSignIn,
     private val navigateToHome: NavigateToHome
 ) : ViewModel(), NavigationCommunication.Observe {
@@ -19,6 +20,9 @@ class MainViewModel(
     }
     
     fun init(isFirstRun: Boolean) {
-        if (isFirstRun) navigateToSignIn.navigateToSignIn()
+        if (isFirstRun) {
+            if (isUserAuthorized.isAuthorized()) navigateToHome.navigateToHome()
+            else navigateToSignIn.navigateToSignIn()
+        }
     }
 }

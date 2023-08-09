@@ -58,4 +58,8 @@ class AuthRepository : Auth {
             throw NoSuchUser()
         }
     }
+    
+    override fun isUserAuthorized(): Boolean {
+        return auth.currentUser != null
+    }
 }

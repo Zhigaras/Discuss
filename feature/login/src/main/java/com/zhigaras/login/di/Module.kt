@@ -2,6 +2,7 @@ package com.zhigaras.login.di
 
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
+import com.zhigaras.login.domain.IsUserAuthorized
 import com.zhigaras.login.domain.SignInCommunication
 import com.zhigaras.login.domain.SignUpCommunication
 import com.zhigaras.login.presentation.signin.SignInViewModel
@@ -29,4 +30,6 @@ fun loginModule() = module {
         SignUpCommunication.Observe::class,
         SignUpCommunication.Post::class
     )
+    
+    single { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
 }

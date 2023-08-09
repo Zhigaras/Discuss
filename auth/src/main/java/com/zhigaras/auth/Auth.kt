@@ -10,4 +10,6 @@ interface Auth {
     
     suspend fun resetPassword(email: String)
     
+    fun isUserAuthorized(): Boolean
+    
 }
