@@ -9,7 +9,7 @@ android {
     
     defaultConfig {
         minSdk = Config.minSdk
-    
+        
         testInstrumentationRunner = Config.testInstrumentationRunner
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -30,9 +30,13 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
+    
+    buildFeatures { viewBinding = true }
 }
 
 dependencies {
+    
+    implementation(project(":core"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

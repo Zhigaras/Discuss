@@ -6,12 +6,13 @@ import android.view.View
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignUpBinding
 import com.zhigaras.login.presentation.input.InputValidation
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpUiState>() {
+class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
     
     override fun initBinding(inflater: LayoutInflater) = FragmentSignUpBinding.inflate(inflater)
     
-    private val viewModel by lazy { initViewModel<SignUpViewModel>() }
+    private val viewModel by viewModel<SignUpViewModel>()
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

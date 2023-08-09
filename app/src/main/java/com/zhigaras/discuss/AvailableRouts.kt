@@ -1,6 +1,7 @@
 package com.zhigaras.discuss
 
 import com.zhigaras.core.NavigationCommunication
+import com.zhigaras.home.domain.HomeScreen
 import com.zhigaras.login.domain.LoginRoutes
 import com.zhigaras.login.domain.SignInScreen
 import com.zhigaras.login.domain.SignUpScreen
@@ -11,7 +12,7 @@ interface AvailableRouts : MainRouts, LoginRoutes {
         private val navigation: NavigationCommunication.Post
     ) : AvailableRouts {
         
-        override fun navigateToHome() = Unit // TODO: add homeScreen
+        override fun navigateToHome() = navigation.post(HomeScreen)
         
         override fun navigateToSignIn() = navigation.post(SignInScreen)
         

@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignInBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SignInFragment : BaseFragment<FragmentSignInBinding, SignInUiState>() {
+class SignInFragment : BaseFragment<FragmentSignInBinding>() {
     
-    private val viewModel by lazy { initViewModel<SignInViewModel>() }
+    private val viewModel by viewModel<SignInViewModel>()
     
     override fun initBinding(inflater: LayoutInflater) = FragmentSignInBinding.inflate(inflater)
     
