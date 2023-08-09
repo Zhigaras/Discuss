@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:hint="@string/email_hint"
     app:endIconDrawable="@drawable/baseline_clear_24"
-    app:endIconMode="clear_text"
     app:errorEnabled="true"
     app:startIconDrawable="@drawable/baseline_email_24">
 
