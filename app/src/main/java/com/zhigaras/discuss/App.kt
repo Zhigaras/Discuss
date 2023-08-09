@@ -13,7 +13,8 @@ class App : Application() {
         Firebase.crashlytics.setCrashlyticsCollectionEnabled(false)
         startKoin {
             modules(
-                listOf(loginModule())
+                listOf(mainModule())
+                        + loginModule()
             )
         }
     }

@@ -34,6 +34,8 @@ android {
 
 dependencies {
     
+    implementation(project(":core"))
+    
     implementation(platform(Dependencies.firebaseBom))
     implementation(Dependencies.firebaseAuth)
 }

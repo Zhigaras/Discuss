@@ -1,6 +1,8 @@
 object Dependencies {
     
     const val koinAndroid = "io.insert-koin:koin-android:${Versions.koin}"
+    
+    //    const val koinCore = "io.insert-koin:koin-core:${Versions.koin}" todo remove?
     const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
     const val firebaseBom = "com.google.firebase:firebase-bom:${Versions.firebaseBom}"
