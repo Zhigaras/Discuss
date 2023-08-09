@@ -19,7 +19,7 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
     
     protected abstract fun innerIsValid(): Boolean
     
-    fun text(): String = (editText?.text ?: "").toString()
+    override fun text(): String = (editText?.text ?: "").toString()
     
     override fun addTextWatcher(textWatcher: TextWatcher) {
         editText?.addTextChangedListener(textWatcher)
@@ -59,4 +59,6 @@ interface InputValidation {
     fun isValid(): Boolean
     
     fun addTextWatcher(textWatcher: TextWatcher)
+    
+    fun text(): String
 }

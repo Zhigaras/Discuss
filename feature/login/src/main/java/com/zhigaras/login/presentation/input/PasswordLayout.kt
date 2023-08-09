@@ -3,35 +3,33 @@ package com.zhigaras.login.presentation.input
 import android.content.Context
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.zhigaras.login.R
-import com.zhigaras.login.databinding.PasswordLayoutBinding
 
 class PasswordLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), InputValidation {
+) : LinearLayout(context, attrs, defStyleAttr), InputValidation {
     
-    private val binding = PasswordLayoutBinding.inflate(LayoutInflater.from(context))
     private val errorTextId = R.string.password_matching_error
-    private val passwordLayout = binding.inputPassword.root
-    private val confirmPasswordLayout = binding.confirmPassword.root
-    private val errorView = binding.passwordMismatchErrorView
-    private val passwordList = listOf(passwordLayout, confirmPasswordLayout)
-    
-    init {
-        addView(binding.root)
-    }
+    private lateinit var errorView: TextView
+    private lateinit var passwordList: List<PasswordInput>
     
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        orientation = VERTICAL
+        errorView = findViewById(R.id.password_mismatch_error_view)
+        passwordList = listOf(
+            findViewById(R.id.input_password),
+            findViewById(R.id.confirm_password)
+        )
         addTextWatcher(AuthTextWatcher { errorView.text = "" })
     }
     
     override fun isValid(): Boolean {
-        val isPasswordsEquals = passwordLayout.text() == confirmPasswordLayout.text()
+        val isPasswordsEquals = passwordList.first().text() == passwordList.last().text()
         errorView.text = if (isPasswordsEquals) "" else context.getText(errorTextId)
         val passListValidation = passwordList.map { it.isValid() }
         return passListValidation.all { it } && isPasswordsEquals
@@ -41,7 +39,7 @@ class PasswordLayout @JvmOverloads constructor(
         passwordList.forEach { it.addTextWatcher(textWatcher) }
     }
     
-    fun text(): String {
-        return passwordLayout.text()
+    override fun text(): String {
+        return passwordList.first().text()
     }
 }
