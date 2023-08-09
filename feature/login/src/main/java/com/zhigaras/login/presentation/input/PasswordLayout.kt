@@ -11,37 +11,35 @@ class PasswordLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), InputValidation, Init {
+) : LinearLayout(context, attrs, defStyleAttr), InputValidation {
     
-    private val passwordLayout = findViewById<PasswordInput>(R.id.input_password)
-    private val confirmPasswordLayout = findViewById<PasswordInput>(R.id.confirm_password)
-    private val errorView = findViewById<TextView>(R.id.password_mismatch_error_view)
+    private val errorTextId = R.string.password_matching_error
+    private lateinit var errorView: TextView
+    private lateinit var passwordList: List<PasswordInput>
     
-    init {
-        initTextWatcher(AuthTextWatcher { errorView.visibility = GONE })
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        orientation = VERTICAL
+        errorView = findViewById(R.id.password_mismatch_error_view)
+        passwordList = listOf(
+            findViewById(R.id.input_password),
+            findViewById(R.id.confirm_password)
+        )
+        addTextWatcher(AuthTextWatcher { errorView.text = "" })
     }
-    
-    private val errorMessageId: Int = R.string.password_matching_error
     
     override fun isValid(): Boolean {
-        val isValid = innerIsValid()
-        errorView.text = if (isValid) "" else context.getString(errorMessageId)
-        return isValid
+        val isPasswordsEquals = passwordList.first().text() == passwordList.last().text()
+        errorView.text = if (isPasswordsEquals) "" else context.getText(errorTextId)
+        val passListValidation = passwordList.map { it.isValid() }
+        return passListValidation.all { it } && isPasswordsEquals
     }
     
-    override fun initTextWatcher(textWatcher: TextWatcher) {
-        listOf(passwordLayout, confirmPasswordLayout).forEach {
-            it?.initTextWatcher(textWatcher)
-        }
+    override fun addTextWatcher(textWatcher: TextWatcher) {
+        passwordList.forEach { it.addTextWatcher(textWatcher) }
     }
     
-    private fun innerIsValid(): Boolean {
-        passwordLayout.isValid()
-        confirmPasswordLayout.isValid()
-        return passwordLayout.text() == confirmPasswordLayout.text()
-    }
-    
-    fun text(): String {
-        return passwordLayout.text()
+    override fun text(): String {
+        return passwordList.first().text()
     }
 }
