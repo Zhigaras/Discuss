@@ -3,8 +3,10 @@ package com.zhigaras.login.di
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
 import com.zhigaras.login.domain.IsUserAuthorized
+import com.zhigaras.login.domain.ShowId
 import com.zhigaras.login.domain.SignInCommunication
 import com.zhigaras.login.domain.SignUpCommunication
+import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.signin.SignInViewModel
 import com.zhigaras.login.presentation.signup.SignUpViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -32,4 +34,7 @@ fun loginModule() = module {
     )
     
     single { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
+    
+    single { UserMapper() }
+    single { ShowId() }
 }

@@ -16,20 +16,19 @@ abstract class BaseViewModel<T : UiState>(
         communication.observe(owner, observer)
     }
     
-    protected fun scopeLaunch(
+    protected fun <E> scopeLaunch(
         onLoading: () -> Unit = {},
-        onSuccess: () -> Unit = {},
+        onSuccess: suspend (E) -> Unit = {},
         onError: suspend (e: DiscussException) -> Unit = {},
-        onFinally: () -> Unit = {}, // TODO remove?
-        payload: suspend () -> Unit,
+        payload: suspend () -> E,
     ) = viewModelScope.launch(dispatchers.ui()) {
         onLoading.invoke()
         try {
             withContext(dispatchers.io()) {
-                payload.invoke()
-            }
-            withContext(dispatchers.ui()) {
-                onSuccess.invoke()
+                val result = payload.invoke()
+                withContext(dispatchers.ui()) {
+                    onSuccess.invoke(result)
+                }
             }
         } catch (e: DiscussException) {
             onError.invoke(e)
