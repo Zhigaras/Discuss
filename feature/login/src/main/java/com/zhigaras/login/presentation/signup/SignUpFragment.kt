@@ -5,19 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignUpBinding
-import com.zhigaras.login.presentation.input.InputValidation
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpUiState>() {
+class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
     
     override fun initBinding(inflater: LayoutInflater) = FragmentSignUpBinding.inflate(inflater)
     
-    private val viewModel by lazy { initViewModel<SignUpViewModel>() }
+    private val viewModel by viewModel<SignUpViewModel>()
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        val inputList =
-            listOf<InputValidation>(binding.emailInputLayout.root, binding.passwordInputLayout.root)
+        val inputList = listOf(binding.emailInputLayout.root, binding.passwordInputLayout.root)
         
         binding.signUp.setOnClickListener {
             val isValid = inputList.map { it.isValid() }
