@@ -9,6 +9,7 @@ object Dependencies {
     const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"
     const val analytics = "com.google.firebase:firebase-analytics-ktx"
     const val firebaseAuth = "com.google.firebase:firebase-auth-ktx"
+    const val firebaseDatabase = "com.google.firebase:firebase-database-ktx"
     const val material = "com.google.android.material:material:${Versions.material}"
     const val lificycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
     
@@ -21,7 +22,7 @@ object Dependencies {
         const val koin = "3.4.3"
         const val appcompat = "1.6.1"
         const val coreKtx = "1.10.1"
-        const val firebaseBom = "32.2.0"
+        const val firebaseBom = "32.2.2"
         const val material = "1.9.0"
         const val lifecycleVersion = "2.6.1"
         
