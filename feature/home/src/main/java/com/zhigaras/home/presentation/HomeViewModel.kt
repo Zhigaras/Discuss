@@ -1,13 +1,13 @@
 package com.zhigaras.home.presentation
 
-import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
+import com.zhigaras.home.domain.HomeInteractor
 
 class HomeViewModel(
     dispatchers: Dispatchers,
     communication: HomeCommunication.Mutable,
-    private val cloudService: CloudService
+    private val homeInteractor: HomeInteractor
 ) : BaseViewModel<HomeUiState>(communication, dispatchers) {
     
 

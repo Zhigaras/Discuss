@@ -23,7 +23,7 @@ interface ProvideDatabase {
         
         companion object {
             private const val DATABASE_URL =
-                "https://organizemeetup-2397f-default-rtdb.asia-southeast1.firebasedatabase.app"
+                "https://discuss-b336c-default-rtdb.europe-west1.firebasedatabase.app/"
         }
     }
 }
