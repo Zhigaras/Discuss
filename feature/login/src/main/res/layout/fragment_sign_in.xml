@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <include
+                android:id="@+id/email_input"
+                layout="@layout/email_input_layout" />
+
+            <include layout="@layout/spacer8dp" />
+
+            <include
+                android:id="@+id/password_input"
+                layout="@layout/single_password_input_layout" />
+
+            <TextView
+                android:id="@+id/forgot_password_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/forgot_password" />
+
+            <include layout="@layout/spacer16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sign_in_with_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_in" />
+
+            <include layout="@layout/spacer16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sign_up_with_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up" />
+
+            <include layout="@layout/or_spacer" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sign_in_with_google"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/continue_with_google"
+                app:icon="@drawable/google_icon"
+                app:iconGravity="textStart"
+                app:iconSize="30dp"
+                app:iconTint="@android:color/transparent"
+                app:iconTintMode="add" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/progress_layout"
+        layout="@layout/progress_layout" />
+
+</FrameLayout>

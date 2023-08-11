@@ -1,22 +1,17 @@
 plugins {
-    id(Plugins.application)
+    id(Plugins.library)
     id(Plugins.android)
-    id(Plugins.crashlytics)
-    id(Plugins.googleServices)
 }
 
 android {
-    namespace = "com.zhigaras.discuss"
+    namespace = "com.zhigaras.home"
     compileSdk = Config.compileSdk
     
     defaultConfig {
-        applicationId = "com.zhigaras.discuss"
         minSdk = Config.minSdk
-        targetSdk = Config.targetSdk
-        versionCode = Config.versionCode
-        versionName = Config.versionName
         
         testInstrumentationRunner = Config.testInstrumentationRunner
+        consumerProguardFiles("consumer-rules.pro")
     }
     
     buildTypes {
@@ -35,22 +30,18 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
+    
+    buildFeatures { viewBinding = true }
 }
 
 dependencies {
     
     implementation(project(":core"))
-    implementation(project(":feature:login"))
-    implementation(project(":feature:home"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)
-    
+    implementation(Dependencies.material)
     implementation(Dependencies.koinAndroid)
-    
-    implementation(platform(Dependencies.firebaseBom))
-    implementation(Dependencies.crashlytics)
-    implementation(Dependencies.analytics)
     
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidJUnit)

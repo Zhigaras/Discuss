@@ -15,4 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Discuss"
 include(":app")
- 
+include(":auth")
+include(":feature:login")
+include(":core")
+include(":feature:home")

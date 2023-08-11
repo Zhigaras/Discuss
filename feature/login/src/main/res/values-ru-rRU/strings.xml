@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="password_input_error">Некорректный пароль</string>
+    <string name="email_input_error">Некорректный email</string>
+    <string name="password_matching_error">Несоответствие паролей</string>
+    <string name="sign_in">Войти</string>
+    <string name="password_support_text">Пароль должен состоять минимум из 6 символов</string>
+    <string name="forgot_password"><u>Забыли пароль?</u></string>
+    <string name="or">ИЛИ</string>
+    <string name="continue_with_google">Продолжить с Google</string>
+    <string name="password_hint">Пароль</string>
+    <string name="sign_up">Зарегистрироваться</string>
+</resources>
