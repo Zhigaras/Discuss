@@ -1,4 +1,4 @@
-package com.zhigaras.home.domain
+package com.zhigaras.home.domain.model
 
 data class User(
     val name: String,

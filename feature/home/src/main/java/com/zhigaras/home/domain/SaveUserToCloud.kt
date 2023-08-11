@@ -1,6 +1,7 @@
 package com.zhigaras.home.domain
 
 import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.home.domain.model.User
 
 interface SaveUserToCloud {
     

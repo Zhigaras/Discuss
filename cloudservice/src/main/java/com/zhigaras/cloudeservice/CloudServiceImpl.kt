@@ -1,11 +1,10 @@
 package com.zhigaras.cloudeservice
 
 import android.content.Context
-import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.tasks.await
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class CloudServiceImpl(context: Context) : CloudService {
     
@@ -41,11 +40,18 @@ class CloudServiceImpl(context: Context) : CloudService {
         directRef.setValue(updatedValue)
     }
     
-    private suspend fun handleResult(task: Task<Void>): Unit = suspendCoroutine { continuation ->
-        task.addOnSuccessListener {
-            continuation.resume(Unit)
-        }.addOnFailureListener {
-            continuation.resumeWithException(it)
-        } // TODO: remove?
+    override fun <T : Any> subscribeToRootLevel(
+        path: String,
+        clazz: Class<T>,
+        callback: CloudService.Callback<T>
+    ) {
+        reference.child(path).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.children.mapNotNull { it.getValue(clazz) }
+                callback.provide(data)
+            }
+            
+            override fun onCancelled(error: DatabaseError) = callback.error(error.message)
+        })
     }
 }

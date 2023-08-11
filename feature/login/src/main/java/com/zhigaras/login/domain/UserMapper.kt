@@ -1,7 +1,7 @@
 package com.zhigaras.login.domain
 
 import com.zhigaras.auth.UserDto
-import com.zhigaras.home.domain.User
+import com.zhigaras.home.domain.model.User
 
 class UserMapper : UserDto.Mapper<User> {
     

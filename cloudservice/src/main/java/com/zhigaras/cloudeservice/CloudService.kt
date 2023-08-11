@@ -2,6 +2,13 @@ package com.zhigaras.cloudeservice
 
 interface CloudService {
     
+    interface Callback<T : Any> {
+        
+        fun provide(obj: List<T>)
+        
+        fun error(message: String)
+    }
+    
     fun postRootLevel(path: String, obj: Any) // TODO: remove??
     
     fun postWithId(path: String, id: String, obj: Any)
@@ -21,5 +28,7 @@ interface CloudService {
         fieldId: String,
         block: (T) -> T
     )
+    
+    fun <T : Any> subscribeToRootLevel(path: String, clazz: Class<T>, callback: Callback<T>)
     
 }
