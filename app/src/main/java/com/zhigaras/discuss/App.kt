@@ -5,6 +5,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.zhigaras.home.di.homeModule
 import com.zhigaras.login.di.loginModule
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class App : Application() {
@@ -13,6 +14,7 @@ class App : Application() {
         super.onCreate()
         Firebase.crashlytics.setCrashlyticsCollectionEnabled(false)
         startKoin {
+            androidContext(this@App)
             modules(
                 listOf(mainModule())
                         + loginModule()

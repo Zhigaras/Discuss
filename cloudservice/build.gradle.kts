@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhigaras.home"
+    namespace = "com.zhigaras.cloudeservice"
     compileSdk = Config.compileSdk
     
     defaultConfig {
@@ -30,19 +30,16 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
-    
-    buildFeatures { viewBinding = true }
 }
 
 dependencies {
     
-    implementation(project(":core"))
-    implementation(project(":cloudservice"))
-    
     implementation(Dependencies.coreKtx)
-    implementation(Dependencies.appcompat)
-    implementation(Dependencies.material)
-    implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.appcompat) //todo remove?
+    implementation(Dependencies.material) //todo remove?
+    
+    implementation(platform(Dependencies.firebaseBom))
+    implementation(Dependencies.firebaseDatabase)
     
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidJUnit)

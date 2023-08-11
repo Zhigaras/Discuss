@@ -10,7 +10,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 abstract class AbstractInputLayout @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
+    attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : TextInputLayout(context, attrs, defStyleAttr), InputValidation {
     
