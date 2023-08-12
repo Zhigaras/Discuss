@@ -15,6 +15,8 @@ interface CloudService {
     
     suspend fun postWithIdGenerating(path: String, obj: Any): String
     
+    suspend fun <T : Any> getDataSnapshot(path: String, child: String, clazz: Class<T>): T
+    
     fun updateField(
         path: String,
         child: String,
@@ -22,11 +24,11 @@ interface CloudService {
         fieldValue: Any
     ) // TODO: remove???
     
-    suspend fun <T : Any> getAndUpdateField(
+    suspend fun <T : Any> getListAndUpdate(
         path: String,
         child: String,
         fieldId: String,
-        block: (T) -> T
+        block: (MutableList<T>) -> MutableList<T>
     )
     
     fun <T : Any> subscribeToRootLevel(path: String, clazz: Class<T>, callback: Callback<T>)
