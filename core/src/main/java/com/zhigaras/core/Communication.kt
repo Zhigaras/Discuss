@@ -10,8 +10,6 @@ interface Communication {
     
     interface Post<T : Any> {
         fun post(item: T)
-        
-        fun singleEvent(item: T)
     }
     
     interface Observe<T : Any> {
@@ -25,11 +23,6 @@ interface Communication {
         
         override fun post(item: T) {
             liveData.value = item
-        }
-        
-        override fun singleEvent(item: T) {
-            liveData.value = item
-            liveData.value = null
         }
         
         override fun observe(owner: LifecycleOwner, observer: Observer<T?>) {

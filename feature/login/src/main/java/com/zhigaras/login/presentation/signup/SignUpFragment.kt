@@ -25,7 +25,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         }
         
         viewModel.observe(this) {
-            it?.update(binding.progressLayout.root)
+            it?.update(binding)
         }
     }
 }
