@@ -1,32 +1,28 @@
 package com.zhigaras.login.presentation.signup
 
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
 import com.zhigaras.core.UiState
+import com.zhigaras.login.databinding.FragmentSignUpBinding
 
-interface SignUpUiState : UiState {
-    
-    fun update(progressLayout: FrameLayout)
+interface SignUpUiState : UiState<FragmentSignUpBinding> {
     
     object Progress : SignUpUiState {
-        override fun update(progressLayout: FrameLayout) {
-            progressLayout.visibility = View.VISIBLE
+        override fun update(binding: FragmentSignUpBinding) {
+            binding.progressLayout.root.visibility = View.VISIBLE
         }
     }
     
     object Success : SignUpUiState {
-        override fun update(progressLayout: FrameLayout) {
-            progressLayout.visibility = View.GONE
+        override fun update(binding: FragmentSignUpBinding) {
+            binding.progressLayout.root.visibility = View.GONE
         }
     }
     
-    class Error(@StringRes val messageId: Int) : SignUpUiState {
-        override fun update(progressLayout: FrameLayout) {
-            val context = progressLayout.context
-            Toast.makeText(context, context.getString(messageId), Toast.LENGTH_LONG).show()
-            progressLayout.visibility = View.GONE
+    class Error(@StringRes val messageId: Int) : SignUpUiState, UiState.SingleEvent<FragmentSignUpBinding>() {
+        override val block: (FragmentSignUpBinding) -> Unit = {
+            Snackbar.make(it.root, messageId, Snackbar.LENGTH_INDEFINITE).show()
         }
     }
 }

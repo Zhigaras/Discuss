@@ -11,4 +11,5 @@
     <string name="email_hint" translatable="false">Email</string>
     <string name="password_hint">Password</string>
     <string name="sign_up">Sign Up</string>
+    <string name="close">Close</string>
 </resources>
