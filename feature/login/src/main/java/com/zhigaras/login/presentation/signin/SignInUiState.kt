@@ -17,12 +17,6 @@ interface SignInUiState : UiState<FragmentSignInBinding> {
         }
     }
     
-    object Success : SignInUiState {
-        override fun update(binding: FragmentSignInBinding) {
-            binding.progressLayout.root.visibility = View.GONE
-        }
-    }
-    
     class SingleEventError(@StringRes val messageId: Int) : SignInUiState,
         UiState.SingleEvent<FragmentSignInBinding>() {
         override val block: (FragmentSignInBinding) -> Unit = {

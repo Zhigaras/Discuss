@@ -8,9 +8,9 @@ import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.model.Subject
 
 class HomeViewModel(
+    private val homeInteractor: HomeInteractor,
     dispatchers: Dispatchers,
-    communication: HomeCommunication.Mutable,
-    private val homeInteractor: HomeInteractor
+    communication: HomeCommunication.Mutable
 ) : BaseViewModel<FragmentHomeBinding, HomeUiState>(communication, dispatchers) {
     
     fun startObservingSubjects(callback: CloudService.Callback<Subject>) {

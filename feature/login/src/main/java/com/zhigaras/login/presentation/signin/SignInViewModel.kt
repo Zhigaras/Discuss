@@ -10,9 +10,9 @@ import com.zhigaras.login.domain.SignInCommunication
 
 class SignInViewModel(
     private val auth: Auth,
-    communication: SignInCommunication.Mutable,
     private val navigateToSignUp: NavigateToSignUp,
     private val navigateToHome: NavigateToHome,
+    communication: SignInCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentSignInBinding, SignInUiState>(communication, dispatchers) {
     

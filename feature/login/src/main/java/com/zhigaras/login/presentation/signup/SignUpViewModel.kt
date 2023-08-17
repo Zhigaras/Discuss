@@ -11,13 +11,13 @@ import com.zhigaras.login.domain.SignUpCommunication
 import com.zhigaras.login.domain.UserMapper
 
 class SignUpViewModel(
-    communication: SignUpCommunication.Mutable,
     private val auth: Auth,
     private val navigateToHome: NavigateToHome,
-    dispatchers: Dispatchers,
     private val saveUserToCloud: SaveUserToCloud,
     private val userMapper: UserMapper,
-    private val showId: ShowId
+    private val showId: ShowId,
+    communication: SignUpCommunication.Mutable,
+    dispatchers: Dispatchers
 ) : BaseViewModel<FragmentSignUpBinding, SignUpUiState>(communication, dispatchers) {
     
     fun signUp(email: String, password: String) = scopeLaunch(
@@ -26,7 +26,7 @@ class SignUpViewModel(
             saveUserToCloud.save(it.map(showId), it.map(userMapper))
             navigateToHome.navigateToHome()
         },
-        onError = { communication.post(SignUpUiState.Error(it.errorId())) }
+        onError = { communication.post(SignUpUiState.SingleEventError(it.errorId())) }
     ) {
         auth.signUpWithEmailAndPassword(email, password)
     }
