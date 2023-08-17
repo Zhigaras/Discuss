@@ -52,6 +52,10 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
             super.onRestoreInstanceState(state)
         }
     }
+    
+    fun setText(text: String?) {
+        editText?.setText(text ?: "")
+    }
 }
 
 interface InputValidation {

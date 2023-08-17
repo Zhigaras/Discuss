@@ -1,5 +1,6 @@
 package com.zhigaras.login.presentation.signin
 
+import android.os.Bundle
 import com.zhigaras.auth.Auth
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
@@ -24,7 +25,7 @@ class SignInViewModel(
         auth.signInWithEmailAndPassword(email, password)
     }
     
-    fun navigateToSignUp() {
-        navigateToSignUp.navigateToSignUp()
+    fun navigateToSignUp(args: Bundle? = null) {
+        navigateToSignUp.navigateToSignUp(args)
     }
 }

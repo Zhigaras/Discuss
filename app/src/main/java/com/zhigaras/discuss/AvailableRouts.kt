@@ -1,5 +1,6 @@
 package com.zhigaras.discuss
 
+import android.os.Bundle
 import com.zhigaras.core.NavigationCommunication
 import com.zhigaras.home.domain.HomeScreen
 import com.zhigaras.login.domain.LoginRoutes
@@ -16,6 +17,6 @@ interface AvailableRouts : MainRouts, LoginRoutes {
         
         override fun navigateToSignIn() = navigation.post(SignInScreen)
         
-        override fun navigateToSignUp() = navigation.post(SignUpScreen)
+        override fun navigateToSignUp(args: Bundle?) = navigation.post(SignUpScreen(args = args))
     }
 }
