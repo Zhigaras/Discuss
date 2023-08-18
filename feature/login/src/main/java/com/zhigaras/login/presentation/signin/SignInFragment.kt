@@ -6,6 +6,7 @@ import android.view.View
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignInBinding
 import com.zhigaras.login.domain.LoginRoutes
+import com.zhigaras.login.presentation.resetpassword.ResetPasswordDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SignInFragment : BaseFragment<FragmentSignInBinding>() {
@@ -26,10 +27,13 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
             }
         }
         binding.signUpWithPassword.setOnClickListener {
-            val bundle = Bundle().also {
-                it.putString(LoginRoutes.EMAIL_KEY, binding.emailInput.root.text())
+            viewModel.navigateToSignUp(binding.emailInput.root.makeBundle(LoginRoutes.EMAIL_KEY))
+        }
+        binding.forgotPasswordText.setOnClickListener {
+            ResetPasswordDialog().also {
+                it.arguments = binding.emailInput.root.makeBundle(LoginRoutes.EMAIL_KEY)
+                it.show(parentFragmentManager, it.tag)
             }
-            viewModel.navigateToSignUp(bundle)
         }
         
         viewModel.observe(this) {

@@ -56,6 +56,8 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
     fun setText(text: String?) {
         editText?.setText(text ?: "")
     }
+    
+    fun makeBundle(key: String) = Bundle().also { it.putString(key, text()) }
 }
 
 interface InputValidation {
