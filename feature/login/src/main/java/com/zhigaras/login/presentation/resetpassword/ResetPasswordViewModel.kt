@@ -19,4 +19,6 @@ class ResetPasswordViewModel(
     ) {
         auth.resetPassword(email)
     }
+    
+    fun setInitialState() = communication.post(ResetPasswordUiState.Initial)
 }

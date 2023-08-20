@@ -14,4 +14,5 @@
     <string name="close">Close</string>
     <string name="reset_password">Reset password</string>
     <string name="enter_email_for_password_reset">Enter the email address that you signed up with to reset it.</string>
+    <string name="successful_resetting_password">The letter was successfully sent. Follow the instructions in it and come back to log in with a new password.</string>
 </resources>

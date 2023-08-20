@@ -36,8 +36,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
             }
         }
         
-        viewModel.observe(this) {
-            it?.update(binding)
+        viewModel.observe(this) {// TODO: move to baseFragment
+            it.update(binding)
         }
     }
 }
