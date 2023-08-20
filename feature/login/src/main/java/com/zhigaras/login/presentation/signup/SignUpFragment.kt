@@ -28,7 +28,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         }
         
         viewModel.observe(this) {
-            it.update(binding)
+            it?.update(binding)
         }
     }
 }

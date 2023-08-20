@@ -8,12 +8,12 @@ import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class BaseViewModel<VB : ViewBinding, T : UiState<VB>>(
+abstract class BaseViewModel<VB: ViewBinding, T : UiState<VB>>(
     protected val communication: Communication.Mutable<T>,
     private val dispatchers: Dispatchers
 ) : ViewModel(), Communication.Observe<T> {
     
-    override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
+    override fun observe(owner: LifecycleOwner, observer: Observer<T?>) {
         communication.observe(owner, observer)
     }
     

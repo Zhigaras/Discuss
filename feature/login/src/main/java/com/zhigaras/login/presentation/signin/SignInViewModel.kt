@@ -15,8 +15,7 @@ class SignInViewModel(
     private val navigateToHome: NavigateToHome,
     communication: SignInCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentSignInBinding, SignInUiState>(communication, dispatchers),
-    NavigateToSignUp {
+) : BaseViewModel<FragmentSignInBinding, SignInUiState>(communication, dispatchers) {
     
     fun signIn(email: String, password: String) = scopeLaunch(
         onLoading = { communication.post(SignInUiState.Progress) },
@@ -26,7 +25,7 @@ class SignInViewModel(
         auth.signInWithEmailAndPassword(email, password)
     }
     
-    override fun navigateToSignUp(args: Bundle?) {
+    fun navigateToSignUp(args: Bundle? = null) {
         navigateToSignUp.navigateToSignUp(args)
     }
 }
