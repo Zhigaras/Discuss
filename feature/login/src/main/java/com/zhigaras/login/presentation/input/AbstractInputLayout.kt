@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.text.TextWatcher
 import android.util.AttributeSet
+import androidx.annotation.StringRes
 import com.google.android.material.textfield.TextInputLayout
 
 
@@ -55,6 +56,12 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
     
     fun setText(text: String?) {
         editText?.setText(text ?: "")
+    }
+    
+    fun makeBundle(key: String) = Bundle().also { it.putString(key, text()) }
+    
+    fun setError(@StringRes messageId: Int) {
+        error = context.getString(messageId)
     }
 }
 
