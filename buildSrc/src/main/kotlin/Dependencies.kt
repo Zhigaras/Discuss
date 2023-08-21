@@ -12,6 +12,7 @@ object Dependencies {
     const val firebaseDatabase = "com.google.firebase:firebase-database-ktx"
     const val material = "com.google.android.material:material:${Versions.material}"
     const val lificycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVersion}"
+    const val webRtc = "io.getstream:stream-webrtc-android-ui:${Versions.webRtcVersion}"
     
     const val jUnit = "junit:junit:${Versions.jUnit}"
     const val androidJUnit = "androidx.test.ext:junit:${Versions.androidJUnit}"
@@ -25,6 +26,7 @@ object Dependencies {
         const val firebaseBom = "32.2.2"
         const val material = "1.9.0"
         const val lifecycleVersion = "2.6.1"
+        const val webRtcVersion = "1.0.4"
         
         const val jUnit = "4.13.2"
         const val androidJUnit = "1.1.5"
