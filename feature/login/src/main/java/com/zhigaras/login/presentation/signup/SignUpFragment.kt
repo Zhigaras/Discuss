@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignUpBinding
+import com.zhigaras.login.domain.LoginRoutes
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
@@ -16,6 +17,8 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        arguments?.let { binding.emailInputLayout.root.setText(it.getString(LoginRoutes.EMAIL_KEY)) }
+        
         val inputList = listOf(binding.emailInputLayout.root, binding.passwordInputLayout.root)
         
         binding.signUp.setOnClickListener {
@@ -25,7 +28,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         }
         
         viewModel.observe(this) {
-            it?.update(binding.progressLayout.root)
+            it.update(binding)
         }
     }
 }
