@@ -24,18 +24,27 @@ class CloudServiceImpl(context: Context) : CloudService {
         return result.key!!
     }
     
+    override suspend fun <T : Any> getDataSnapshot(
+        path: String,
+        child: String,
+        clazz: Class<T>
+    ): T {
+        return reference.child(path).child(child).get().await()
+            .getValue(clazz)!! // TODO: handle exceptions
+    }
+    
     override fun updateField(path: String, child: String, fieldId: String, fieldValue: Any) {
         reference.child(path).child(child).child(fieldId).setValue(fieldValue)
     }
     
-    override suspend fun <T : Any> getAndUpdateField(
+    override suspend fun <T : Any> getListAndUpdate(
         path: String,
         child: String,
         fieldId: String,
-        block: (T) -> T
+        block: (MutableList<T>) -> MutableList<T>
     ) {
         val directRef = reference.child(path).child(child).child(fieldId)
-        val value = directRef.get().await().value as T
+        val value = directRef.get().await().value as? MutableList<T> ?: mutableListOf()
         val updatedValue = block.invoke(value)
         directRef.setValue(updatedValue)
     }
