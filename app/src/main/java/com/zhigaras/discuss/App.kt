@@ -5,6 +5,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.zhigaras.home.di.homeModule
 import com.zhigaras.login.di.loginModule
+import com.zhigaras.calls.di.callModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -19,6 +20,7 @@ class App : Application() {
                 listOf(mainModule())
                         + loginModule()
                         + homeModule()
+                        + callModule()
             )
         }
     }

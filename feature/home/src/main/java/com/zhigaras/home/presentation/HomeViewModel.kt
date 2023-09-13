@@ -7,15 +7,18 @@ import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.databinding.FragmentHomeBinding
 import com.zhigaras.home.domain.DisputePosition
+import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.HomeInteractor
+import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.home.domain.model.Subject
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val homeInteractor: HomeInteractor,
+    private val navigateToCall: NavigateToCall,
     dispatchers: Dispatchers,
     communication: HomeCommunication.Mutable
-) : BaseViewModel<FragmentHomeBinding, HomeUiState>(communication, dispatchers) {
+) : BaseViewModel<FragmentHomeBinding, HomeUiState>(communication, dispatchers), NavigateToCall {
     
     fun startObservingSubjects(callback: CloudService.Callback<Subject>) {
         homeInteractor.subscribeToSubjects(callback)
@@ -30,4 +33,6 @@ class HomeViewModel(
             }
         }
     }
+    
+    override fun navigateToCall() = navigateToCall.navigateToCall()
 }

@@ -30,9 +30,17 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
+    buildFeatures { viewBinding = true }
 }
 
 dependencies {
     
-    implementation(Dependencies.webRtc)
+    implementation(files("./libs/libwebrtc.aar"))
+    implementation(project(":core"))
+    
+    implementation(Dependencies.coreKtx)
+    implementation(Dependencies.lificycle)
+    implementation(Dependencies.appcompat)
+    
+    implementation(Dependencies.koinAndroid)
 }

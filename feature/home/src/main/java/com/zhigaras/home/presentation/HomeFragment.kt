@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.home.databinding.FragmentHomeBinding
-import com.zhigaras.home.domain.DisputePosition
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
@@ -19,7 +18,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
 //        viewModel.startObservingSubjects()
         binding.startConversationButton.setOnClickListener {
-            viewModel.addUserToWaitList("fgh", "1", DisputePosition.SUPPORT)
+            viewModel.navigateToCall()
+//            viewModel.addUserToWaitList("fgh", "1", DisputePosition.SUPPORT)
         }
     }
 }
