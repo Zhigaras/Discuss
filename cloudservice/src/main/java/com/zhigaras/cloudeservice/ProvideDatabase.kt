@@ -14,7 +14,7 @@ interface ProvideDatabase {
         
         init {
             FirebaseApp.initializeApp(context)
-            Firebase.database(DATABASE_URL).setPersistenceEnabled(false)
+//            Firebase.database(DATABASE_URL).setPersistenceEnabled(false)
         }
         
         override fun database(): DatabaseReference {
