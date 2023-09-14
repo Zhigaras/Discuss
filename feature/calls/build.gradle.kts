@@ -48,4 +48,6 @@ dependencies {
     
     implementation(platform(Dependencies.firebaseBom)) //todo remove!!!
     implementation(Dependencies.firebaseDatabase) //todo remove!!!
+    implementation(Dependencies.firebaseAuth) //todo remove!!!
+    
 }

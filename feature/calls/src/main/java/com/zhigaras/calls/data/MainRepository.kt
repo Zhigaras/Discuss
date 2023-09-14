@@ -3,8 +3,8 @@ package com.zhigaras.calls.data
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
-import com.zhigaras.calls.domain.model.DataModel
-import com.zhigaras.calls.domain.model.DataModelType
+import com.zhigaras.calls.domain.model.ConnectionData
+import com.zhigaras.calls.domain.model.ConnectionDataType
 import com.zhigaras.calls.webrtc.ErrorCallBack
 import com.zhigaras.calls.webrtc.NewEventCallBack
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
@@ -95,7 +95,7 @@ object MainRepository : WebRTCClient.Listener {
     
     fun sendCallRequest(target: String, errorCallBack: ErrorCallBack) {
         firebaseClient.sendMessageToOtherUser(
-            DataModel(target, currentUsername, null, DataModelType.START_CALL), errorCallBack
+            ConnectionData(target, currentUsername, null, ConnectionDataType.START_CALL), errorCallBack
         )
     }
     
@@ -105,48 +105,48 @@ object MainRepository : WebRTCClient.Listener {
     
     fun subscribeForLatestEvent(callBack: NewEventCallBack) {
         firebaseClient.observeIncomingLatestEvent(object : NewEventCallBack {
-            override fun onNewEventReceived(model: DataModel) {
-                when (model.type) {
-                    DataModelType.OFFER -> {
-                        target = model.sender
+            override fun onNewEventReceived(data: ConnectionData) {
+                when (data.type) {
+                    ConnectionDataType.OFFER -> {
+                        target = data.sender
                         webRTCClient?.onRemoteSessionReceived(
                             SessionDescription(
-                                SessionDescription.Type.OFFER, model.data
+                                SessionDescription.Type.OFFER, data.data
                             )
                         )
-                        webRTCClient?.answer(model.sender)
+                        webRTCClient?.answer(data.sender)
                     }
                     
-                    DataModelType.ANSWER -> {
-                        target = model.sender
+                    ConnectionDataType.ANSWER -> {
+                        target = data.sender
                         webRTCClient?.onRemoteSessionReceived(
                             SessionDescription(
-                                SessionDescription.Type.ANSWER, model.data
+                                SessionDescription.Type.ANSWER, data.data
                             )
                         )
                     }
                     
-                    DataModelType.ICE_CANDIDATE -> try {
+                    ConnectionDataType.ICE_CANDIDATE -> try {
                         val candidate: IceCandidate =
-                            gson.fromJson(model.data, IceCandidate::class.java)
+                            gson.fromJson(data.data, IceCandidate::class.java)
                         webRTCClient?.addIceCandidate(candidate)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                     
-                    DataModelType.START_CALL -> {
-                        target = model.sender
-                        callBack.onNewEventReceived(model)
+                    ConnectionDataType.START_CALL -> {
+                        target = data.sender
+                        callBack.onNewEventReceived(data)
                     }
                 }
             }
         })
     }
     
-    override fun onTransferDataToOtherPeer(model: DataModel) {
+    override fun onTransferDataToOtherPeer(model: ConnectionData) {
         firebaseClient.sendMessageToOtherUser(model, object : ErrorCallBack {
             override fun onError() {
-            
+                Log.d("AAAA", "onTransferDataToOtherPeer failed")
             }
         })
     }

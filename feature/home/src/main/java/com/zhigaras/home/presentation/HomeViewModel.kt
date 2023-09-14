@@ -21,7 +21,7 @@ class HomeViewModel(
 ) : BaseViewModel<FragmentHomeBinding, HomeUiState>(communication, dispatchers), NavigateToCall {
     
     fun startObservingSubjects(callback: CloudService.Callback<Subject>) {
-        homeInteractor.subscribeToSubjects(callback)
+        homeInteractor.subscribeToSubjects(callback) // TODO: navigate right here???
     }
     
     fun addUserToWaitList(userId: String, subjectId: String, userOpinion: DisputePosition) {

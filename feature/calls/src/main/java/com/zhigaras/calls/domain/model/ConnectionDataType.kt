@@ -1,5 +1,5 @@
 package com.zhigaras.calls.domain.model
 
-enum class DataModelType {
+enum class ConnectionDataType {
     OFFER, ANSWER, ICE_CANDIDATE, START_CALL
 }

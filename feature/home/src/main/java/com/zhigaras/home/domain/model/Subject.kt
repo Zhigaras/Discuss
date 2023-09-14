@@ -1,6 +1,6 @@
 package com.zhigaras.home.domain.model
 
-data class Subject(
+class Subject(
     val nameEn: String = "",
     val nameRu: String = "",
     val supportList: List<String> = emptyList(),

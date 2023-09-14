@@ -21,9 +21,8 @@ import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoSource
 import org.webrtc.VideoTrack
-
-import com.zhigaras.calls.domain.model.DataModel
-import com.zhigaras.calls.domain.model.DataModelType
+import com.zhigaras.calls.domain.model.ConnectionData
+import com.zhigaras.calls.domain.model.ConnectionDataType
 
 class WebRTCClient(
     private val context: Context,
@@ -134,21 +133,17 @@ class WebRTCClient(
         try {
             peerConnection!!.createOffer(object : SimpleSdpObserver() {
                 override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                    super.onCreateSuccess(sessionDescription)
                     peerConnection.setLocalDescription(object : SimpleSdpObserver() {
                         override fun onSetSuccess() {
-                            super.onSetSuccess()
                             //its time to transfer this sdp to other peer
-                            if (listener != null) {
-                                listener.onTransferDataToOtherPeer(
-                                    DataModel(
-                                        target,
-                                        username,
-                                        sessionDescription.description,
-                                        DataModelType.OFFER
-                                    )
+                            listener.onTransferDataToOtherPeer(
+                                ConnectionData(
+                                    target,
+                                    username,
+                                    sessionDescription.description,
+                                    ConnectionDataType.OFFER
                                 )
-                            }
+                            )
                         }
                     }, sessionDescription)
                 }
@@ -162,21 +157,17 @@ class WebRTCClient(
         try {
             peerConnection!!.createAnswer(object : SimpleSdpObserver() {
                 override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                    super.onCreateSuccess(sessionDescription)
                     peerConnection.setLocalDescription(object : SimpleSdpObserver() {
                         override fun onSetSuccess() {
-                            super.onSetSuccess()
                             //its time to transfer this sdp to other peer
-                            if (listener != null) {
-                                listener.onTransferDataToOtherPeer(
-                                    DataModel(
-                                        target,
-                                        username,
-                                        sessionDescription.description,
-                                        DataModelType.ANSWER
-                                    )
+                            listener.onTransferDataToOtherPeer(
+                                ConnectionData(
+                                    target,
+                                    username,
+                                    sessionDescription.description,
+                                    ConnectionDataType.ANSWER
                                 )
-                            }
+                            )
                         }
                     }, sessionDescription)
                 }
@@ -196,13 +187,11 @@ class WebRTCClient(
     
     fun sendIceCandidate(iceCandidate: IceCandidate?, target: String) {
         addIceCandidate(iceCandidate)
-        if (listener != null) {
-            listener.onTransferDataToOtherPeer(
-                DataModel(
-                    target, username, gson.toJson(iceCandidate), DataModelType.ICE_CANDIDATE
-                )
+        listener.onTransferDataToOtherPeer(
+            ConnectionData(
+                target, username, gson.toJson(iceCandidate), ConnectionDataType.ICE_CANDIDATE
             )
-        }
+        )
     }
     
     fun switchCamera() {
@@ -210,16 +199,16 @@ class WebRTCClient(
     }
     
     fun toggleVideo(shouldBeMuted: Boolean?) {
-        localVideoTrack!!.setEnabled(shouldBeMuted!!)
+        localVideoTrack.setEnabled(shouldBeMuted!!)
     }
     
     fun toggleAudio(shouldBeMuted: Boolean?) {
-        localAudioTrack!!.setEnabled(shouldBeMuted!!)
+        localAudioTrack.setEnabled(shouldBeMuted!!)
     }
     
     fun closeConnection() {
         try {
-            localVideoTrack!!.dispose()
+            localVideoTrack.dispose()
             videoCapturer!!.stopCapture()
             videoCapturer!!.dispose()
             peerConnection!!.close()
@@ -229,6 +218,6 @@ class WebRTCClient(
     }
     
     interface Listener {
-        fun onTransferDataToOtherPeer(model: DataModel)
+        fun onTransferDataToOtherPeer(model: ConnectionData)
     }
 }

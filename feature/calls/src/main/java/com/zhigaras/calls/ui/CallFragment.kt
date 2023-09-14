@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import com.zhigaras.calls.data.MainRepository
-import com.zhigaras.calls.domain.model.DataModel
-import com.zhigaras.calls.domain.model.DataModelType
+import com.zhigaras.calls.domain.model.ConnectionData
+import com.zhigaras.calls.domain.model.ConnectionDataType
 import com.zhigaras.calls.webrtc.ErrorCallBack
 import com.zhigaras.calls.webrtc.NewEventCallBack
 import com.zhigaras.core.BaseFragment
@@ -42,14 +42,14 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
         mainRepository.listener = this
         
         mainRepository.subscribeForLatestEvent(object : NewEventCallBack {
-            override fun onNewEventReceived(model: DataModel) {
-                if (model.type === DataModelType.START_CALL) {
+            override fun onNewEventReceived(data: ConnectionData) {
+                if (data.type === ConnectionDataType.START_CALL) {
                     requireActivity().runOnUiThread {
-                        binding.incomingNameTV.text = model.sender + " is Calling you"
+                        binding.incomingNameTV.text = data.sender + " is Calling you"
                         binding.incomingCallLayout.setVisibility(View.VISIBLE)
                         binding.acceptButton.setOnClickListener { v ->
                             //star the call here
-                            mainRepository.startCall(model.sender)
+                            mainRepository.startCall(data.sender)
                             binding.incomingCallLayout.visibility = View.GONE
                         }
                         binding.rejectButton.setOnClickListener { v ->

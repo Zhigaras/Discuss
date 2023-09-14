@@ -42,7 +42,7 @@ interface HomeInteractor {
         
         override fun subscribeToSubjects(callback: CloudService.Callback<Subject>) {
             cloudService.subscribeToRootLevel(SUBJECTS_PATH, Subject::class.java, callback)
-        }
+        } // TODO: subscribe to single subject instead of list
         
         override suspend fun checkMatching(
             subjectId: String,
@@ -74,7 +74,7 @@ interface HomeInteractor {
             userOpinion: DisputePosition
         ) {
             cloudService.getListAndUpdate(SUBJECTS_PATH, subjectId, userOpinion.path) {
-                it.remove(userId)
+                it.remove(userId) // TODO: use remove() instead of getting and updating list?
                 it
             }
         }

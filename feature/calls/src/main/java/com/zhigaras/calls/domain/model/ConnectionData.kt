@@ -1,8 +1,8 @@
 package com.zhigaras.calls.domain.model
 
-data class DataModel(
+class ConnectionData(
     val target: String,
     val sender: String,
     val data: String?,
-    val type: DataModelType
+    val type: ConnectionDataType
 )

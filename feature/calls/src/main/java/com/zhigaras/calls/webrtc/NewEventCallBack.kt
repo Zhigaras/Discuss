@@ -1,9 +1,9 @@
 package com.zhigaras.calls.webrtc
 
-import com.zhigaras.calls.domain.model.DataModel
+import com.zhigaras.calls.domain.model.ConnectionData
 
 interface NewEventCallBack {
     
-    fun onNewEventReceived(model: DataModel)
+    fun onNewEventReceived(data: ConnectionData)
     
 }

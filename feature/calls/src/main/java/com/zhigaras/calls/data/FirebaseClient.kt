@@ -7,7 +7,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
-import com.zhigaras.calls.domain.model.DataModel
+import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.webrtc.ErrorCallBack
 import com.zhigaras.calls.webrtc.NewEventCallBack
 import com.zhigaras.calls.webrtc.SuccessCallBack
@@ -26,13 +26,13 @@ class FirebaseClient {
             }
     }
     
-    fun sendMessageToOtherUser(dataModel: DataModel, errorCallBack: ErrorCallBack) {
+    fun sendMessageToOtherUser(connectionData: ConnectionData, errorCallBack: ErrorCallBack) {
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.child(dataModel.target).exists()) {
+                if (snapshot.child(connectionData.target).exists()) {
                     //send the signal to other user
-                    dbRef.child(dataModel.target).child(LATEST_EVENT_FIELD_NAME)
-                        .setValue(gson.toJson(dataModel))
+                    dbRef.child(connectionData.target).child(LATEST_EVENT_FIELD_NAME)
+                        .setValue(gson.toJson(connectionData))
                 } else {
                     errorCallBack.onError()
                 }
@@ -49,9 +49,9 @@ class FirebaseClient {
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     try {
-                        val data = Objects.requireNonNull<Any>(snapshot.getValue()).toString()
-                        val dataModel: DataModel = gson.fromJson(data, DataModel::class.java)
-                        callBack.onNewEventReceived(dataModel)
+                        val data = Objects.requireNonNull<Any>(snapshot.value).toString()
+                        val connectionData: ConnectionData = gson.fromJson(data, ConnectionData::class.java)
+                        callBack.onNewEventReceived(connectionData)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -63,6 +63,6 @@ class FirebaseClient {
     }
     
     companion object {
-        private const val LATEST_EVENT_FIELD_NAME = "latest_event"
+        private const val LATEST_EVENT_FIELD_NAME = "connectionEvent"
     }
 }
