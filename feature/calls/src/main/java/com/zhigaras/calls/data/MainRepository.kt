@@ -2,6 +2,7 @@ package com.zhigaras.calls.data
 
 import android.content.Context
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ConnectionDataType
@@ -21,17 +22,17 @@ object MainRepository : WebRTCClient.Listener {
     private val gson = Gson()
     private val firebaseClient: FirebaseClient = FirebaseClient()
     private var webRTCClient: WebRTCClient? = null
-    private lateinit var currentUsername: String
+    private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     private var remoteView: SurfaceViewRenderer? = null
     private lateinit var target: String
-    private fun updateCurrentUsername(username: String) {
-        currentUsername = username
-    }
+//    private fun updateCurrentUsername(username: String) {
+//        currentUsername = username
+//    }
     
     fun login(username: String, context: Context, callBack: SuccessCallBack) {
         firebaseClient.login(username, object : SuccessCallBack {
             override fun onSuccess() {
-                updateCurrentUsername(username)
+//                updateCurrentUsername(username)
                 webRTCClient = WebRTCClient(context, object : SimplePeerConnectionObserver() {
                     override fun onAddStream(mediaStream: MediaStream?) {
                         super.onAddStream(mediaStream)
@@ -61,7 +62,7 @@ object MainRepository : WebRTCClient.Listener {
                         super.onIceCandidate(iceCandidate)
                         webRTCClient?.sendIceCandidate(iceCandidate, target)
                     }
-                }, username)
+                })
                 webRTCClient!!.listener = this@MainRepository
                 callBack.onSuccess()
             }

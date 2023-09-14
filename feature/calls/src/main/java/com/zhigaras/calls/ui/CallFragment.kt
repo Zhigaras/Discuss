@@ -27,7 +27,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
         binding.callBtn.setOnClickListener { v ->
             //start a call request here
             mainRepository.sendCallRequest(
-                binding.targetUserNameEt.getText().toString(), object : ErrorCallBack {
+                "uzZAvzvRrFNoZz1p2xCrsdmpt4T2", object : ErrorCallBack {
                     override fun onError() {
                         Toast.makeText(
                             requireContext(),

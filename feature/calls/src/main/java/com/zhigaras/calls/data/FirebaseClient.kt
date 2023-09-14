@@ -1,5 +1,6 @@
 package com.zhigaras.calls.data
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -17,21 +18,21 @@ class FirebaseClient {
     private val gson = Gson()
     private val dbRef: DatabaseReference =
         Firebase.database("https://discuss-b336c-default-rtdb.europe-west1.firebasedatabase.app/").reference
-    private lateinit var currentUsername: String
+    private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     fun login(username: String, callBack: SuccessCallBack) {
-        dbRef.child(username).setValue("")
-            .addOnCompleteListener {
-                currentUsername = username
+//        dbRef.child(username).setValue("")
+//            .addOnCompleteListener {
+//                currentUsername = username
                 callBack.onSuccess()
-            }
+//            }
     }
     
     fun sendMessageToOtherUser(connectionData: ConnectionData, errorCallBack: ErrorCallBack) {
-        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        dbRef.child("Users").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.child(connectionData.target).exists()) {
                     //send the signal to other user
-                    dbRef.child(connectionData.target).child(LATEST_EVENT_FIELD_NAME)
+                    dbRef.child("Users").child(connectionData.target).child(LATEST_EVENT_FIELD_NAME)
                         .setValue(gson.toJson(connectionData))
                 } else {
                     errorCallBack.onError()
@@ -45,7 +46,7 @@ class FirebaseClient {
     }
     
     fun observeIncomingLatestEvent(callBack: NewEventCallBack) {
-        dbRef.child(currentUsername).child(LATEST_EVENT_FIELD_NAME).addValueEventListener(
+        dbRef.child("Users").child(currentUsername).child(LATEST_EVENT_FIELD_NAME).addValueEventListener(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     try {

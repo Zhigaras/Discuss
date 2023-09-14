@@ -1,6 +1,7 @@
 package com.zhigaras.calls.webrtc
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import org.webrtc.AudioSource
 import org.webrtc.AudioTrack
@@ -27,7 +28,7 @@ import com.zhigaras.calls.domain.model.ConnectionDataType
 class WebRTCClient(
     private val context: Context,
     observer: PeerConnection.Observer,
-    private val username: String,
+    private val username: String = FirebaseAuth.getInstance().uid ?: "no id",
     private val gson: Gson = Gson()
 ) {
     private val eglBaseContext = EglBase.create().eglBaseContext
