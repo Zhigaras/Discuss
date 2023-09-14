@@ -35,9 +35,9 @@ interface ResetPasswordUiState : UiState<DialogResetPasswordBinding> {
     class SingleEventError(@StringRes val messageId: Int) : ResetPasswordUiState,
         UiState.SingleEvent<DialogResetPasswordBinding>() {
         
-        override val block: (DialogResetPasswordBinding) -> Unit = {
-            it.emailInput.root.setError(messageId)
-            it.progressBar.visibility = View.GONE
+        override val block: DialogResetPasswordBinding.() -> Unit = {
+            emailInput.root.setError(messageId)
+            progressBar.visibility = View.GONE
         }
     }
 }

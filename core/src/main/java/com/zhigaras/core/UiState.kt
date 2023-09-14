@@ -11,7 +11,7 @@ interface UiState<T : ViewBinding> {
         
         private val needToBeShown = AtomicBoolean(true)
         
-        protected abstract val block: (T) -> Unit
+        protected abstract val block: T.() -> Unit
         
         override fun update(binding: T) {
             if (needToBeShown.compareAndSet(true, false)) {

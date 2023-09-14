@@ -24,7 +24,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.callBtn.setOnClickListener { v ->
+        binding.callBtn.setOnClickListener {
             //start a call request here
             mainRepository.sendCallRequest(
                 "uzZAvzvRrFNoZz1p2xCrsdmpt4T2", object : ErrorCallBack {
@@ -89,11 +89,11 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
     }
     
     override fun webrtcConnected() {
-        requireActivity().runOnUiThread(Runnable {
-            binding.incomingCallLayout.setVisibility(View.GONE)
-            binding.whoToCallLayout.setVisibility(View.GONE)
-            binding.callLayout.setVisibility(View.VISIBLE)
-        })
+        requireActivity().runOnUiThread {
+            binding.incomingCallLayout.visibility = View.GONE
+            binding.whoToCallLayout.visibility = View.GONE
+            binding.callLayout.visibility = View.VISIBLE
+        }
     }
     
     override fun webrtcClosed() {

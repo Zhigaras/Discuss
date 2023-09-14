@@ -19,9 +19,9 @@ interface SignInUiState : UiState<FragmentSignInBinding> {
     
     class SingleEventError(@StringRes val messageId: Int) : SignInUiState,
         UiState.SingleEvent<FragmentSignInBinding>() {
-        override val block: (FragmentSignInBinding) -> Unit = {
-            it.progressLayout.root.visibility = View.GONE
-            Toast.makeText(it.root.context, messageId, Toast.LENGTH_LONG).show()
+        override val block: FragmentSignInBinding.() -> Unit = {
+            progressLayout.root.visibility = View.GONE
+            Toast.makeText(root.context, messageId, Toast.LENGTH_LONG).show()
         }
     }
     
