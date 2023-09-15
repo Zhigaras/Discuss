@@ -22,7 +22,7 @@ import com.zhigaras.cloudeservice.CloudServiceImpl
 import com.zhigaras.cloudeservice.ProvideDatabase
 import kotlin.jvm.Throws
 
-class WebRTCClient(
+class WebRtcClientImpl(
     private val context: Context,
     observer: PeerConnection.Observer,
     private val username: String = FirebaseAuth.getInstance().uid ?: "no id",

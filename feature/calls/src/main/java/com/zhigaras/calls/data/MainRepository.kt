@@ -10,14 +10,13 @@ import com.zhigaras.calls.domain.model.ConnectionDataType
 import com.zhigaras.calls.webrtc.NewEventCallBack
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.SuccessCallBack
-import com.zhigaras.calls.webrtc.WebRTCClient
+import com.zhigaras.calls.webrtc.WebRtcClientImpl
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.cloudeservice.CloudServiceImpl
 import com.zhigaras.cloudeservice.ProvideDatabase
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.PeerConnection.PeerConnectionState
-import org.webrtc.SessionDescription
 import org.webrtc.SurfaceViewRenderer
 
 object MainRepository {
@@ -25,7 +24,7 @@ object MainRepository {
     private val gson = Gson()
     private val callsCloudService: CallsCloudService =
         CallsCloudService.Base(CloudServiceImpl(ProvideDatabase.Base()))
-    private var webRTCClient: WebRTCClient? = null
+    private var webRtcClient: WebRtcClientImpl? = null
     private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     private var remoteView: SurfaceViewRenderer? = null
     private lateinit var target: String
@@ -37,7 +36,7 @@ object MainRepository {
 //        firebaseClient.login(username, object : SuccessCallBack {
 //            override fun onSuccess() {
 //                updateCurrentUsername(username)
-        webRTCClient = WebRTCClient(context, object : SimplePeerConnectionObserver() {
+        webRtcClient = WebRtcClientImpl(context, object : SimplePeerConnectionObserver() {
             override fun onAddStream(mediaStream: MediaStream?) {
                 super.onAddStream(mediaStream)
                 try {
@@ -64,7 +63,7 @@ object MainRepository {
             
             override fun onIceCandidate(iceCandidate: IceCandidate?) {
                 super.onIceCandidate(iceCandidate)
-                webRTCClient?.sendIceCandidate(iceCandidate, target)
+                webRtcClient?.sendIceCandidate(iceCandidate, target)
             }
         })
         callBack.onSuccess()
@@ -73,28 +72,28 @@ object MainRepository {
 //    }
     
     fun initLocalView(view: SurfaceViewRenderer) {
-        webRTCClient?.initLocalSurfaceView(view)
+        webRtcClient?.initLocalSurfaceView(view)
     }
     
     fun initRemoteView(view: SurfaceViewRenderer) {
-        webRTCClient?.initRemoteSurfaceView(view)
+        webRtcClient?.initRemoteSurfaceView(view)
         remoteView = view
     }
     
     fun startCall(target: String) {
-        webRTCClient?.call(target)
+        webRtcClient?.call(target)
     }
     
     fun switchCamera() {
-        webRTCClient?.switchCamera()
+        webRtcClient?.switchCamera()
     }
     
     fun toggleAudio(shouldBeMuted: Boolean?) {
-        webRTCClient?.toggleAudio(shouldBeMuted)
+        webRtcClient?.toggleAudio(shouldBeMuted)
     }
     
     fun toggleVideo(shouldBeMuted: Boolean?) {
-        webRTCClient?.toggleVideo(shouldBeMuted)
+        webRtcClient?.toggleVideo(shouldBeMuted)
     }
     
     fun sendCallRequest(target: String) {
@@ -104,7 +103,7 @@ object MainRepository {
     }
     
     fun endCall() {
-        webRTCClient?.closeConnection()
+        webRtcClient?.closeConnection()
     }
     
     fun subscribeForLatestEvent(callBack: NewEventCallBack) {
@@ -112,41 +111,9 @@ object MainRepository {
             currentUsername,
             object : CloudService.Callback<ConnectionData> {
                 override fun provide(obj: ConnectionData) {
-                    when (obj.type) {
-                        ConnectionDataType.OFFER -> {
-                            target = obj.sender
-                            webRTCClient?.onRemoteSessionReceived(
-                                SessionDescription(
-                                    SessionDescription.Type.OFFER, obj.data
-                                )
-                            )
-                            webRTCClient?.answer(obj.sender)
-                        }
-                        
-                        ConnectionDataType.ANSWER -> {
-                            target = obj.sender
-                            webRTCClient?.onRemoteSessionReceived(
-                                SessionDescription(
-                                    SessionDescription.Type.ANSWER, obj.data
-                                )
-                            )
-                        }
-                        
-                        ConnectionDataType.ICE_CANDIDATE -> try {
-                            val candidate: IceCandidate =
-                                gson.fromJson(obj.data, IceCandidate::class.java)
-                            webRTCClient?.addIceCandidate(candidate)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                        
-                        ConnectionDataType.START_CALL -> {
-                            target = obj.sender
-                            callBack.onNewEventReceived(obj)
-                        }
-                        
-                        ConnectionDataType.EMPTY -> {}
-                    }
+                    target = obj.sender
+                    webRtcClient?.let { obj.handle(it) }
+                    callBack.onNewEventReceived(obj)
                 }
                 
                 override fun error(message: String) {
