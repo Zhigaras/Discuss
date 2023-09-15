@@ -37,6 +37,7 @@ dependencies {
     
     implementation(files("./libs/libwebrtc.aar"))
     implementation(project(":core"))
+    implementation(project(":cloudservice"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.lificycle)

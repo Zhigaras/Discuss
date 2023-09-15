@@ -31,7 +31,6 @@ class FirebaseClient {
         dbRef.child("Users").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.child(connectionData.target).exists()) {
-                    //send the signal to other user
                     dbRef.child("Users").child(connectionData.target).child(LATEST_EVENT_FIELD_NAME)
                         .setValue(gson.toJson(connectionData))
                 } else {

@@ -3,11 +3,9 @@ package com.zhigaras.calls.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import com.zhigaras.calls.data.MainRepository
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ConnectionDataType
-import com.zhigaras.calls.webrtc.ErrorCallBack
 import com.zhigaras.calls.webrtc.NewEventCallBack
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.webrtc.R
@@ -27,15 +25,8 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
         binding.callBtn.setOnClickListener {
             //start a call request here
             mainRepository.sendCallRequest(
-                "uzZAvzvRrFNoZz1p2xCrsdmpt4T2", object : ErrorCallBack {
-                    override fun onError() {
-                        Toast.makeText(
-                            requireContext(),
-                            "couldnt find the target",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
+                "uzZAvzvRrFNoZz1p2xCrsdmpt4T2"
+            )
         }
         mainRepository.initLocalView(binding.localView)
         mainRepository.initRemoteView(binding.remoteView)
@@ -43,7 +34,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
         
         mainRepository.subscribeForLatestEvent(object : NewEventCallBack {
             override fun onNewEventReceived(data: ConnectionData) {
-                if (data.type === ConnectionDataType.START_CALL) {
+                if (data.type == ConnectionDataType.START_CALL) {
                     requireActivity().runOnUiThread {
                         binding.incomingNameTV.text = data.sender + " is Calling you"
                         binding.incomingCallLayout.setVisibility(View.VISIBLE)

@@ -1,12 +1,12 @@
 package com.zhigaras.home.domain.model
 
-import com.zhigaras.home.domain.HomeInteractor
+import com.zhigaras.calls.webrtc.WebRtcClient
 
 interface MatchingResult {
     
     fun isMatch(): Boolean
     
-    suspend fun updateUi(homeInteractor: HomeInteractor)
+    suspend fun updateUi(webRtcClient: WebRtcClient)
     
     class Success(
         private val userId: String,
@@ -16,8 +16,8 @@ interface MatchingResult {
         
         override fun isMatch() = true
         
-        override suspend fun updateUi(homeInteractor: HomeInteractor) {
-            homeInteractor.createRoom(userId, opponentId, subjectId)
+        override suspend fun updateUi(webRtcClient: WebRtcClient) {
+//            webRtcClient.startNegotiation(userId, opponentId)
         }
         
     }
@@ -25,7 +25,7 @@ interface MatchingResult {
     object NoMatch : MatchingResult {
         
         override fun isMatch() = false
-        override suspend fun updateUi(homeInteractor: HomeInteractor) =
+        override suspend fun updateUi(webRtcClient: WebRtcClient) =
             Unit // TODO: handle not matching
         
     }

@@ -4,7 +4,7 @@ interface CloudService {
     
     interface Callback<T : Any> {
         
-        fun provide(obj: List<T>)
+        fun provide(obj: T)
         
         fun error(message: String)
     }
@@ -28,9 +28,16 @@ interface CloudService {
         path: String,
         child: String,
         fieldId: String,
-        block: (MutableList<T>) -> MutableList<T>
+        block: MutableList<T>.() -> MutableList<T>
     )
     
     fun <T : Any> subscribeToRootLevel(path: String, clazz: Class<T>, callback: Callback<T>)
     
+    fun postMultipleLevels(obj: Any, vararg children: String)
+    
+    fun <T : Any> subscribeMultipleLevels(
+        callback: Callback<T>,
+        clazz: Class<T>,
+        vararg children: String
+    )
 }

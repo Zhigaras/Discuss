@@ -21,8 +21,6 @@ interface HomeInteractor {
         userOpinion: DisputePosition
     ): MatchingResult
     
-    suspend fun createRoom(userId: String, opponentId: String, subjectId: String)
-    
     class Base(private val cloudService: CloudService) : HomeInteractor {
         
         override suspend fun addUserToWaitList(
@@ -35,8 +33,8 @@ interface HomeInteractor {
                 child = subjectId,
                 fieldId = userOpinion.path
             ) {
-                it.add(userId)
-                it
+                add(userId)
+                this
             }
         }
         
@@ -74,18 +72,13 @@ interface HomeInteractor {
             userOpinion: DisputePosition
         ) {
             cloudService.getListAndUpdate(SUBJECTS_PATH, subjectId, userOpinion.path) {
-                it.remove(userId) // TODO: use remove() instead of getting and updating list?
-                it
+                remove(userId) // TODO: use remove() instead of getting and updating list?
+                this
             }
-        }
-        
-        override suspend fun createRoom(userId: String, opponentId: String, subjectId: String) {
-            cloudService.postWithIdGenerating(ROOMS_PATH, Room(userId, opponentId, subjectId))
         }
     }
     
     companion object {
         private const val SUBJECTS_PATH = "Subjects"
-        private const val ROOMS_PATH = "Rooms"
     }
 }
