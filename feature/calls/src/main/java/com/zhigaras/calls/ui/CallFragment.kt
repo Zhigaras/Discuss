@@ -13,20 +13,17 @@ import com.zhigaras.webrtc.databinding.FragmentCallBinding
 
 class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listener {
     
-    var mainRepository = MainRepository
-    
     private var isCameraMuted = false
-    private var isMicrophoneMuted = false
     
+    private var isMicrophoneMuted = false
     override fun initBinding(inflater: LayoutInflater) = FragmentCallBinding.inflate(inflater)
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val mainRepository = MainRepository(requireContext().applicationContext)
         binding.callBtn.setOnClickListener {
-            //start a call request here
-            mainRepository.sendCallRequest(
-                "uzZAvzvRrFNoZz1p2xCrsdmpt4T2"
-            )
+//        start a call request here
+            mainRepository.sendCallRequest("uzZAvzvRrFNoZz1p2xCrsdmpt4T2")
         }
         mainRepository.initLocalView(binding.localView)
         mainRepository.initRemoteView(binding.remoteView)
@@ -59,7 +56,6 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
             } else {
                 binding.micButton.setImageResource(R.drawable.ic_baseline_mic_24)
             }
-            mainRepository.toggleAudio(isMicrophoneMuted)
             isMicrophoneMuted = !isMicrophoneMuted
         }
         
@@ -69,7 +65,6 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
             } else {
                 binding.videoButton.setImageResource(R.drawable.ic_baseline_videocam_24)
             }
-            mainRepository.toggleVideo(isCameraMuted)
             isCameraMuted = !isCameraMuted
         }
         

@@ -5,7 +5,7 @@ import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 
-open class SimplePeerConnectionObserver : PeerConnection.Observer {
+interface SimplePeerConnectionObserver : PeerConnection.Observer {
     
     override fun onSignalingChange(p0: PeerConnection.SignalingState?) {}
     
@@ -15,11 +15,11 @@ open class SimplePeerConnectionObserver : PeerConnection.Observer {
     
     override fun onIceGatheringChange(p0: PeerConnection.IceGatheringState?) {}
     
-    override fun onIceCandidate(iceCandidate: IceCandidate?) {}
+    override fun onIceCandidate(iceCandidate: IceCandidate) {}
     
     override fun onIceCandidatesRemoved(p0: Array<out IceCandidate>?) {}
     
-    override fun onAddStream(mediaStream: MediaStream?) {}
+    override fun onAddStream(mediaStream: MediaStream) {}
     
     override fun onRemoveStream(p0: MediaStream?) {}
     

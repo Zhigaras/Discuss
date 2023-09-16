@@ -23,14 +23,12 @@ import com.zhigaras.cloudeservice.ProvideDatabase
 import kotlin.jvm.Throws
 
 class WebRtcClientImpl(
-    private val context: Context,
+    private val application: Context,
     observer: PeerConnection.Observer,
     private val username: String = FirebaseAuth.getInstance().uid ?: "no id",
     private val gson: Gson = Gson(),
     private val callsCloudService: CallsCloudService = CallsCloudService.Base(
-        CloudServiceImpl(
-            ProvideDatabase.Base()
-        )
+        CloudServiceImpl(ProvideDatabase.Base())
     )
 ) {
     private val eglBaseContext = EglBase.create().eglBaseContext
@@ -40,7 +38,7 @@ class WebRtcClientImpl(
     }
     
     init {
-        peerConnectionFactory.init(context)
+        peerConnectionFactory.init(application)
     }
     
     private val iceServers = arrayListOf(
@@ -51,10 +49,9 @@ class WebRtcClientImpl(
     private val peerConnection = peerConnectionFactory.createPeerConnection(iceServers, observer)
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
-    private var videoCapturer = getVideoCapturer()
+    private val videoCapturer = getVideoCapturer()
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
-    
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
         initSurfaceViewRenderer(view)
@@ -69,8 +66,8 @@ class WebRtcClientImpl(
     
     private fun startLocalVideoStreaming(view: SurfaceViewRenderer) {
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
-        videoCapturer.initialize(helper, context, localVideoSource.capturerObserver)
-        videoCapturer.startCapture(480, 360, 15)
+        videoCapturer.initialize(helper, application, localVideoSource.capturerObserver)
+        videoCapturer.startCapture(480, 360, 30)
         localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
             .apply { addSink(view) }
         localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
@@ -82,7 +79,7 @@ class WebRtcClientImpl(
     }
     
     private fun getVideoCapturer(): CameraVideoCapturer {
-        val enumerator = Camera2Enumerator(context)
+        val enumerator = Camera2Enumerator(application)
         val deviceNames = enumerator.deviceNames
         for (device in deviceNames) {
             if (enumerator.isFrontFacing(device)) {
@@ -149,14 +146,6 @@ class WebRtcClientImpl(
     
     fun switchCamera() {
         videoCapturer.switchCamera(null)
-    }
-    
-    fun toggleVideo(shouldBeMuted: Boolean?) {
-        localVideoTrack.setEnabled(shouldBeMuted!!)
-    }
-    
-    fun toggleAudio(shouldBeMuted: Boolean?) {
-        localAudioTrack.setEnabled(shouldBeMuted!!)
     }
     
     fun closeConnection() {
