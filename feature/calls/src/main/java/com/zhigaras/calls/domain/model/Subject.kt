@@ -1,4 +1,4 @@
-package com.zhigaras.home.domain.model
+package com.zhigaras.calls.domain.model
 
 class Subject(
     val nameEn: String = "",

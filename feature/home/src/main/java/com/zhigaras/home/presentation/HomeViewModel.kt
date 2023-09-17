@@ -6,11 +6,11 @@ import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.databinding.FragmentHomeBinding
-import com.zhigaras.home.domain.DisputePosition
+import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.home.domain.HomeCommunication
-import com.zhigaras.home.domain.HomeInteractor
+import com.zhigaras.calls.domain.HomeInteractor
 import com.zhigaras.home.domain.NavigateToCall
-import com.zhigaras.home.domain.model.Subject
+import com.zhigaras.calls.domain.model.Subject
 import kotlinx.coroutines.launch
 
 class HomeViewModel(

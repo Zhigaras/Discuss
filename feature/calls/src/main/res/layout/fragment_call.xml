@@ -41,35 +41,13 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/whoToCallLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/incomingCallLayout">
 
-        <EditText
-            android:id="@+id/targetUserNameEt"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_margin="30dp"
-            android:hint="who to call ?" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/callBtn"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-
-            android:layout_below="@id/targetUserNameEt"
-            android:layout_marginHorizontal="30dp"
-            android:background="@drawable/common_full_open_on_phone"
-            android:text="call" />
-    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/callLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:visibility="visible">
 
         <org.webrtc.SurfaceViewRenderer
@@ -148,6 +126,30 @@
                 app:srcCompat="@drawable/common_full_open_on_phone" />
         </LinearLayout>
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/whoToCallLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/incomingCallLayout">
+
+        <EditText
+            android:id="@+id/targetUserNameEt"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="30dp"
+            android:hint="who to call ?" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/callBtn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+
+            android:layout_below="@id/targetUserNameEt"
+            android:layout_marginHorizontal="30dp"
+            android:background="@drawable/common_full_open_on_phone"
+            android:text="call" />
     </RelativeLayout>
 
 

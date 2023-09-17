@@ -1,9 +1,9 @@
-package com.zhigaras.home.domain
+package com.zhigaras.calls.domain
 
+import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.cloudeservice.CloudService
-import com.zhigaras.home.domain.model.MatchingResult
-import com.zhigaras.home.domain.model.Room
-import com.zhigaras.home.domain.model.Subject
+import com.zhigaras.calls.domain.model.MatchingResult
+import com.zhigaras.calls.domain.model.Subject
 
 interface HomeInteractor {
     

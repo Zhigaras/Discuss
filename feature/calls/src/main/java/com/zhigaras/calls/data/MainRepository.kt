@@ -19,7 +19,6 @@ import org.webrtc.SurfaceViewRenderer
 
 class MainRepository(
     application: Context,
-    var listener: Listener? = null,
     private val callsCloudService: CallsCloudService =
         CallsCloudService.Base(CloudServiceImpl(ProvideDatabase.Base()))
 ) {
@@ -44,16 +43,7 @@ class MainRepository(
             override fun onConnectionChange(newState: PeerConnectionState) {
                 Log.d("TAG", "onConnectionChange: $newState")
                 super.onConnectionChange(newState)
-                if (newState == PeerConnectionState.CONNECTED && listener != null) {
-                    listener!!.webrtcConnected()
-                }
-                if (newState == PeerConnectionState.CLOSED ||
-                    newState == PeerConnectionState.DISCONNECTED
-                ) {
-                    if (listener != null) {
-                        listener!!.webrtcClosed()
-                    }
-                }
+                
             }
             
             override fun onIceCandidate(iceCandidate: IceCandidate) {
@@ -105,10 +95,4 @@ class MainRepository(
                 }
             })
     }
-    
-    interface Listener {
-        fun webrtcConnected()
-        fun webrtcClosed()
-    }
-    
 }

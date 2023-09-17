@@ -4,7 +4,7 @@ import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.cloudeservice.CloudServiceImpl
 import com.zhigaras.cloudeservice.ProvideDatabase
 import com.zhigaras.home.domain.HomeCommunication
-import com.zhigaras.home.domain.HomeInteractor
+import com.zhigaras.calls.domain.HomeInteractor
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.home.presentation.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
