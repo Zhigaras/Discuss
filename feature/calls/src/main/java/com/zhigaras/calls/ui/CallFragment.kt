@@ -29,24 +29,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), MainRepository.Listene
         mainRepository.initRemoteView(binding.remoteView)
         mainRepository.listener = this
         
-        mainRepository.subscribeForLatestEvent(object : NewEventCallBack {
-            override fun onNewEventReceived(data: ConnectionData) {
-                if (data.type == ConnectionDataType.START_CALL) {
-                    requireActivity().runOnUiThread {
-                        binding.incomingNameTV.text = data.sender + " is Calling you"
-                        binding.incomingCallLayout.setVisibility(View.VISIBLE)
-                        binding.acceptButton.setOnClickListener { v ->
-                            //star the call here
-                            mainRepository.startCall(data.sender)
-                            binding.incomingCallLayout.visibility = View.GONE
-                        }
-                        binding.rejectButton.setOnClickListener { v ->
-                            binding.incomingCallLayout.visibility = View.GONE
-                        }
-                    }
-                }
-            }
-        })
+        mainRepository.subscribeForLatestEvent()
         
         binding.switchCameraButton.setOnClickListener { mainRepository.switchCamera() }
         

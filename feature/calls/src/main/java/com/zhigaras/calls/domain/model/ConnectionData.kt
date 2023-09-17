@@ -57,11 +57,6 @@ enum class ConnectionDataType {
                 e.printStackTrace()
             }
         }
-    },
-    START_CALL {
-        override fun handle(client: WebRtcClientImpl, connectionData: ConnectionData) {
-        
-        }
     };
     
     val gson: Gson = Gson() // TODO: how to escape of it??

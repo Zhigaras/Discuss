@@ -26,7 +26,9 @@ class MainRepository(
     private lateinit var webRtcClient: WebRtcClientImpl
     private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     private var remoteView: SurfaceViewRenderer? = null
-    private lateinit var target: String
+    private val target: String = if (FirebaseAuth.getInstance().uid == "uzZAvzvRrFNoZz1p2xCrsdmpt4T2")
+        "stmSRe5bcxNEmCTMm3bCth15vyr2"
+        else "uzZAvzvRrFNoZz1p2xCrsdmpt4T2"
     
     init {
         webRtcClient = WebRtcClientImpl(application, object : SimplePeerConnectionObserver {
@@ -79,23 +81,23 @@ class MainRepository(
     }
     
     fun sendCallRequest(target: String) {
-        callsCloudService.sendToCloud(
-            ConnectionData(target, currentUsername, type = ConnectionDataType.START_CALL),
-        )
+        webRtcClient.call(target)
+//        callsCloudService.sendToCloud(
+//            ConnectionData(target, currentUsername, type = ConnectionDataType.START_CALL),
+//        )
     }
     
     fun endCall() {
         webRtcClient.closeConnection()
     }
     
-    fun subscribeForLatestEvent(callBack: NewEventCallBack) {
+    fun subscribeForLatestEvent() {
         callsCloudService.observeUpdates(
             currentUsername,
             object : CloudService.Callback<ConnectionData> {
                 override fun provide(obj: ConnectionData) {
-                    target = obj.sender
+//                    target = obj.sender
                     obj.handle(webRtcClient)
-                    callBack.onNewEventReceived(obj)
                 }
                 
                 override fun error(message: String) {
