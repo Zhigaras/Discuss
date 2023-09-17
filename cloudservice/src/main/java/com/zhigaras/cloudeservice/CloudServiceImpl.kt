@@ -29,18 +29,6 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
             .getValue(clazz)!! // TODO: handle exceptions
     }
     
-    override suspend fun <T : Any> getListAndUpdate(
-        path: String,
-        child: String,
-        fieldId: String,
-        block: MutableList<T>.() -> MutableList<T>
-    ) {
-        val directRef = reference.child(path).child(child).child(fieldId)
-        val value = directRef.get().await().value as? MutableList<T> ?: mutableListOf()
-        val updatedValue = block.invoke(value)
-        directRef.setValue(updatedValue)
-    }
-    
     override fun postMultipleLevels(obj: Any, vararg children: String) {
         makeReference(*children).setValue(obj)
     }
@@ -63,8 +51,14 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         })
     }
     
-    override fun removeListItem(obj: Any, vararg children: String) {
-        TODO("Not yet implemented")
+    override fun addItemToList(item: String, vararg children: String) {
+        val ref = makeReference(*children)
+        ref.updateChildren(mapOf(item to "waiting"))
+    }
+    
+    override suspend fun removeListItem(itemId: String, vararg children: String) {
+        val ref = makeReference(*children)
+        ref.updateChildren(mapOf(itemId to null))
     }
     
     private fun makeReference(vararg children: String): DatabaseReference {

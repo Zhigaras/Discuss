@@ -32,14 +32,7 @@ interface MatchingInteractor {
             userId: String,
             userOpinion: DisputePosition
         ) {
-            cloudService.getListAndUpdate(
-                path = SUBJECTS_PATH,
-                child = subjectId,
-                fieldId = userOpinion.path
-            ) {
-                add(userId)
-                this
-            }
+            cloudService.addItemToList(userId, SUBJECTS_PATH, subjectId, userOpinion.path)
         }
         
         override suspend fun checkMatching(
@@ -54,14 +47,14 @@ interface MatchingInteractor {
                 if (subject.supportList.isEmpty())
                     MatchingResult.NoMatch(userId, subjectId, userOpinion)
                 else {
-                    opponentId = subject.supportList.first()
+                    opponentId = subject.supportList.keys.first()
                     MatchingResult.FoundUserWhoSupport(userId, opponentId, subjectId)
                 }
             } else {
                 if (subject.againstList.isEmpty())
                     MatchingResult.NoMatch(userId, subjectId, userOpinion)
                 else {
-                    opponentId = subject.againstList.first()
+                    opponentId = subject.againstList.keys.first()
                     MatchingResult.FoundUserWhoAgainst(userId, opponentId, subjectId)
                 }
             }
@@ -72,10 +65,7 @@ interface MatchingInteractor {
             userId: String,
             userOpinion: DisputePosition
         ) {
-            cloudService.getListAndUpdate(SUBJECTS_PATH, subjectId, userOpinion.path) {
-                remove(userId) // TODO: use remove() instead of getting and updating list?
-                this
-            }
+            cloudService.removeListItem(userId, SUBJECTS_PATH, subjectId, userOpinion.path)
         }
     }
 }

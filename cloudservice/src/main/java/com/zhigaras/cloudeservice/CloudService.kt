@@ -15,13 +15,6 @@ interface CloudService {
     
     suspend fun <T : Any> getDataSnapshot(path: String, child: String, clazz: Class<T>): T
     
-    suspend fun <T : Any> getListAndUpdate(
-        path: String,
-        child: String,
-        fieldId: String,
-        block: MutableList<T>.() -> MutableList<T>
-    )
-    
     fun postMultipleLevels(obj: Any, vararg children: String)
     
     fun <T : Any> subscribeMultipleLevels(
@@ -30,7 +23,9 @@ interface CloudService {
         vararg children: String
     )
     
-    fun removeListItem(obj: Any, vararg children: String)
+    fun addItemToList(item: String, vararg children: String)
+    
+    suspend fun removeListItem(itemId: String, vararg children: String)
     
     companion object {
         const val USERS_PATH = "Users"
