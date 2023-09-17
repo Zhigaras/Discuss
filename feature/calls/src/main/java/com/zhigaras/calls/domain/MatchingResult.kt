@@ -27,7 +27,7 @@ interface MatchingResult {
         ) {
             callsController.setOpponentId(opponentId)
             matchingInteractor.removeUserFromWaitList(subjectId, opponentId, opponentOpinion)
-            callsController.startNegotiation(opponentId)
+            callsController.startNegotiation(opponentId, userId)
         }
     }
     

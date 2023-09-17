@@ -1,7 +1,7 @@
 package com.zhigaras.calls.domain.model
 
 import com.google.gson.Gson
-import com.zhigaras.calls.webrtc.WebRtcClientImpl
+import com.zhigaras.calls.webrtc.WebRtcClient
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 
@@ -11,35 +11,35 @@ class ConnectionData(
     val data: String = "",
     val type: ConnectionDataType = ConnectionDataType.EMPTY
 ) : HandleConnectionData {
-    override fun handle(client: WebRtcClientImpl) {
+    override fun handle(client: WebRtcClient) {
         type.handle(client, this)
     }
 }
 
 interface HandleConnectionData {
     
-    fun handle(client: WebRtcClientImpl)
+    fun handle(client: WebRtcClient)
 }
 
 enum class ConnectionDataType {
     
     EMPTY {
-        override fun handle(client: WebRtcClientImpl, connectionData: ConnectionData) {
+        override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
             // TODO: handle start state (before connection)
         }
     },
     OFFER {
-        override fun handle(client: WebRtcClientImpl, connectionData: ConnectionData) {
+        override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
             client.onRemoteSessionReceived(
                 SessionDescription(
                     SessionDescription.Type.OFFER, connectionData.data
                 )
             )
-            client.answer(connectionData.sender)
+            client.answer(connectionData.sender, connectionData.target)
         }
     },
     ANSWER {
-        override fun handle(client: WebRtcClientImpl, connectionData: ConnectionData) {
+        override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
             client.onRemoteSessionReceived(
                 SessionDescription(
                     SessionDescription.Type.ANSWER, connectionData.data
@@ -48,7 +48,7 @@ enum class ConnectionDataType {
         }
     },
     ICE_CANDIDATE {
-        override fun handle(client: WebRtcClientImpl, connectionData: ConnectionData) {
+        override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
             try {
                 val candidate: IceCandidate =
                     gson.fromJson(connectionData.data, IceCandidate::class.java)
@@ -61,5 +61,5 @@ enum class ConnectionDataType {
     
     val gson: Gson = Gson() // TODO: how to escape of it??
     
-    abstract fun handle(client: WebRtcClientImpl, connectionData: ConnectionData)
+    abstract fun handle(client: WebRtcClient, connectionData: ConnectionData)
 }

@@ -7,7 +7,7 @@ import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
-import com.zhigaras.calls.webrtc.WebRtcClientImpl
+import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.cloudeservice.CloudServiceImpl
 import com.zhigaras.cloudeservice.ProvideDatabase
@@ -21,13 +21,13 @@ class CallsControllerImpl(
     private val callsCloudService: CallsCloudService =
         CallsCloudService.Base(CloudServiceImpl(ProvideDatabase.Base()))
 ): CallsController {
-    private lateinit var webRtcClient: WebRtcClientImpl
+    private lateinit var webRtcClient: WebRtcClient
     private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     private var remoteView: SurfaceViewRenderer? = null
     private lateinit var target: String
     
     init {
-        webRtcClient = WebRtcClientImpl(application, object : SimplePeerConnectionObserver {
+        webRtcClient = WebRtcClient(application, object : SimplePeerConnectionObserver {
             override fun onAddStream(mediaStream: MediaStream) {
                 super.onAddStream(mediaStream)
                 try {
@@ -45,7 +45,7 @@ class CallsControllerImpl(
             
             override fun onIceCandidate(iceCandidate: IceCandidate) {
                 super.onIceCandidate(iceCandidate)
-                webRtcClient.sendIceCandidate(iceCandidate, target)
+                webRtcClient.sendIceCandidate(iceCandidate, target, currentUsername)
             }
         })
     }
@@ -63,8 +63,8 @@ class CallsControllerImpl(
         webRtcClient.switchCamera()
     }
     
-    override fun startNegotiation(opponentId: String) {
-        webRtcClient.call(opponentId)
+    override fun startNegotiation(opponentId: String, userId: String) {
+        webRtcClient.call(opponentId, userId)
     }
     
     override fun setOpponentId(opponentId: String) {
@@ -79,9 +79,9 @@ class CallsControllerImpl(
         callsCloudService.observeUpdates(
             currentUsername,
             object : CloudService.Callback<ConnectionData> {
-                override fun provide(obj: ConnectionData) {
-                    target = obj.sender
-                    obj.handle(webRtcClient)
+                override fun provide(data: ConnectionData) {
+                    target = data.sender
+                    data.handle(webRtcClient)
                 }
                 
                 override fun error(message: String) {

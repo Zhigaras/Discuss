@@ -4,7 +4,7 @@ interface CloudService {
     
     interface Callback<T : Any> {
         
-        fun provide(obj: T)
+        fun provide(data: T)
         
         fun error(message: String)
     }
