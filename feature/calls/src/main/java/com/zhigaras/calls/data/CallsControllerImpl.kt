@@ -4,9 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.zhigaras.calls.domain.CallsCloudService
+import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.model.ConnectionData
-import com.zhigaras.calls.domain.model.ConnectionDataType
-import com.zhigaras.calls.webrtc.NewEventCallBack
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClientImpl
 import com.zhigaras.cloudeservice.CloudService
@@ -17,11 +16,11 @@ import org.webrtc.MediaStream
 import org.webrtc.PeerConnection.PeerConnectionState
 import org.webrtc.SurfaceViewRenderer
 
-class MainRepository(
+class CallsControllerImpl(
     application: Context,
     private val callsCloudService: CallsCloudService =
         CallsCloudService.Base(CloudServiceImpl(ProvideDatabase.Base()))
-) {
+): CallsController {
     private lateinit var webRtcClient: WebRtcClientImpl
     private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     private var remoteView: SurfaceViewRenderer? = null
@@ -53,35 +52,32 @@ class MainRepository(
         })
     }
     
-    fun initLocalView(view: SurfaceViewRenderer) {
+    override fun initLocalView(view: SurfaceViewRenderer) {
         webRtcClient.initLocalSurfaceView(view)
     }
     
-    fun initRemoteView(view: SurfaceViewRenderer) {
+    override fun initRemoteView(view: SurfaceViewRenderer) {
         webRtcClient.initRemoteSurfaceView(view)
         remoteView = view
-    }
-    
-    fun startCall(target: String) {
-        webRtcClient.call(target)
     }
     
     fun switchCamera() {
         webRtcClient.switchCamera()
     }
     
-    fun sendCallRequest(target: String) {
-        webRtcClient.call(target)
-//        callsCloudService.sendToCloud(
-//            ConnectionData(target, currentUsername, type = ConnectionDataType.START_CALL),
-//        )
+    override fun startNegotiation(opponentId: String) {
+        webRtcClient.call(opponentId)
+    }
+    
+    override fun setOpponentId(opponentId: String) {
+        TODO("Not yet implemented")
     }
     
     fun endCall() {
         webRtcClient.closeConnection()
     }
     
-    fun subscribeForLatestEvent() {
+    override fun subscribeToConnectionEvents(userId: String){
         callsCloudService.observeUpdates(
             currentUsername,
             object : CloudService.Callback<ConnectionData> {
