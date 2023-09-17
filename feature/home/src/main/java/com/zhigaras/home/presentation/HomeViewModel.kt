@@ -8,28 +8,28 @@ import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.databinding.FragmentHomeBinding
 import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.home.domain.HomeCommunication
-import com.zhigaras.calls.domain.HomeInteractor
+import com.zhigaras.calls.domain.CallsInteractor
 import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.calls.domain.model.Subject
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val homeInteractor: HomeInteractor,
+    private val callsInteractor: CallsInteractor,
     private val navigateToCall: NavigateToCall,
     dispatchers: Dispatchers,
     communication: HomeCommunication.Mutable
 ) : BaseViewModel<FragmentHomeBinding, HomeUiState>(communication, dispatchers), NavigateToCall {
     
     fun startObservingSubjects(callback: CloudService.Callback<Subject>) {
-//        homeInteractor.subscribeToSubjects(callback) // TODO: navigate right here???
+//        callsInteractor.subscribeToSubjects(callback) // TODO: navigate right here???
     }
     
     fun addUserToWaitList(userId: String, subjectId: String, userOpinion: DisputePosition) {
         viewModelScope.launch {
-            homeInteractor.addUserToWaitList(subjectId, userId, userOpinion)
-            homeInteractor.checkMatching(subjectId, userId, userOpinion).let {
+            callsInteractor.addUserToWaitList(subjectId, userId, userOpinion)
+            callsInteractor.checkMatching(subjectId, userId, userOpinion).let {
                 Log.d("AAA", it.toString())
-//                it.updateUi(homeInteractor)
+//                it.updateUi(callsInteractor)
             }
         }
     }

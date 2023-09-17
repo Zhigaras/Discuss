@@ -3,7 +3,7 @@ package com.zhigaras.home.domain
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.home.domain.model.User
 
-interface SaveUserToCloud {
+interface SaveUserToCloud { // TODO: move to auth module
     
     suspend fun save(userId: String, user: User)
     

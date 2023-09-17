@@ -4,7 +4,7 @@ import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.cloudeservice.CloudServiceImpl
 import com.zhigaras.cloudeservice.ProvideDatabase
 import com.zhigaras.home.domain.HomeCommunication
-import com.zhigaras.calls.domain.HomeInteractor
+import com.zhigaras.calls.domain.CallsInteractor
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.home.presentation.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -22,11 +22,11 @@ fun homeModule() = module {
         HomeCommunication.Post::class
     )
     
-    single { CloudServiceImpl(get()) } bind CloudService::class
+    single { CloudServiceImpl(get()) } bind CloudService::class // TODO: move to ??? module
     
-    single { ProvideDatabase.Base() } bind ProvideDatabase::class
+    single { ProvideDatabase.Base() } bind ProvideDatabase::class // TODO: move to ??? module
     
-    single { HomeInteractor.Base(get()) } bind HomeInteractor::class
+    single { CallsInteractor.Base(get()) } bind CallsInteractor::class // TODO: move to calls module
     
     single { SaveUserToCloud.Base(get()) } bind SaveUserToCloud::class
 }
