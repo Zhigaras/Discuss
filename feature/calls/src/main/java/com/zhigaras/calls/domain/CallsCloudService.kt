@@ -2,6 +2,8 @@ package com.zhigaras.calls.domain
 
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudeservice.CloudService.Companion.CONNECTION_EVENT_PATH
+import com.zhigaras.cloudeservice.CloudService.Companion.USERS_PATH
 
 interface CallsCloudService {
     
@@ -29,10 +31,5 @@ interface CallsCloudService {
                 CONNECTION_EVENT_PATH
             )
         }
-    }
-    
-    companion object {
-        private const val USERS_PATH = "Users"
-        private const val CONNECTION_EVENT_PATH = "connectionEvent"
     }
 }

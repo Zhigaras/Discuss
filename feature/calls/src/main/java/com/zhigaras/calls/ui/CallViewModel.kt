@@ -6,14 +6,14 @@ import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsController
-import com.zhigaras.calls.domain.CallsInteractor
+import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import kotlinx.coroutines.launch
 
 class CallViewModel(
     private val callsController: CallsController,
-    private val callsInteractor: CallsInteractor,
+    private val matchingInteractor: MatchingInteractor,
     communication: CallCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentCallBinding, CallUiState>(communication, dispatchers) {
@@ -22,8 +22,8 @@ class CallViewModel(
         viewModelScope.launch {
             val userId = FirebaseAuth.getInstance().uid!!
             val opinion = if (userId == "stmSRe5bcxNEmCTMm3bCth15vyr2") DisputePosition.SUPPORT else DisputePosition.AGAINST
-            callsInteractor.checkMatching("1", userId, opinion).let {
-                it.handle(callsController, callsInteractor)
+            matchingInteractor.checkMatching("1", userId, opinion).let {
+                it.handle(callsController, matchingInteractor)
             }
         }
     }

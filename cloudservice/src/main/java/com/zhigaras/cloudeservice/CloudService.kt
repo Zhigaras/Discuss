@@ -9,20 +9,11 @@ interface CloudService {
         fun error(message: String)
     }
     
-    fun postRootLevel(path: String, obj: Any) // TODO: remove??
-    
     fun postWithId(path: String, id: String, obj: Any)
     
     suspend fun postWithIdGenerating(path: String, obj: Any): String
     
     suspend fun <T : Any> getDataSnapshot(path: String, child: String, clazz: Class<T>): T
-    
-    fun updateField(
-        path: String,
-        child: String,
-        fieldId: String,
-        fieldValue: Any
-    ) // TODO: remove???
     
     suspend fun <T : Any> getListAndUpdate(
         path: String,
@@ -31,8 +22,6 @@ interface CloudService {
         block: MutableList<T>.() -> MutableList<T>
     )
     
-    fun <T : Any> subscribeToRootLevel(path: String, clazz: Class<T>, callback: Callback<T>)
-    
     fun postMultipleLevels(obj: Any, vararg children: String)
     
     fun <T : Any> subscribeMultipleLevels(
@@ -40,4 +29,12 @@ interface CloudService {
         clazz: Class<T>,
         vararg children: String
     )
+    
+    fun removeListItem(obj: Any, vararg children: String)
+    
+    companion object {
+        const val USERS_PATH = "Users"
+        const val SUBJECTS_PATH = "Subjects"
+        const val CONNECTION_EVENT_PATH = "connectionEvent"
+    }
 }

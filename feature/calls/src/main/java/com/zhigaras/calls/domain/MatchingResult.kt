@@ -8,7 +8,7 @@ interface MatchingResult {
     
     suspend fun handle(
         callsController: CallsController,
-        callsInteractor: CallsInteractor
+        matchingInteractor: MatchingInteractor
     )
     
     abstract class Success(
@@ -23,10 +23,10 @@ interface MatchingResult {
         
         override suspend fun handle(
             callsController: CallsController,
-            callsInteractor: CallsInteractor
+            matchingInteractor: MatchingInteractor
         ) {
             callsController.setOpponentId(opponentId)
-//            callsInteractor.removeUserFromWaitList(subjectId, userId, opponentOpinion)
+//            matchingInteractor.removeUserFromWaitList(subjectId, userId, opponentOpinion)
             callsController.startNegotiation(opponentId)
         }
     }
@@ -58,9 +58,9 @@ interface MatchingResult {
         override fun isMatch() = false
         override suspend fun handle(
             callsController: CallsController,
-            callsInteractor: CallsInteractor
+            matchingInteractor: MatchingInteractor
         ) {
-            callsInteractor.addUserToWaitList(subjectId, userId, userOpinion)
+            matchingInteractor.addUserToWaitList(subjectId, userId, userOpinion)
             callsController.subscribeToConnectionEvents(userId)
         }
     }

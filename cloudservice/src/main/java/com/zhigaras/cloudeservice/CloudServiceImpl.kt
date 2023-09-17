@@ -1,18 +1,14 @@
 package com.zhigaras.cloudeservice
 
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.tasks.await
 
 class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     
     private val reference = provideDatabase.database()
-    
-    override fun postRootLevel(path: String, obj: Any) {
-        reference.child(path).setValue(obj)
-    }
     
     override fun postWithId(path: String, id: String, obj: Any) {
         reference.child(path).child(id).setValue(obj)
@@ -33,10 +29,6 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
             .getValue(clazz)!! // TODO: handle exceptions
     }
     
-    override fun updateField(path: String, child: String, fieldId: String, fieldValue: Any) {
-        reference.child(path).child(child).child(fieldId).setValue(fieldValue)
-    }
-    
     override suspend fun <T : Any> getListAndUpdate(
         path: String,
         child: String,
@@ -49,27 +41,8 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         directRef.setValue(updatedValue)
     }
     
-    override fun <T : Any> subscribeToRootLevel(
-        path: String,
-        clazz: Class<T>,
-        callback: CloudService.Callback<T>
-    ) {
-        // TODO: childListener??
-        reference.child(path).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-//                val data = snapshot.children.mapNotNull { it.getValue(clazz) }
-//                callback.provide(data)
-                // FIXME: fix list
-            }
-            
-            override fun onCancelled(error: DatabaseError) = callback.error(error.message)
-        })
-    }
-    
     override fun postMultipleLevels(obj: Any, vararg children: String) {
-        var ref = reference
-        children.forEach { ref = ref.child(it) }
-        ref.setValue(obj)
+        makeReference(*children).setValue(obj)
     }
     
     override fun <T : Any> subscribeMultipleLevels(
@@ -77,9 +50,7 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         clazz: Class<T>,
         vararg children: String
     ) {
-        var ref = reference // TODO: move to separate fun, DRY
-        children.forEach { ref = ref.child(it) }
-        ref.addValueEventListener(object : ValueEventListener {
+        makeReference(*children).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val result = snapshot.getValue(clazz)
                 if (result == null) callback.error("Data is null")
@@ -90,5 +61,15 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
                 callback.error(error.message)
             }
         })
+    }
+    
+    override fun removeListItem(obj: Any, vararg children: String) {
+        TODO("Not yet implemented")
+    }
+    
+    private fun makeReference(vararg children: String): DatabaseReference {
+        var ref = reference
+        children.forEach { ref = ref.child(it) }
+        return ref
     }
 }

@@ -3,8 +3,9 @@ package com.zhigaras.calls.domain
 import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.calls.domain.model.Subject
+import com.zhigaras.cloudeservice.CloudService.Companion.SUBJECTS_PATH
 
-interface CallsInteractor {
+interface MatchingInteractor {
     
     suspend fun addUserToWaitList(
         subjectId: String,
@@ -12,15 +13,19 @@ interface CallsInteractor {
         userOpinion: DisputePosition
     )
     
-    fun subscribeToSubjects(callback: CloudService.Callback<Subject>)
-    
     suspend fun checkMatching(
         subjectId: String,
         userId: String,
         userOpinion: DisputePosition
     ): MatchingResult
     
-    class Base(private val cloudService: CloudService) : CallsInteractor {
+    suspend fun removeUserFromWaitList(
+        subjectId: String,
+        userId: String,
+        userOpinion: DisputePosition
+    )
+    
+    class Base(private val cloudService: CloudService) : MatchingInteractor {
         
         override suspend fun addUserToWaitList(
             subjectId: String,
@@ -37,10 +42,6 @@ interface CallsInteractor {
             }
         }
         
-        override fun subscribeToSubjects(callback: CloudService.Callback<Subject>) {
-            cloudService.subscribeToRootLevel(SUBJECTS_PATH, Subject::class.java, callback)
-        } // TODO: subscribe to single subject instead of list
-    
         override suspend fun checkMatching(
             subjectId: String,
             userId: String,
@@ -66,7 +67,7 @@ interface CallsInteractor {
             }
         }
         
-        private suspend fun removeSingledUserFromWaitList(
+        override suspend fun removeUserFromWaitList(
             subjectId: String,
             userId: String,
             userOpinion: DisputePosition
@@ -76,9 +77,5 @@ interface CallsInteractor {
                 this
             }
         }
-    }
-    
-    companion object {
-        private const val SUBJECTS_PATH = "Subjects"
     }
 }
