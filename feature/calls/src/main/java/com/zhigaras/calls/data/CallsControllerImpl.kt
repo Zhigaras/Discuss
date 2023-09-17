@@ -24,9 +24,7 @@ class CallsControllerImpl(
     private lateinit var webRtcClient: WebRtcClientImpl
     private val currentUsername: String = FirebaseAuth.getInstance().uid ?: "no id"
     private var remoteView: SurfaceViewRenderer? = null
-    private val target: String = if (FirebaseAuth.getInstance().uid == "uzZAvzvRrFNoZz1p2xCrsdmpt4T2")
-        "stmSRe5bcxNEmCTMm3bCth15vyr2"
-        else "uzZAvzvRrFNoZz1p2xCrsdmpt4T2"
+    private lateinit var target: String
     
     init {
         webRtcClient = WebRtcClientImpl(application, object : SimplePeerConnectionObserver {
@@ -70,7 +68,7 @@ class CallsControllerImpl(
     }
     
     override fun setOpponentId(opponentId: String) {
-        TODO("Not yet implemented")
+        target = opponentId
     }
     
     fun endCall() {
@@ -82,7 +80,7 @@ class CallsControllerImpl(
             currentUsername,
             object : CloudService.Callback<ConnectionData> {
                 override fun provide(obj: ConnectionData) {
-//                    target = obj.sender
+                    target = obj.sender
                     obj.handle(webRtcClient)
                 }
                 
