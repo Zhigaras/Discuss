@@ -2,7 +2,7 @@ package com.zhigaras.calls.webrtc
 
 import android.content.Context
 import com.google.gson.Gson
-import com.zhigaras.calls.domain.CallsCloudService
+import com.zhigaras.calls.data.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ConnectionDataType
 import com.zhigaras.cloudeservice.CloudServiceImpl

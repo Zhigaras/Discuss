@@ -1,4 +1,4 @@
-package com.zhigaras.calls.domain
+package com.zhigaras.calls.data
 
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.cloudeservice.CloudService

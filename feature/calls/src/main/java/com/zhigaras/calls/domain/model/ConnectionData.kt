@@ -1,5 +1,6 @@
 package com.zhigaras.calls.domain.model
 
+import android.util.Log
 import com.google.gson.Gson
 import com.zhigaras.calls.webrtc.WebRtcClient
 import org.webrtc.IceCandidate
@@ -54,7 +55,7 @@ enum class ConnectionDataType {
                     gson.fromJson(connectionData.data, IceCandidate::class.java)
                 client.addIceCandidate(candidate)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.d("AAA", e.message.toString()) // TODO: fix this
             }
         }
     };

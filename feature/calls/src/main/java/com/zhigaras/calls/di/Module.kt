@@ -2,7 +2,7 @@ package com.zhigaras.calls.di
 
 import com.zhigaras.calls.data.CallsControllerImpl
 import com.zhigaras.calls.domain.CallCommunication
-import com.zhigaras.calls.domain.CallsCloudService
+import com.zhigaras.calls.data.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel

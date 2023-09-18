@@ -61,7 +61,7 @@ class AuthRepository : Auth {
     }
     
     override fun isUserAuthorized(): Boolean {
-        Log.d("AAAA", auth.currentUser?.uid.toString())
+        Log.d("AAAA", auth.currentUser?.uid.toString()) // TODO: provide Logger
         return auth.currentUser != null
     }
 }

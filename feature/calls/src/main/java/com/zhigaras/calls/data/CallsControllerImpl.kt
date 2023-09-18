@@ -3,7 +3,6 @@ package com.zhigaras.calls.data
 import android.content.Context
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
