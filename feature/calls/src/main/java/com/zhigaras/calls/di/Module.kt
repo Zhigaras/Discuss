@@ -2,7 +2,9 @@ package com.zhigaras.calls.di
 
 import com.zhigaras.calls.data.CallsControllerImpl
 import com.zhigaras.calls.domain.CallCommunication
+import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
+import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -20,5 +22,9 @@ fun callModule() = module {
         CallCommunication.Post::class
     )
     
-    single { CallsControllerImpl(androidApplication()) } bind CallsController::class
+    single { CallsControllerImpl(androidApplication(), get()) } bind CallsController::class
+    
+    single { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
+    
+    single { CallsCloudService.Base(get()) } bind CallsCloudService::class
 }

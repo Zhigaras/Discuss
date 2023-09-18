@@ -1,6 +1,8 @@
 package com.zhigaras.calls.domain
 
-import com.zhigaras.core.Screen
+import android.os.Bundle
 import com.zhigaras.calls.ui.CallFragment
+import com.zhigaras.core.Screen
 
-object CallScreen : Screen.ReplaceAndAddToBackstack(CallFragment::class.java)
+class CallScreen(args: Bundle? = null) :
+    Screen.ReplaceAndAddToBackstack(CallFragment::class.java, args)
