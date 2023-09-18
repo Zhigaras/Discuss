@@ -38,7 +38,7 @@ dependencies {
     
     implementation(project(":core"))
     implementation(project(":cloudservice"))
-    implementation(project(":feature:calls")) //todo check if it needed or not
+    implementation(project(":feature:calls"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

@@ -34,14 +34,7 @@ android {
 
 dependencies {
     
-    implementation(Dependencies.coreKtx)
-    implementation(Dependencies.appcompat) //todo remove?
-    implementation(Dependencies.material) //todo remove?
-    
     implementation(platform(Dependencies.firebaseBom))
     implementation(Dependencies.firebaseDatabase)
     
-    testImplementation(Dependencies.jUnit)
-    androidTestImplementation(Dependencies.androidJUnit)
-    androidTestImplementation(Dependencies.espresso)
 }

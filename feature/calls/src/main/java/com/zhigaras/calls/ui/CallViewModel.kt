@@ -20,16 +20,16 @@ class CallViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentCallBinding, CallUiState>(communication, dispatchers) {
     
+    fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
+        callsController.initLocalView(localView)
+        callsController.initRemoteView(remoteView)
+    }
+    
     fun lookForOpponent(subjectId: String, opinion: DisputePosition) {
         viewModelScope.launch {
             matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion).let {
                 it.handle(callsController, matchingInteractor)
             }
         }
-    }
-    
-    fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
-        callsController.initLocalView(localView)
-        callsController.initRemoteView(remoteView)
     }
 }
