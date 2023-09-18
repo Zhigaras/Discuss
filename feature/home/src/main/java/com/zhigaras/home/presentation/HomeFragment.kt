@@ -3,9 +3,11 @@ package com.zhigaras.home.presentation
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.os.bundleOf
+import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.core.BaseFragment
+import com.zhigaras.home.R
 import com.zhigaras.home.databinding.FragmentHomeBinding
-import com.zhigaras.home.domain.DisputePosition
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
@@ -16,10 +18,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        viewModel.startObservingSubjects()
-        binding.startConversationButton.setOnClickListener {
-            viewModel.addUserToWaitList("fgh", "1", DisputePosition.SUPPORT)
+        binding.enterButton.setOnClickListener {
+            val opinion = if (binding.opinionChipGroup.checkedChipId == R.id.against_chip) "AGAINST"
+            else "SUPPORT"
+            viewModel.navigateToCall(bundleOf(CallRoutes.DISPUTE_POSITION_KEY to opinion))
         }
     }
 }

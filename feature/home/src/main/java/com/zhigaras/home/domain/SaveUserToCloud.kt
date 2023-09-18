@@ -1,9 +1,10 @@
 package com.zhigaras.home.domain
 
 import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudeservice.CloudService.Companion.USERS_PATH
 import com.zhigaras.home.domain.model.User
 
-interface SaveUserToCloud {
+interface SaveUserToCloud { // TODO: move to auth module??
     
     suspend fun save(userId: String, user: User)
     
@@ -11,9 +12,6 @@ interface SaveUserToCloud {
         
         override suspend fun save(userId: String, user: User) =
             cloudService.postWithId(USERS_PATH, userId, user)
-    }
-    
-    companion object {
-        private const val USERS_PATH = "Users"
+        // TODO: replace with postMultipleLevels()
     }
 }

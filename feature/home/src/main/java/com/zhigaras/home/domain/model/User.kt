@@ -1,6 +1,7 @@
 package com.zhigaras.home.domain.model
 
-data class User(
+class User( // TODO: move to auth module
     val name: String,
-    val email: String
+    val email: String,
+    val connectionEvent: String
 )

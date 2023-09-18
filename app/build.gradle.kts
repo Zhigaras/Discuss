@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":feature:login"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:calls"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

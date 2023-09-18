@@ -1,18 +1,14 @@
 package com.zhigaras.cloudeservice
 
-import android.content.Context
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.tasks.await
 
-class CloudServiceImpl(context: Context) : CloudService {
+class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     
-    private val reference = ProvideDatabase.Base(context).database()
-    
-    override fun postRootLevel(path: String, obj: Any) {
-        reference.child(path).setValue(obj)
-    }
+    private val reference = provideDatabase.database()
     
     override fun postWithId(path: String, id: String, obj: Any) {
         reference.child(path).child(id).setValue(obj)
@@ -33,34 +29,41 @@ class CloudServiceImpl(context: Context) : CloudService {
             .getValue(clazz)!! // TODO: handle exceptions
     }
     
-    override fun updateField(path: String, child: String, fieldId: String, fieldValue: Any) {
-        reference.child(path).child(child).child(fieldId).setValue(fieldValue)
+    override fun postMultipleLevels(obj: Any, vararg children: String) {
+        makeReference(*children).setValue(obj)
     }
     
-    override suspend fun <T : Any> getListAndUpdate(
-        path: String,
-        child: String,
-        fieldId: String,
-        block: (MutableList<T>) -> MutableList<T>
-    ) {
-        val directRef = reference.child(path).child(child).child(fieldId)
-        val value = directRef.get().await().value as? MutableList<T> ?: mutableListOf()
-        val updatedValue = block.invoke(value)
-        directRef.setValue(updatedValue)
-    }
-    
-    override fun <T : Any> subscribeToRootLevel(
-        path: String,
+    override fun <T : Any> subscribeMultipleLevels(
+        callback: CloudService.Callback<T>,
         clazz: Class<T>,
-        callback: CloudService.Callback<T>
+        vararg children: String
     ) {
-        reference.child(path).addValueEventListener(object : ValueEventListener {
+        makeReference(*children).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val data = snapshot.children.mapNotNull { it.getValue(clazz) }
-                callback.provide(data)
+                val result = snapshot.getValue(clazz)
+                if (result == null) callback.error("Data is null")
+                else callback.provide(result)
             }
             
-            override fun onCancelled(error: DatabaseError) = callback.error(error.message)
+            override fun onCancelled(error: DatabaseError) {
+                callback.error(error.message)
+            }
         })
+    }
+    
+    override fun addItemToList(item: String, vararg children: String) {
+        val ref = makeReference(*children)
+        ref.updateChildren(mapOf(item to "waiting"))
+    }
+    
+    override suspend fun removeListItem(itemId: String, vararg children: String) {
+        val ref = makeReference(*children)
+        ref.updateChildren(mapOf(itemId to null))
+    }
+    
+    private fun makeReference(vararg children: String): DatabaseReference {
+        var ref = reference
+        children.forEach { ref = ref.child(it) }
+        return ref
     }
 }
