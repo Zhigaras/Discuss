@@ -3,7 +3,6 @@ package com.zhigaras.calls.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import com.google.firebase.auth.FirebaseAuth
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.core.BaseFragment
@@ -19,11 +18,11 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        viewModel.init(binding)
+        viewModel.init(binding.localView, binding.remoteView) // TODO: fix
         arguments?.let {
             val disputePosition = it.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return@let
             val opinion = DisputePosition.valueOf(disputePosition)
-            viewModel.lookForOpponent(FirebaseAuth.getInstance().uid.toString(), "1", opinion)
+            viewModel.lookForOpponent("1", opinion)
         }
     }
 }

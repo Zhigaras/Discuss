@@ -1,8 +1,8 @@
 package com.zhigaras.calls.di
 
-import com.zhigaras.calls.data.CallsControllerImpl
+import com.zhigaras.calls.data.CallsCloudServiceImpl
 import com.zhigaras.calls.domain.CallCommunication
-import com.zhigaras.calls.data.CallsCloudService
+import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
@@ -22,9 +22,9 @@ fun callModule() = module {
         CallCommunication.Post::class
     )
     
-    single { CallsControllerImpl(androidApplication(), get()) } bind CallsController::class
+    single { CallsController.Base(androidApplication(), get(), get()) } bind CallsController::class
     
     single { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
     
-    single { CallsCloudService.Base(get()) } bind CallsCloudService::class
+    single { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
 }

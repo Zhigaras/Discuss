@@ -2,11 +2,9 @@ package com.zhigaras.calls.webrtc
 
 import android.content.Context
 import com.google.gson.Gson
-import com.zhigaras.calls.data.CallsCloudService
+import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ConnectionDataType
-import com.zhigaras.cloudeservice.CloudServiceImpl
-import com.zhigaras.cloudeservice.ProvideDatabase
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
@@ -22,11 +20,9 @@ import org.webrtc.VideoTrack
 
 class WebRtcClient(
     private val application: Context,
+    private val callsCloudService: CallsCloudService,
     observer: PeerConnection.Observer,
-    private val gson: Gson = Gson(),
-    private val callsCloudService: CallsCloudService = CallsCloudService.Base(
-        CloudServiceImpl(ProvideDatabase.Base())
-    )
+    private val gson: Gson = Gson()
 ) {
     private val eglBaseContext = EglBase.create().eglBaseContext
     private val peerConnectionFactory = MyPeerConnectionFactory(eglBaseContext)

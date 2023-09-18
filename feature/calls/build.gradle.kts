@@ -37,6 +37,7 @@ dependencies {
     
     implementation(files("./libs/libwebrtc.aar"))
     implementation(project(":core"))
+    implementation(project(":auth"))
     implementation(project(":cloudservice"))
     
     implementation(Dependencies.coreKtx)
@@ -46,9 +47,4 @@ dependencies {
     implementation(Dependencies.koinAndroid)
     
     implementation("com.google.code.gson:gson:2.10.1") // todo remove??
-    
-    implementation(platform(Dependencies.firebaseBom)) //todo remove!!!
-    implementation(Dependencies.firebaseDatabase) //todo remove!!!
-    implementation(Dependencies.firebaseAuth) //todo remove!!!
-    
 }
