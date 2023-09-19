@@ -24,5 +24,9 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
             val opinion = DisputePosition.valueOf(disputePosition)
             viewModel.lookForOpponent("1", opinion)
         }
+        
+        viewModel.observe(this) {
+            it.update(binding)
+        }
     }
 }

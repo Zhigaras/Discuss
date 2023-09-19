@@ -1,7 +1,6 @@
 package com.zhigaras.calls.domain
 
 import android.content.Context
-import android.util.Log
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
@@ -9,7 +8,7 @@ import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
-import org.webrtc.PeerConnection
+import org.webrtc.PeerConnection.PeerConnectionState
 import org.webrtc.SurfaceViewRenderer
 
 interface CallsController {
@@ -22,17 +21,20 @@ interface CallsController {
     
     fun initRemoteView(view: SurfaceViewRenderer)
     
+    fun initConnectionCallback(callback: (PeerConnectionState) -> Unit)
+    
     fun setOpponentId(opponentId: String)
     
     class Base(
         application: Context,
         private val callsCloudService: CallsCloudService,
-        private val provideUserId: ProvideUserId
+        provideUserId: ProvideUserId
     ) : CallsController {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
         private lateinit var webRtcClient: WebRtcClient
         private lateinit var target: String
+        private lateinit var peerConnectionCallback: (PeerConnectionState) -> Unit
         
         init {
             webRtcClient =
@@ -46,10 +48,10 @@ interface CallsController {
                         }
                     }
                     
-                    override fun onConnectionChange(newState: PeerConnection.PeerConnectionState) {
-                        Log.d("TAG", "onConnectionChange: $newState")
+                    override fun onConnectionChange(newState: PeerConnectionState) {
                         super.onConnectionChange(newState)
-                        
+                        peerConnectionCallback.invoke(newState)
+                        // TODO: handle reconnecting while internet connection down
                     }
                     
                     override fun onIceCandidate(iceCandidate: IceCandidate) {
@@ -68,13 +70,17 @@ interface CallsController {
             remoteView = view
         }
         
+        override fun initConnectionCallback(callback: (PeerConnectionState) -> Unit) {
+            peerConnectionCallback = callback
+        }
+        
         fun switchCamera() {
             webRtcClient.switchCamera()
         }
         
         override fun startNegotiation(opponentId: String, userId: String) {
-            webRtcClient.call(opponentId, userId)
             subscribeToConnectionEvents(userId)
+            webRtcClient.call(opponentId, userId)
         }
         
         override fun setOpponentId(opponentId: String) {

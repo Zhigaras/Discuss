@@ -8,17 +8,17 @@ import com.zhigaras.login.domain.ResetPasswordCommunication
 
 class ResetPasswordViewModel(
     private val auth: Auth,
-    communication: ResetPasswordCommunication.Mutable,
+    override val communication: ResetPasswordCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<DialogResetPasswordBinding, ResetPasswordUiState>(communication, dispatchers) {
+) : BaseViewModel<DialogResetPasswordBinding, ResetPasswordUiState>(dispatchers) {
     
     fun resetPassword(email: String) = scopeLaunch(
-        onLoading = { communication.post(ResetPasswordUiState.Progress) },
-        onSuccess = { communication.post(ResetPasswordUiState.Success) },
-        onError = { communication.post(ResetPasswordUiState.SingleEventError(it.errorId())) }
+        onLoading = { communication.postUi(ResetPasswordUiState.Progress) },
+        onSuccess = { communication.postUi(ResetPasswordUiState.Success) },
+        onError = { communication.postUi(ResetPasswordUiState.SingleEventError(it.errorId())) }
     ) {
         auth.resetPassword(email)
     }
     
-    fun setInitialState() = communication.post(ResetPasswordUiState.Initial)
+    fun setInitialState() = communication.postUi(ResetPasswordUiState.Initial)
 }

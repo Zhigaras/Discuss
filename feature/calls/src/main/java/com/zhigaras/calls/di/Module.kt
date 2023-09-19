@@ -6,6 +6,7 @@ import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
+import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -27,4 +28,6 @@ fun callModule() = module {
     single { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
     
     single { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
+    
+    factory { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
 }
