@@ -44,7 +44,7 @@ interface CallsController {
                         try {
                             mediaStream.videoTracks[0].addSink(remoteView)
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            throw Exception("Can`t add stream")
                         }
                     }
                     
@@ -101,7 +101,7 @@ interface CallsController {
                     }
                     
                     override fun error(message: String) {
-                        // TODO: handle errors
+                        throw Exception(message)
                     }
                 })
         }

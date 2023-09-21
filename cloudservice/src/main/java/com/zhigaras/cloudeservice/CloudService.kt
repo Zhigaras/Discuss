@@ -30,6 +30,6 @@ interface CloudService {
     companion object {
         const val USERS_PATH = "Users"
         const val SUBJECTS_PATH = "Subjects"
-        const val CONNECTION_EVENT_PATH = "connectionEvent"
+        const val CONNECTION_EVENT_PATH = "connectionData"
     }
 }
