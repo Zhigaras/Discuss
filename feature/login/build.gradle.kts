@@ -38,6 +38,7 @@ dependencies {
     
     implementation(project(":core"))
     implementation(project(":auth"))
+    implementation(project(":feature:home"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

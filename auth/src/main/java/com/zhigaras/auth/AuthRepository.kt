@@ -1,5 +1,6 @@
 package com.zhigaras.auth
 
+import android.util.Log
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -60,6 +61,7 @@ class AuthRepository : Auth {
     }
     
     override fun isUserAuthorized(): Boolean {
+        Log.d("AAAA", auth.currentUser?.uid.toString()) // TODO: provide Logger
         return auth.currentUser != null
     }
 }

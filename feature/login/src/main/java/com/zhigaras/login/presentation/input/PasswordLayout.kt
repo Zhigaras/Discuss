@@ -9,7 +9,7 @@ import com.zhigaras.login.R
 
 class PasswordLayout @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet,
+    attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InputValidation {
     

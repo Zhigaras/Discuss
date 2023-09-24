@@ -2,6 +2,7 @@ package com.zhigaras.discuss
 
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.NavigationCommunication
+import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -22,7 +23,8 @@ fun mainModule() = module {
     single { AvailableRouts.Base(get()) } binds arrayOf(
         NavigateToSignIn::class,
         NavigateToSignUp::class,
-        NavigateToHome::class
+        NavigateToHome::class,
+        NavigateToCall::class
     )
     
     single { Dispatchers.Base() } bind Dispatchers::class
