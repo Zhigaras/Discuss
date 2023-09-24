@@ -12,9 +12,17 @@
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/local_view"
         android:layout_width="120dp"
-        android:layout_gravity="bottom"
         android:layout_height="150dp"
+        android:layout_gravity="bottom"
         android:layout_margin="16dp"
         android:elevation="16dp" />
+
+    <TextView
+        android:id="@+id/test_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="40sp" />
 
 </FrameLayout>

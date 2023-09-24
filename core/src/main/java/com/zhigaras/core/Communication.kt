@@ -9,7 +9,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 interface Communication {
     
     interface Post<T : Any> {
-        fun post(item: T)
+        fun postUi(item: T)
+        
+        fun postBackground(item: T)
     }
     
     interface Observe<T : Any> {
@@ -21,8 +23,12 @@ interface Communication {
     abstract class Abstract<T : Any>(private val liveData: MutableLiveData<T> = MutableLiveData()) :
         Mutable<T> {
         
-        override fun post(item: T) {
+        override fun postUi(item: T) {
             liveData.value = item
+        }
+        
+        override fun postBackground(item: T) {
+            liveData.postValue(item)
         }
         
         override fun observe(owner: LifecycleOwner, observer: Observer<T>) {

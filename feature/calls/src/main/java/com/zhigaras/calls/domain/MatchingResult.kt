@@ -1,6 +1,7 @@
 package com.zhigaras.calls.domain
 
 import com.zhigaras.calls.domain.model.DisputePosition
+import com.zhigaras.calls.ui.CallUiState
 
 interface MatchingResult {
     
@@ -8,7 +9,8 @@ interface MatchingResult {
     
     suspend fun handle(
         callsController: CallsController,
-        matchingInteractor: MatchingInteractor
+        matchingInteractor: MatchingInteractor,
+        communication: CallCommunication.Post,
     )
     
     abstract class Success(
@@ -23,7 +25,8 @@ interface MatchingResult {
         
         override suspend fun handle(
             callsController: CallsController,
-            matchingInteractor: MatchingInteractor
+            matchingInteractor: MatchingInteractor,
+            communication: CallCommunication.Post
         ) {
             callsController.setOpponentId(opponentId)
             matchingInteractor.removeUserFromWaitList(subjectId, opponentId, opponentOpinion)
@@ -58,8 +61,10 @@ interface MatchingResult {
         override fun isMatch() = false
         override suspend fun handle(
             callsController: CallsController,
-            matchingInteractor: MatchingInteractor
+            matchingInteractor: MatchingInteractor,
+            communication: CallCommunication.Post
         ) {
+            communication.postUi(CallUiState.WaitingForOpponent)
             matchingInteractor.addUserToWaitList(subjectId, userId, userOpinion)
             callsController.subscribeToConnectionEvents(userId)
         }

@@ -16,17 +16,17 @@ class SignUpViewModel(
     private val saveUserToCloud: SaveUserToCloud,
     private val userMapper: UserMapper,
     private val showId: ShowId,
-    communication: SignUpCommunication.Mutable,
+    override val communication: SignUpCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentSignUpBinding, SignUpUiState>(communication, dispatchers) {
+) : BaseViewModel<FragmentSignUpBinding, SignUpUiState>(dispatchers) {
     
     fun signUp(email: String, password: String) = scopeLaunch(
-        onLoading = { communication.post(SignUpUiState.Progress) },
+        onLoading = { communication.postUi(SignUpUiState.Progress) },
         onSuccess = {
             saveUserToCloud.save(it.map(showId), it.map(userMapper))
             navigateToHome.navigateToHome()
         },
-        onError = { communication.post(SignUpUiState.SingleEventError(it.errorId())) }
+        onError = { communication.postUi(SignUpUiState.SingleEventError(it.errorId())) }
     ) {
         auth.signUpWithEmailAndPassword(email, password)
     }

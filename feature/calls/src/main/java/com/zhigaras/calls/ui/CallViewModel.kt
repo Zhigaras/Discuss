@@ -6,6 +6,7 @@ import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.domain.model.DisputePosition
+import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
@@ -16,19 +17,22 @@ class CallViewModel(
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
     private val provideUserId: ProvideUserId,
-    communication: CallCommunication.Mutable,
+    private val connectionCallback: PeerConnectionCallback,
+    override val communication: CallCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentCallBinding, CallUiState>(communication, dispatchers) {
+) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
     
     fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
         callsController.initLocalView(localView)
         callsController.initRemoteView(remoteView)
+        callsController.initConnectionCallback(connectionCallback)
     }
     
     fun lookForOpponent(subjectId: String, opinion: DisputePosition) {
         viewModelScope.launch {
+            communication.postUi(CallUiState.LookingForOpponent)
             matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion).let {
-                it.handle(callsController, matchingInteractor)
+                it.handle(callsController, matchingInteractor, communication)
             }
         }
     }

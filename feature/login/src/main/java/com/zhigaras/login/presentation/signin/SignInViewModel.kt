@@ -13,15 +13,15 @@ class SignInViewModel(
     private val auth: Auth,
     private val navigateToSignUp: NavigateToSignUp,
     private val navigateToHome: NavigateToHome,
-    communication: SignInCommunication.Mutable,
+    override val communication: SignInCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentSignInBinding, SignInUiState>(communication, dispatchers),
+) : BaseViewModel<FragmentSignInBinding, SignInUiState>(dispatchers),
     NavigateToSignUp {
     
     fun signIn(email: String, password: String) = scopeLaunch(
-        onLoading = { communication.post(SignInUiState.Progress) },
+        onLoading = { communication.postUi(SignInUiState.Progress) },
         onSuccess = { navigateToHome.navigateToHome() },
-        onError = { communication.post(SignInUiState.SingleEventError(it.errorId())) }
+        onError = { communication.postUi(SignInUiState.SingleEventError(it.errorId())) }
     ) {
         auth.signInWithEmailAndPassword(email, password)
     }

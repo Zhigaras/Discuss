@@ -1,6 +1,7 @@
 package com.zhigaras.calls.webrtc
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -86,6 +87,7 @@ class WebRtcClient(
         initSurfaceViewRenderer(view)
     }
     
+    @Synchronized
     @Throws(NullPointerException::class)
     fun call(target: String, userId: String) {
         if (peerConnection == null) throw NullPointerException()
@@ -97,12 +99,14 @@ class WebRtcClient(
                 peerConnection.setLocalDescription(object : SimpleSdpObserver() {
                     override fun onSetSuccess() {
                         callsCloudService.sendToCloud(data(sessionDescription))
+                        Log.d("AAA trouble", "offer sent  ")
                     }
                 }, sessionDescription)
             }
         }, mediaConstraints)
     }
     
+    @Synchronized
     @Throws(NullPointerException::class)
     fun answer(target: String, userId: String) {
         if (peerConnection == null) throw NullPointerException()
@@ -114,6 +118,7 @@ class WebRtcClient(
                 peerConnection.setLocalDescription(object : SimpleSdpObserver() {
                     override fun onSetSuccess() {
                         callsCloudService.sendToCloud(data(sessionDescription))
+                        Log.d("AAA trouble", "answer sent  ")
                     }
                 }, sessionDescription)
             }
@@ -128,6 +133,7 @@ class WebRtcClient(
         peerConnection!!.addIceCandidate(iceCandidate)
     }
     
+    @Synchronized
     fun sendIceCandidate(iceCandidate: IceCandidate?, target: String, userId: String) {
         addIceCandidate(iceCandidate)
         callsCloudService.sendToCloud(
