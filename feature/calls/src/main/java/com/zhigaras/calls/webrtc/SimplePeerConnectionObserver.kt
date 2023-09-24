@@ -9,11 +9,11 @@ interface SimplePeerConnectionObserver : PeerConnection.Observer {
     
     override fun onSignalingChange(p0: PeerConnection.SignalingState?) {}
     
-    override fun onIceConnectionChange(p0: PeerConnection.IceConnectionState?) {}
+    override fun onIceConnectionChange(newState: PeerConnection.IceConnectionState?) {}
     
     override fun onIceConnectionReceivingChange(p0: Boolean) {}
     
-    override fun onIceGatheringChange(p0: PeerConnection.IceGatheringState?) {}
+    override fun onIceGatheringChange(newState: PeerConnection.IceGatheringState?) {}
     
     override fun onIceCandidate(iceCandidate: IceCandidate) {}
     

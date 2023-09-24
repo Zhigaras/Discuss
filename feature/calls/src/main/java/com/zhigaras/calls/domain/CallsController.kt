@@ -3,6 +3,7 @@ package com.zhigaras.calls.domain
 import android.content.Context
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.model.ConnectionData
+import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
@@ -21,7 +22,7 @@ interface CallsController {
     
     fun initRemoteView(view: SurfaceViewRenderer)
     
-    fun initConnectionCallback(callback: (PeerConnectionState) -> Unit)
+    fun initConnectionCallback(callback: PeerConnectionCallback)
     
     fun setOpponentId(opponentId: String)
     
@@ -34,7 +35,7 @@ interface CallsController {
         private val userId = provideUserId.provide()
         private lateinit var webRtcClient: WebRtcClient
         private lateinit var target: String
-        private lateinit var peerConnectionCallback: (PeerConnectionState) -> Unit
+        private lateinit var peerConnectionCallback: PeerConnectionCallback
         
         init {
             webRtcClient =
@@ -51,6 +52,9 @@ interface CallsController {
                     override fun onConnectionChange(newState: PeerConnectionState) {
                         super.onConnectionChange(newState)
                         peerConnectionCallback.invoke(newState)
+                        if (newState == PeerConnectionState.CONNECTED) {
+                            callsCloudService.removeConnectionData(userId)
+                        }
                         // TODO: handle reconnecting while internet connection down
                     }
                     
@@ -70,7 +74,7 @@ interface CallsController {
             remoteView = view
         }
         
-        override fun initConnectionCallback(callback: (PeerConnectionState) -> Unit) {
+        override fun initConnectionCallback(callback: PeerConnectionCallback) {
             peerConnectionCallback = callback
         }
         

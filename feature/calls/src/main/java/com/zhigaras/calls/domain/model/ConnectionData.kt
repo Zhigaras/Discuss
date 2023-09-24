@@ -26,12 +26,12 @@ enum class ConnectionDataType {
     
     EMPTY {
         override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
-            Log.d("AAA handle empty connection data", "nothing to do")
+            Log.d("AAA trouble empty data", "nothing to do")
         }
     },
     OFFER {
         override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
-            Log.d("AAA trouble OFFER handle", connectionData.toString())
+            Log.d("AAA trouble OFFER handle", "offer handled")
             client.onRemoteSessionReceived(
                 SessionDescription(
                     SessionDescription.Type.OFFER, connectionData.data
@@ -42,7 +42,7 @@ enum class ConnectionDataType {
     },
     ANSWER {
         override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
-            Log.d("AAA trouble ANSWER handle", connectionData.toString())
+            Log.d("AAA trouble ANSWER handle", "answer handled")
             client.onRemoteSessionReceived(
                 SessionDescription(
                     SessionDescription.Type.ANSWER, connectionData.data
@@ -52,13 +52,13 @@ enum class ConnectionDataType {
     },
     ICE_CANDIDATE {
         override fun handle(client: WebRtcClient, connectionData: ConnectionData) {
-            Log.d("AAA trouble ICE_CANDIDATE handle", connectionData.toString())
+            Log.d("AAA trouble CANDIDATE handle", "iceCandidate handled")
             try {
                 val candidate: IceCandidate =
                     gson.fromJson(connectionData.data, IceCandidate::class.java)
                 client.addIceCandidate(candidate)
             } catch (e: Exception) {
-                Log.d("AAA trouble ICE_CANDIDATE error", e.message.toString()) // TODO: fix this
+                Log.d("AAA trouble CANDIDATE error", e.message.toString()) // TODO: fix this
             }
         }
     };

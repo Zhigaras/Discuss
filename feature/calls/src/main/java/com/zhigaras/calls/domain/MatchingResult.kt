@@ -1,6 +1,5 @@
 package com.zhigaras.calls.domain
 
-import android.util.Log
 import com.zhigaras.calls.domain.model.DisputePosition
 import com.zhigaras.calls.ui.CallUiState
 
@@ -29,7 +28,6 @@ interface MatchingResult {
             matchingInteractor: MatchingInteractor,
             communication: CallCommunication.Post
         ) {
-            Log.d("AAA trouble Success", "$userId, $opponentId, $subjectId")
             callsController.setOpponentId(opponentId)
             matchingInteractor.removeUserFromWaitList(subjectId, opponentId, opponentOpinion)
             callsController.startNegotiation(opponentId, userId)
@@ -66,7 +64,6 @@ interface MatchingResult {
             matchingInteractor: MatchingInteractor,
             communication: CallCommunication.Post
         ) {
-            Log.d("AAA trouble NoMatch", "$userId, $subjectId, $userOpinion")
             communication.postUi(CallUiState.WaitingForOpponent)
             matchingInteractor.addUserToWaitList(subjectId, userId, userOpinion)
             callsController.subscribeToConnectionEvents(userId)

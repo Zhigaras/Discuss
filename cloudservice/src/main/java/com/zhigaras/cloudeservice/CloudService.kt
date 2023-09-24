@@ -15,7 +15,7 @@ interface CloudService {
     
     suspend fun <T : Any> getDataSnapshot(path: String, child: String, clazz: Class<T>): T
     
-    fun postMultipleLevels(obj: Any, vararg children: String)
+    fun postMultipleLevels(obj: Any?, vararg children: String)
     
     fun <T : Any> subscribeMultipleLevels(
         callback: Callback<T>,

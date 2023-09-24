@@ -8,4 +8,6 @@ interface CallsCloudService {
     fun sendToCloud(data: ConnectionData)
     
     fun observeUpdates(userId: String, callback: CloudService.Callback<ConnectionData>)
+    
+    fun removeConnectionData(userId: String)
 }
