@@ -4,7 +4,7 @@ import com.zhigaras.auth.Auth
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.login.databinding.DialogResetPasswordBinding
-import com.zhigaras.login.domain.ResetPasswordCommunication
+import com.zhigaras.login.presentation.resetpassword.domain.ResetPasswordCommunication
 
 class ResetPasswordViewModel(
     private val auth: Auth,

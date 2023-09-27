@@ -1,10 +1,13 @@
-package com.zhigaras.login.domain
+package com.zhigaras.login.presentation.signup.domain
 
 import com.zhigaras.auth.UserDto
 import com.zhigaras.home.domain.SaveUserToCloud
+import com.zhigaras.login.domain.NavigateToHome
+import com.zhigaras.login.domain.ShowId
+import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.signup.SignUpUiState
 
-interface AuthResult {
+interface SignUpResult {
     
     suspend fun handle(
         communication: SignUpCommunication.Post,
@@ -16,7 +19,7 @@ interface AuthResult {
         private val user: UserDto,
         private val showId: ShowId = ShowId(),
         private val userMapper: UserMapper = UserMapper()
-    ) : AuthResult {
+    ) : SignUpResult {
         override suspend fun handle(
             communication: SignUpCommunication.Post,
             navigateToHome: NavigateToHome,
@@ -27,7 +30,7 @@ interface AuthResult {
         }
     }
     
-    class Error(private val errorId: Int) : AuthResult {
+    class Error(private val errorId: Int) : SignUpResult {
         override suspend fun handle(
             communication: SignUpCommunication.Post,
             navigateToHome: NavigateToHome,

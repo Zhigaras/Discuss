@@ -6,8 +6,8 @@ import com.zhigaras.core.NavigationCommunication
 import com.zhigaras.home.domain.HomeRoutes
 import com.zhigaras.home.domain.HomeScreen
 import com.zhigaras.login.domain.LoginRoutes
-import com.zhigaras.login.domain.SignInScreen
-import com.zhigaras.login.domain.SignUpScreen
+import com.zhigaras.login.presentation.signin.domain.SignInScreen
+import com.zhigaras.login.presentation.signup.domain.SignUpScreen
 
 interface AvailableRouts : MainRouts, LoginRoutes, HomeRoutes {
     

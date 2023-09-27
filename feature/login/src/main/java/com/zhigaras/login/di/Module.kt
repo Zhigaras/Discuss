@@ -3,13 +3,15 @@ package com.zhigaras.login.di
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
 import com.zhigaras.auth.ProvideUserId
+import com.zhigaras.login.data.SignInRepositoryImpl
 import com.zhigaras.login.data.SignUpRepositoryImpl
 import com.zhigaras.login.domain.IsUserAuthorized
-import com.zhigaras.login.domain.ResetPasswordCommunication
+import com.zhigaras.login.presentation.resetpassword.domain.ResetPasswordCommunication
 import com.zhigaras.login.domain.ShowId
-import com.zhigaras.login.domain.SignInCommunication
-import com.zhigaras.login.domain.SignUpCommunication
-import com.zhigaras.login.domain.SignUpRepository
+import com.zhigaras.login.presentation.signin.domain.SignInCommunication
+import com.zhigaras.login.presentation.signin.domain.SignInRepository
+import com.zhigaras.login.presentation.signup.domain.SignUpCommunication
+import com.zhigaras.login.presentation.signup.domain.SignUpRepository
 import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.resetpassword.ResetPasswordViewModel
 import com.zhigaras.login.presentation.signin.SignInViewModel
@@ -46,6 +48,8 @@ fun loginModule() = module {
     )
     
     single { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
+    
+    single { SignInRepositoryImpl(get()) } bind SignInRepository::class
     
     single { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
     

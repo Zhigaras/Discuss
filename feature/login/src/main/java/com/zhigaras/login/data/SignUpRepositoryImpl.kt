@@ -2,8 +2,8 @@ package com.zhigaras.login.data
 
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.DiscussException
-import com.zhigaras.login.domain.AuthResult
-import com.zhigaras.login.domain.SignUpRepository
+import com.zhigaras.login.presentation.signup.domain.SignUpResult
+import com.zhigaras.login.presentation.signup.domain.SignUpRepository
 
 class SignUpRepositoryImpl(
     private val auth: Auth
@@ -12,12 +12,12 @@ class SignUpRepositoryImpl(
     override suspend fun signUpWithEmailAndPassword(
         email: String,
         password: String
-    ): AuthResult {
+    ): SignUpResult {
         return try {
             val user = auth.signUpWithEmailAndPassword(email, password)
-            AuthResult.Success(user)
+            SignUpResult.Success(user)
         } catch (e: DiscussException) {
-            AuthResult.Error(e.errorId())
+            SignUpResult.Error(e.errorId())
         }
     }
 }
