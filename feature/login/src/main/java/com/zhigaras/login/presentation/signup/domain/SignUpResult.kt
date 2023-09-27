@@ -1,5 +1,6 @@
 package com.zhigaras.login.presentation.signup.domain
 
+import androidx.annotation.StringRes
 import com.zhigaras.auth.UserDto
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.login.domain.NavigateToHome
@@ -30,7 +31,7 @@ interface SignUpResult {
         }
     }
     
-    class Error(private val errorId: Int) : SignUpResult {
+    class Error(@StringRes private val errorId: Int) : SignUpResult {
         override suspend fun handle(
             communication: SignUpCommunication.Post,
             navigateToHome: NavigateToHome,

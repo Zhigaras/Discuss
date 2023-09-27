@@ -3,6 +3,7 @@ package com.zhigaras.login.di
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
 import com.zhigaras.auth.ProvideUserId
+import com.zhigaras.login.data.ResetPasswordRepositoryImpl
 import com.zhigaras.login.data.SignInRepositoryImpl
 import com.zhigaras.login.data.SignUpRepositoryImpl
 import com.zhigaras.login.domain.IsUserAuthorized
@@ -14,6 +15,7 @@ import com.zhigaras.login.presentation.signup.domain.SignUpCommunication
 import com.zhigaras.login.presentation.signup.domain.SignUpRepository
 import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.resetpassword.ResetPasswordViewModel
+import com.zhigaras.login.presentation.resetpassword.domain.ResetPasswordRepository
 import com.zhigaras.login.presentation.signin.SignInViewModel
 import com.zhigaras.login.presentation.signup.SignUpViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -50,6 +52,8 @@ fun loginModule() = module {
     single { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
     
     single { SignInRepositoryImpl(get()) } bind SignInRepository::class
+    
+    single { ResetPasswordRepositoryImpl(get()) } bind ResetPasswordRepository::class
     
     single { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
     
