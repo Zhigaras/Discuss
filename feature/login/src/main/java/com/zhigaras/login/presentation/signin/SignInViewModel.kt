@@ -19,11 +19,13 @@ class SignInViewModel(
     NavigateToSignUp {
     
     
-    fun signIn(email: String, password: String) = scopeLaunch({
+    fun signIn(email: String, password: String) {
         communication.postUi(SignInUiState.Progress)
-        signInRepository.signInWithEmailAndPassword(email, password)
-    }) {
-        it.handle(communication, navigateToHome)
+        scopeLaunch({
+            signInRepository.signInWithEmailAndPassword(email, password)
+        }) {
+            it.handle(communication, navigateToHome)
+        }
     }
     
     override fun navigateToSignUp(args: Bundle?) {

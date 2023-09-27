@@ -16,10 +16,12 @@ class SignUpViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentSignUpBinding, SignUpUiState>(dispatchers) {
     
-    fun signUp(email: String, password: String) = scopeLaunch({
+    fun signUp(email: String, password: String) {
         communication.postUi(SignUpUiState.Progress)
-        signUpRepository.signUpWithEmailAndPassword(email, password)
-    }) {
-        it.handle(communication, navigateToHome, saveUserToCloud)
+        scopeLaunch({
+            signUpRepository.signUpWithEmailAndPassword(email, password)
+        }) {
+            it.handle(communication, navigateToHome, saveUserToCloud)
+        }
     }
 }

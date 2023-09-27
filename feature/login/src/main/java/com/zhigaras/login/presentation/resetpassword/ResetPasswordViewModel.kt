@@ -12,11 +12,13 @@ class ResetPasswordViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<DialogResetPasswordBinding, ResetPasswordUiState>(dispatchers) {
     
-    fun resetPassword(email: String) = scopeLaunch({
+    fun resetPassword(email: String)  {
         communication.postUi(ResetPasswordUiState.Progress)
-        resetPasswordRepository.resetPassword(email)
-    }) {
-        it.handle(communication)
+        scopeLaunch({
+            resetPasswordRepository.resetPassword(email)
+        }) {
+            it.handle(communication)
+        }
     }
     
     fun setInitialState() = communication.postUi(ResetPasswordUiState.Initial)
