@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.calls.domain.CallRoutes
-import com.zhigaras.calls.domain.model.DisputePosition
+import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +21,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
         viewModel.init(binding.localView, binding.remoteView) // TODO: fix
         arguments?.let {
             val disputePosition = it.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return@let
-            val opinion = DisputePosition.valueOf(disputePosition)
+            val opinion = DisputeParty.valueOf(disputePosition)
             viewModel.lookForOpponent("1", opinion)
         }
         
