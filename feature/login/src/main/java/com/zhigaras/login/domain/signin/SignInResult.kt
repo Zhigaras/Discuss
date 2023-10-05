@@ -32,6 +32,16 @@ interface SignInResult {
         }
     }
     
+    object OneTapSignInLaunched : SignInResult {
+        
+        override suspend fun handle(
+            communication: SignInCommunication.Post,
+            saveUserToCloud: SaveUserToCloud,
+            navigateToHome: NavigateToHome
+        ) {
+        }
+    }
+    
     class Error(@StringRes private val errorId: Int) : SignInResult {
         
         override suspend fun handle(

@@ -2,6 +2,7 @@ package com.zhigaras.login.di
 
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
+import com.zhigaras.auth.OneTapSignIn
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.login.data.ResetPasswordRepositoryImpl
 import com.zhigaras.login.data.SignInRepositoryImpl
@@ -49,9 +50,11 @@ fun loginModule() = module {
         ResetPasswordCommunication.Post::class
     )
     
+    single { OneTapSignIn.Base(get()) } bind OneTapSignIn::class
+    
     single { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
     
-    single { SignInRepositoryImpl(get()) } bind SignInRepository::class
+    single { SignInRepositoryImpl(get(), get()) } bind SignInRepository::class
     
     single { ResetPasswordRepositoryImpl(get()) } bind ResetPasswordRepository::class
     

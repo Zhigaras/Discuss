@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import com.zhigaras.auth.AuthResultWrapper
+import com.zhigaras.auth.OneTapSignInClient
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignInBinding
 import com.zhigaras.login.domain.LoginRoutes
@@ -14,15 +15,16 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SignInFragment : BaseFragment<FragmentSignInBinding>() {
     
     private val viewModel by viewModel<SignInViewModel>()
-    private val signInWithGoogleLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            viewModel.handleResult(AuthResultWrapper.Base(it))
-        }
     
     override fun initBinding(inflater: LayoutInflater) = FragmentSignInBinding.inflate(inflater)
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val client = OneTapSignInClient(requireContext())
+        val signInWithGoogleLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+                viewModel.handleResult(AuthResultWrapper.Base(it), client)
+            }
         
         val inputList = listOf(binding.emailInput.root, binding.passwordInput.root)
         
@@ -42,7 +44,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
             }
         }
         binding.signInWithGoogle.setOnClickListener {
-            viewModel.startGoogleSignIn(signInWithGoogleLauncher)
+            viewModel.startGoogleSignIn(signInWithGoogleLauncher, client)
         }
         
         viewModel.observe(this) {// TODO: move to baseFragment

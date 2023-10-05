@@ -1,9 +1,10 @@
 package com.zhigaras.login.presentation.signin
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import com.zhigaras.auth.AuthResultWrapper
+import com.zhigaras.auth.OneTapSignInClient
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.domain.SaveUserToCloud
@@ -33,14 +34,20 @@ class SignInViewModel(
         }
     }
     
-    fun handleResult(authResult: AuthResultWrapper) = scopeLaunch({
-        signInRepository.signInWithGoogle(authResult)
+    fun handleResult(authResult: AuthResultWrapper, client: OneTapSignInClient) = scopeLaunch({
+        signInRepository.handelOneTapSignInResult(authResult, client)
     }) {
         it.handle(communication, saveUserToCloud, navigateToHome)
     }
     
-    fun startGoogleSignIn(launcher: ActivityResultLauncher<Intent>) {
-        communication.postUi(SignInUiState.StartAuth(launcher))
+    fun startGoogleSignIn(
+        launcher: ActivityResultLauncher<IntentSenderRequest>,
+        client: OneTapSignInClient
+    ) {
+        communication.postUi(SignInUiState.Progress)
+        scopeLaunch({ signInRepository.handleOneTapSignInLaunch(launcher, client) }) {
+            it.handle(communication, saveUserToCloud, navigateToHome)
+        }
     }
     
     override fun navigateToSignUp(args: Bundle?) {

@@ -1,12 +1,9 @@
 package com.zhigaras.login.presentation.signin
 
-import android.content.Intent
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
-import com.zhigaras.auth.OneTapSignInClient
 import com.zhigaras.core.UiState
 import com.zhigaras.login.R
 import com.zhigaras.login.databinding.FragmentSignInBinding
@@ -17,13 +14,6 @@ interface SignInUiState : UiState<FragmentSignInBinding> {
         
         override fun update(binding: FragmentSignInBinding) {
             binding.progressLayout.root.visibility = View.VISIBLE
-        }
-    }
-    
-    class StartAuth(private val launcher: ActivityResultLauncher<Intent>) : SignInUiState {
-        
-        override fun update(binding: FragmentSignInBinding) {
-            launcher.launch(OneTapSignInClient().getIntent(binding.root.context))
         }
     }
     
