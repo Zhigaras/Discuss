@@ -5,7 +5,7 @@ import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.MatchingInteractor
-import com.zhigaras.calls.domain.model.DisputePosition
+import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
@@ -28,12 +28,11 @@ class CallViewModel(
         callsController.initConnectionCallback(connectionCallback)
     }
     
-    fun lookForOpponent(subjectId: String, opinion: DisputePosition) {
+    fun lookForOpponent(subjectId: String, opinion: DisputeParty) {
         viewModelScope.launch {
             communication.postUi(CallUiState.LookingForOpponent)
-            matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion).let {
-                it.handle(callsController, matchingInteractor, communication)
-            }
+            matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion)
+                .handle(callsController, matchingInteractor, communication)
         }
     }
 }
