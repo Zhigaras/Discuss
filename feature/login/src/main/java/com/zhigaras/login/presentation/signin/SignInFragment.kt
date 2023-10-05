@@ -3,6 +3,8 @@ package com.zhigaras.login.presentation.signin
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import com.zhigaras.auth.AuthResultWrapper
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignInBinding
 import com.zhigaras.login.domain.LoginRoutes
@@ -12,6 +14,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SignInFragment : BaseFragment<FragmentSignInBinding>() {
     
     private val viewModel by viewModel<SignInViewModel>()
+    private val signInWithGoogleLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            viewModel.handleResult(AuthResultWrapper.Base(it))
+        }
     
     override fun initBinding(inflater: LayoutInflater) = FragmentSignInBinding.inflate(inflater)
     
@@ -34,6 +40,9 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
                 it.arguments = binding.emailInput.root.makeBundle(LoginRoutes.EMAIL_KEY)
                 it.show(parentFragmentManager, it.tag)
             }
+        }
+        binding.signInWithGoogle.setOnClickListener {
+            viewModel.startGoogleSignIn(signInWithGoogleLauncher)
         }
         
         viewModel.observe(this) {// TODO: move to baseFragment

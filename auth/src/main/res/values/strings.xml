@@ -14,4 +14,5 @@
     <string name="account_disabled">Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.</string>
     <string name="no_such_user">There is no user corresponding to the given email address.</string>
     <string name="too_many_google_signIn_requests">Too many authorization cancellations via Google, the system blocked them for 24h. To restore dial the combination *#*#66382723#*#* in your phone.</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

@@ -2,8 +2,8 @@ package com.zhigaras.login.data
 
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.DiscussException
-import com.zhigaras.login.presentation.resetpassword.domain.ResetPasswordRepository
-import com.zhigaras.login.presentation.resetpassword.domain.ResetPasswordResult
+import com.zhigaras.login.domain.resetpassword.ResetPasswordRepository
+import com.zhigaras.login.domain.resetpassword.ResetPasswordResult
 
 class ResetPasswordRepositoryImpl(private val auth: Auth) : ResetPasswordRepository {
     

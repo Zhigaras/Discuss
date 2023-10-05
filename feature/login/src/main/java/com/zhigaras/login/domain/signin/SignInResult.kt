@@ -1,30 +1,42 @@
-package com.zhigaras.login.presentation.signin.domain
+package com.zhigaras.login.domain.signin
 
 import androidx.annotation.StringRes
+import com.zhigaras.auth.UserDto
+import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.login.domain.NavigateToHome
+import com.zhigaras.login.domain.ShowId
+import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.signin.SignInUiState
 
 interface SignInResult {
     
-    fun handle(
+    suspend fun handle(
         communication: SignInCommunication.Post,
+        saveUserToCloud: SaveUserToCloud,
         navigateToHome: NavigateToHome
     )
     
-    object Success : SignInResult {
+    class Success(
+        private val user: UserDto,
+        private val showId: ShowId = ShowId(),
+        private val userMapper: UserMapper = UserMapper()
+    ) : SignInResult {
         
-        override fun handle(
+        override suspend fun handle(
             communication: SignInCommunication.Post,
+            saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
+            saveUserToCloud.save(user.map(showId), user.map(userMapper))
             navigateToHome.navigateToHome()
         }
     }
     
     class Error(@StringRes private val errorId: Int) : SignInResult {
         
-        override fun handle(
+        override suspend fun handle(
             communication: SignInCommunication.Post,
+            saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
             communication.postUi(SignInUiState.SingleEventError(errorId))

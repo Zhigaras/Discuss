@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation.signup.domain
+package com.zhigaras.login.domain.signup
 
 import com.zhigaras.core.Communication
 import com.zhigaras.login.presentation.signup.SignUpUiState

@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation.resetpassword.domain
+package com.zhigaras.login.domain.resetpassword
 
 import com.zhigaras.core.Communication
 import com.zhigaras.login.presentation.resetpassword.ResetPasswordUiState

@@ -6,7 +6,7 @@ interface Auth {
     
     suspend fun signInWithEmailAndPassword(email: String, password: String): UserDto
     
-    suspend fun signUpWithGoogle(token: String): UserDto
+    suspend fun signInWithGoogle(token: String): UserDto
     
     suspend fun resetPassword(email: String)
     

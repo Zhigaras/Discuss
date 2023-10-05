@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation.signup.domain
+package com.zhigaras.login.domain.signup
 
 import androidx.annotation.StringRes
 import com.zhigaras.auth.UserDto
