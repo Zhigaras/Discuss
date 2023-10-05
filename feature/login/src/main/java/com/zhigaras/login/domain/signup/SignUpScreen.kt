@@ -1,4 +1,4 @@
-package com.zhigaras.login.domain
+package com.zhigaras.login.domain.signup
 
 import android.os.Bundle
 import com.zhigaras.core.Screen

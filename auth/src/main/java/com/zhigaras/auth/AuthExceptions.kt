@@ -1,14 +1,12 @@
 package com.zhigaras.auth
 
-import com.zhigaras.core.DiscussException
-
 class NetworkException : DiscussException() {
     override fun errorId() = R.string.check_internet_connection
 }
 
-abstract class AuthException : Exception()
+abstract class AuthException : DiscussException()
 
-class NoSuchUser : DiscussException() {
+class NoSuchUser : AuthException() {
     override fun errorId() = R.string.no_such_user
 }
 

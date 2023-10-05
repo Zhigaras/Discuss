@@ -33,9 +33,11 @@ android {
 }
 
 dependencies {
-    
-    implementation(project(":core"))
-    
+
+//    implementation(project(":core"))
+    implementation(Dependencies.appcompat)
+
     implementation(platform(Dependencies.firebaseBom))
     implementation(Dependencies.firebaseAuth)
+    implementation(Dependencies.googlePlayAuth)
 }
