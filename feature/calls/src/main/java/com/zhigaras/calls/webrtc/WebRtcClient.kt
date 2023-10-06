@@ -2,10 +2,10 @@ package com.zhigaras.calls.webrtc
 
 import android.content.Context
 import android.util.Log
-import com.google.gson.Gson
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
-import com.zhigaras.calls.domain.model.ConnectionDataType
+import com.zhigaras.calls.domain.model.MyIceCandidate
+import com.zhigaras.calls.domain.model.MySessionDescription
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
@@ -23,7 +23,6 @@ class WebRtcClient(
     private val application: Context,
     private val callsCloudService: CallsCloudService,
     observer: PeerConnection.Observer,
-    private val gson: Gson = Gson()
 ) {
     private val eglBaseContext = EglBase.create().eglBaseContext
     private val peerConnectionFactory = MyPeerConnectionFactory(eglBaseContext)
@@ -91,14 +90,18 @@ class WebRtcClient(
     @Throws(NullPointerException::class)
     fun call(target: String, userId: String) {
         if (peerConnection == null) throw NullPointerException()
-        val data: (SessionDescription) -> ConnectionData = {
-            ConnectionData(target, userId, it.description, ConnectionDataType.OFFER)
-        }
+        
         peerConnection.createOffer(object : SimpleSdpObserver() {
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
                 peerConnection.setLocalDescription(object : SimpleSdpObserver() {
                     override fun onSetSuccess() {
-                        callsCloudService.sendToCloud(data(sessionDescription))
+                        callsCloudService.sendToCloud(
+                            ConnectionData(
+                                target,
+                                userId,
+                                offer = MySessionDescription(sessionDescription)
+                            )
+                        )
                         Log.d("AAA trouble", "offer sent  ")
                     }
                 }, sessionDescription)
@@ -110,15 +113,17 @@ class WebRtcClient(
     @Throws(NullPointerException::class)
     fun answer(target: String, userId: String) {
         if (peerConnection == null) throw NullPointerException()
-        val data: (SessionDescription) -> ConnectionData = {
-            ConnectionData(target, userId, it.description, ConnectionDataType.ANSWER)
-        }
         peerConnection.createAnswer(object : SimpleSdpObserver() {
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
                 peerConnection.setLocalDescription(object : SimpleSdpObserver() {
                     override fun onSetSuccess() {
-                        callsCloudService.sendToCloud(data(sessionDescription))
-                        Log.d("AAA trouble", "answer sent  ")
+                        callsCloudService.sendToCloud(
+                            ConnectionData(
+                                target,
+                                userId,
+                                answer = MySessionDescription(sessionDescription)
+                            )
+                        )
                     }
                 }, sessionDescription)
             }
@@ -136,11 +141,7 @@ class WebRtcClient(
     @Synchronized
     fun sendIceCandidate(iceCandidate: IceCandidate?, target: String, userId: String) {
         addIceCandidate(iceCandidate)
-        callsCloudService.sendToCloud(
-            ConnectionData(
-                target, userId, gson.toJson(iceCandidate), ConnectionDataType.ICE_CANDIDATE
-            )
-        )
+        callsCloudService.sendToCloud(ConnectionData(target, userId, iceCandidate = MyIceCandidate(iceCandidate!!)))
     }
     
     fun switchCamera() {

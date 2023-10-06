@@ -52,9 +52,9 @@ interface CallsController {
                     override fun onConnectionChange(newState: PeerConnectionState) {
                         super.onConnectionChange(newState)
                         peerConnectionCallback.invoke(newState)
-                        if (newState == PeerConnectionState.CONNECTED) {
-                            callsCloudService.removeConnectionData(userId)
-                        }
+//                        if (newState == PeerConnectionState.CONNECTED) {
+//                            callsCloudService.removeConnectionData(userId)
+//                        }
                         // TODO: handle reconnecting while internet connection down
                     }
                     
