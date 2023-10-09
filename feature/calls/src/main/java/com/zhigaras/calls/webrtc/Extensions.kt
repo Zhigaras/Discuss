@@ -20,8 +20,8 @@ suspend inline fun suspendCreateSessionDescription(
         
         override fun onSetSuccess() = Unit
         
-        override fun onCreateFailure(p0: String?) {
-            it.resumeWithException(RuntimeException("Session description creating failed"))
+        override fun onCreateFailure(error: String?) {
+            it.resumeWithException(RuntimeException(error))
         }
         
         override fun onSetFailure(p0: String?) = Unit
@@ -40,8 +40,8 @@ suspend inline fun suspendSdpObserver(
         
         override fun onCreateFailure(p0: String?) = Unit
         
-        override fun onSetFailure(p0: String?) {
-            it.resumeWithException(RuntimeException("Session description setting failed"))
+        override fun onSetFailure(error: String?) {
+            it.resumeWithException(RuntimeException(error))
         }
     })
 }
@@ -54,7 +54,7 @@ suspend fun PeerConnection.addRtcIceCandidate(iceCandidate: IceCandidate) {
             }
             
             override fun onAddFailure(error: String?) {
-                it.resumeWithException(RuntimeException("IceCandidate adding failed"))
+                it.resumeWithException(RuntimeException(error))
             }
         })
     }

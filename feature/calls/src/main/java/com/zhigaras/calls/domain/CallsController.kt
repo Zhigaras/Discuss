@@ -1,6 +1,10 @@
 package com.zhigaras.calls.domain
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.core.content.ContextCompat
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
@@ -9,6 +13,7 @@ import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.core.IntentAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,6 +48,20 @@ interface CallsController {
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private lateinit var target: String
         private lateinit var peerConnectionCallback: PeerConnectionCallback
+        private val connectionReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
+                    val networkState = intent.getStringExtra("state")
+                    val connState = webRtcClient.provideConnectionState()
+                    if (
+                        networkState == "online" &&
+                        (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
+                    ) {
+                        reconnect(target, userId)
+                    }
+                }
+            }
+        }
         private var webRtcClient: WebRtcClient =
             WebRtcClient(application, object : SimplePeerConnectionObserver {
                 override fun onAddStream(mediaStream: MediaStream) {
@@ -53,16 +72,23 @@ interface CallsController {
                         throw Exception("Can`t add stream")
                     }
                 }
-        
+                
                 override fun onConnectionChange(newState: PeerConnectionState) {
                     super.onConnectionChange(newState)
                     peerConnectionCallback.invoke(newState)
-//                        if (newState == PeerConnectionState.CONNECTED) {
-//                            callsCloudService.removeConnectionData(userId)
-//                        }
-                    // TODO: handle reconnecting while internet connection down
+                    if (newState == PeerConnectionState.CONNECTED) {
+                        callsCloudService.removeConnectionData(userId)
+                    }
+                    if (newState == PeerConnectionState.DISCONNECTED) {
+                        ContextCompat.registerReceiver(
+                            application,
+                            connectionReceiver,
+                            IntentFilter(IntentAction.ACTION_NETWORK_STATE),
+                            ContextCompat.RECEIVER_NOT_EXPORTED
+                        )
+                    }
                 }
-        
+                
                 override fun onIceCandidate(iceCandidate: IceCandidate) {
                     super.onIceCandidate(iceCandidate)
                     callsCloudService.sendToCloud(
@@ -86,6 +112,16 @@ interface CallsController {
         
         override fun initConnectionCallback(callback: PeerConnectionCallback) {
             peerConnectionCallback = callback
+        }
+        
+        fun reconnect(opponentId: String, userId: String) {
+            scope.launch {
+                val offer = webRtcClient.reconnect()
+                webRtcClient.setLocalDescription(offer)
+                callsCloudService.sendToCloud(
+                    ConnectionData(opponentId, userId, offer = MySessionDescription(offer))
+                )
+            }
         }
         
         override fun sendOffer(opponentId: String, userId: String) {

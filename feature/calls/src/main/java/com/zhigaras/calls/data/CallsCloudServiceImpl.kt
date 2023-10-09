@@ -31,12 +31,12 @@ class CallsCloudServiceImpl(
     }
     
     override fun removeConnectionData(userId: String) {
-//        cloudService.postMultipleLevels(
-//            ConnectionDataType.EMPTY,
-//            CloudService.USERS_PATH,
-//            userId,
-//            CloudService.CONNECTION_EVENT_PATH,
-//            "type"
-//        )
+        cloudService.postMultipleLevels(
+            null,
+            CloudService.USERS_PATH,
+            userId,
+            CloudService.CONNECTION_EVENT_PATH,
+            "iceCandidate"
+        )
     }
 }

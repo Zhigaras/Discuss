@@ -49,6 +49,8 @@ class WebRtcClient(
         startLocalVideoStreaming(view)
     }
     
+    fun provideConnectionState() = peerConnection?.connectionState()
+    
     private fun initSurfaceViewRenderer(viewRenderer: SurfaceViewRenderer) {
         viewRenderer.setEnableHardwareScaler(true)
         viewRenderer.setMirror(true)
@@ -82,6 +84,16 @@ class WebRtcClient(
     
     fun initRemoteSurfaceView(view: SurfaceViewRenderer) {
         initSurfaceViewRenderer(view)
+    }
+    
+    suspend fun reconnect(): SessionDescription {
+        if (peerConnection == null) throw NullPointerException()
+        return suspendCreateSessionDescription {
+            peerConnection.createOffer(it, MediaConstraints().apply {
+                mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
+                mandatory.add(MediaConstraints.KeyValuePair("IceRestart", "true"))
+            })
+        }
     }
     
     suspend fun createOffer(): SessionDescription {
