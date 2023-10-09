@@ -24,7 +24,7 @@ fun callModule() = module {
         CallCommunication.Post::class
     )
     
-    single { CallsController.Base(androidApplication(), get(), get()) } binds arrayOf(
+    single { CallsController.Base(androidApplication(), get(), get(), get()) } binds arrayOf(
         CallsController::class,
         InitCalls::class
     )

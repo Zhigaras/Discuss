@@ -41,13 +41,13 @@ interface CallsController {
     class Base(
         application: Context,
         private val callsCloudService: CallsCloudService,
+        private var peerConnectionCallback: PeerConnectionCallback,
         provideUserId: ProvideUserId
     ) : CallsController, InitCalls {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private lateinit var target: String
-        private lateinit var peerConnectionCallback: PeerConnectionCallback
         private val connectionReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
@@ -108,10 +108,6 @@ interface CallsController {
         override fun initRemoteView(view: SurfaceViewRenderer) {
             webRtcClient.initRemoteSurfaceView(view)
             remoteView = view
-        }
-        
-        override fun initConnectionCallback(callback: PeerConnectionCallback) {
-            peerConnectionCallback = callback
         }
         
         fun reconnect(opponentId: String, userId: String) {
@@ -184,6 +180,4 @@ interface InitCalls {
     fun initLocalView(view: SurfaceViewRenderer)
     
     fun initRemoteView(view: SurfaceViewRenderer)
-    
-    fun initConnectionCallback(callback: PeerConnectionCallback)
 }
