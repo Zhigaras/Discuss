@@ -22,9 +22,6 @@ class WebRtcClient(
 ) {
     private val eglBaseContext = EglBase.create().eglBaseContext
     private val peerConnectionFactory = MyPeerConnectionFactory(eglBaseContext)
-    private val mediaConstraints = MediaConstraints().also {
-        it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
-    }
     
     init {
         peerConnectionFactory.init(application)
@@ -86,22 +83,12 @@ class WebRtcClient(
         initSurfaceViewRenderer(view)
     }
     
-    suspend fun reconnect(): SessionDescription {
-        if (peerConnection == null) throw NullPointerException()
-        return suspendCreateSessionDescription {
-            peerConnection.createOffer(it, MediaConstraints().apply {
-                mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
-                mandatory.add(MediaConstraints.KeyValuePair("IceRestart", "true"))
-            })
-        }
-    }
-    
-    suspend fun createOffer(): SessionDescription {
+    suspend fun createOffer(mediaConstraints: MediaConstraints): SessionDescription {
         if (peerConnection == null) throw NullPointerException()
         return suspendCreateSessionDescription { peerConnection.createOffer(it, mediaConstraints) }
     }
     
-    suspend fun createAnswer(): SessionDescription {
+    suspend fun createAnswer(mediaConstraints: MediaConstraints): SessionDescription {
         if (peerConnection == null) throw NullPointerException()
         return suspendCreateSessionDescription { peerConnection.createAnswer(it, mediaConstraints) }
     }
