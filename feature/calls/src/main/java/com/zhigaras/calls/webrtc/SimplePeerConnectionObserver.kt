@@ -7,7 +7,7 @@ import org.webrtc.PeerConnection
 
 interface SimplePeerConnectionObserver : PeerConnection.Observer {
     
-    override fun onSignalingChange(p0: PeerConnection.SignalingState?) {}
+    override fun onSignalingChange(p0: PeerConnection.SignalingState) {}
     
     override fun onIceConnectionChange(newState: PeerConnection.IceConnectionState?) {}
     

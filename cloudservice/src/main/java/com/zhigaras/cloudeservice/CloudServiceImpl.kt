@@ -1,6 +1,5 @@
 package com.zhigaras.cloudeservice
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -27,7 +26,6 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         clazz: Class<T>
     ): T {
         return reference.child(path).child(child).get().addOnSuccessListener {
-            Log.d("AAA data snapshot", it.toString())
         }.addOnCanceledListener {
             throw IllegalStateException("problem with data") // TODO: replace it
         }.await().getValue(clazz)!!

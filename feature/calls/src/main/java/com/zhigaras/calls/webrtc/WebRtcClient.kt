@@ -1,11 +1,8 @@
 package com.zhigaras.calls.webrtc
 
 import android.content.Context
-import android.util.Log
-import com.google.gson.Gson
-import com.zhigaras.calls.domain.CallsCloudService
-import com.zhigaras.calls.domain.model.ConnectionData
-import com.zhigaras.calls.domain.model.ConnectionDataType
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
@@ -21,15 +18,10 @@ import org.webrtc.VideoTrack
 
 class WebRtcClient(
     private val application: Context,
-    private val callsCloudService: CallsCloudService,
     observer: PeerConnection.Observer,
-    private val gson: Gson = Gson()
 ) {
     private val eglBaseContext = EglBase.create().eglBaseContext
     private val peerConnectionFactory = MyPeerConnectionFactory(eglBaseContext)
-    private val mediaConstraints = MediaConstraints().also {
-        it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
-    }
     
     init {
         peerConnectionFactory.init(application)
@@ -44,6 +36,8 @@ class WebRtcClient(
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
     private val videoCapturer = getVideoCapturer()
+    private val pendingIceMutex = Mutex()
+    private val pendingIceCandidates = mutableListOf<IceCandidate>()
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
     
@@ -51,6 +45,8 @@ class WebRtcClient(
         initSurfaceViewRenderer(view)
         startLocalVideoStreaming(view)
     }
+    
+    fun provideConnectionState() = peerConnection?.connectionState()
     
     private fun initSurfaceViewRenderer(viewRenderer: SurfaceViewRenderer) {
         viewRenderer.setEnableHardwareScaler(true)
@@ -87,60 +83,43 @@ class WebRtcClient(
         initSurfaceViewRenderer(view)
     }
     
-    @Synchronized
-    @Throws(NullPointerException::class)
-    fun call(target: String, userId: String) {
+    suspend fun createOffer(mediaConstraints: MediaConstraints): SessionDescription {
         if (peerConnection == null) throw NullPointerException()
-        val data: (SessionDescription) -> ConnectionData = {
-            ConnectionData(target, userId, it.description, ConnectionDataType.OFFER)
-        }
-        peerConnection.createOffer(object : SimpleSdpObserver() {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                peerConnection.setLocalDescription(object : SimpleSdpObserver() {
-                    override fun onSetSuccess() {
-                        callsCloudService.sendToCloud(data(sessionDescription))
-                        Log.d("AAA trouble", "offer sent  ")
-                    }
-                }, sessionDescription)
-            }
-        }, mediaConstraints)
+        return suspendCreateSessionDescription { peerConnection.createOffer(it, mediaConstraints) }
     }
     
-    @Synchronized
-    @Throws(NullPointerException::class)
-    fun answer(target: String, userId: String) {
+    suspend fun createAnswer(mediaConstraints: MediaConstraints): SessionDescription {
         if (peerConnection == null) throw NullPointerException()
-        val data: (SessionDescription) -> ConnectionData = {
-            ConnectionData(target, userId, it.description, ConnectionDataType.ANSWER)
-        }
-        peerConnection.createAnswer(object : SimpleSdpObserver() {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                peerConnection.setLocalDescription(object : SimpleSdpObserver() {
-                    override fun onSetSuccess() {
-                        callsCloudService.sendToCloud(data(sessionDescription))
-                        Log.d("AAA trouble", "answer sent  ")
-                    }
-                }, sessionDescription)
+        return suspendCreateSessionDescription { peerConnection.createAnswer(it, mediaConstraints) }
+    }
+    
+    suspend fun setRemoteDescription(sessionDescription: SessionDescription) {
+        if (peerConnection == null) throw NullPointerException()
+        return suspendSdpObserver {
+            peerConnection.setRemoteDescription(it, sessionDescription)
+        }.also {
+            pendingIceMutex.withLock {
+                pendingIceCandidates.forEach { iceCandidate ->
+                    peerConnection.addRtcIceCandidate(iceCandidate)
+                }
+                pendingIceCandidates.clear()
             }
-        }, mediaConstraints)
+        }
     }
     
-    fun onRemoteSessionReceived(sessionDescription: SessionDescription?) {
-        peerConnection!!.setRemoteDescription(SimpleSdpObserver(), sessionDescription)
+    suspend fun setLocalDescription(sessionDescription: SessionDescription) {
+        if (peerConnection == null) throw NullPointerException()
+        return suspendSdpObserver { peerConnection.setLocalDescription(it, sessionDescription) }
     }
     
-    fun addIceCandidate(iceCandidate: IceCandidate?) {
-        peerConnection!!.addIceCandidate(iceCandidate)
-    }
-    
-    @Synchronized
-    fun sendIceCandidate(iceCandidate: IceCandidate?, target: String, userId: String) {
-        addIceCandidate(iceCandidate)
-        callsCloudService.sendToCloud(
-            ConnectionData(
-                target, userId, gson.toJson(iceCandidate), ConnectionDataType.ICE_CANDIDATE
-            )
-        )
+    suspend fun addIceCandidate(iceCandidate: IceCandidate) {
+        if (peerConnection?.remoteDescription == null) {
+            pendingIceMutex.withLock {
+                pendingIceCandidates.add(iceCandidate)
+            }
+            return
+        }
+        peerConnection.addRtcIceCandidate(iceCandidate)
     }
     
     fun switchCamera() {

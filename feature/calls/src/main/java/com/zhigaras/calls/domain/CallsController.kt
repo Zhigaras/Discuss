@@ -1,68 +1,105 @@
 package com.zhigaras.calls.domain
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.core.content.ContextCompat
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.model.ConnectionData
+import com.zhigaras.calls.domain.model.MyIceCandidate
+import com.zhigaras.calls.domain.model.MySessionDescription
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.core.IntentAction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.webrtc.IceCandidate
+import org.webrtc.MediaConstraints
 import org.webrtc.MediaStream
 import org.webrtc.PeerConnection.PeerConnectionState
+import org.webrtc.SessionDescription
 import org.webrtc.SurfaceViewRenderer
 
 interface CallsController {
     
-    fun startNegotiation(opponentId: String, userId: String)
+    fun sendOffer(opponentId: String, userId: String)
+    
+    fun sendAnswer(offer: SessionDescription, opponentId: String, userId: String)
+    
+    fun handleAnswer(answer: SessionDescription)
     
     fun subscribeToConnectionEvents(userId: String)
     
-    fun initLocalView(view: SurfaceViewRenderer)
-    
-    fun initRemoteView(view: SurfaceViewRenderer)
-    
-    fun initConnectionCallback(callback: PeerConnectionCallback)
-    
     fun setOpponentId(opponentId: String)
+    
+    fun handleIceCandidate(iceCandidate: MyIceCandidate)
     
     class Base(
         application: Context,
         private val callsCloudService: CallsCloudService,
+        private var peerConnectionCallback: PeerConnectionCallback,
         provideUserId: ProvideUserId
-    ) : CallsController {
+    ) : CallsController, InitCalls {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
-        private lateinit var webRtcClient: WebRtcClient
+        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private lateinit var target: String
-        private lateinit var peerConnectionCallback: PeerConnectionCallback
+        
+        private var webRtcClient: WebRtcClient =
+            WebRtcClient(application, object : SimplePeerConnectionObserver {
+                override fun onAddStream(mediaStream: MediaStream) {
+                    super.onAddStream(mediaStream)
+                    try {
+                        mediaStream.videoTracks[0].addSink(remoteView)
+                    } catch (e: Exception) {
+                        throw Exception("Can`t add stream")
+                    }
+                }
+                
+                override fun onConnectionChange(newState: PeerConnectionState) {
+                    super.onConnectionChange(newState)
+                    peerConnectionCallback.invoke(newState)
+                    if (newState == PeerConnectionState.CONNECTED) {
+                        callsCloudService.removeConnectionData(userId)
+                    }
+                }
+                
+                override fun onIceCandidate(iceCandidate: IceCandidate) {
+                    super.onIceCandidate(iceCandidate)
+                    callsCloudService.sendToCloud(
+                        ConnectionData(
+                            target, userId, iceCandidate = MyIceCandidate(iceCandidate)
+                        )
+                    )
+                }
+            })
         
         init {
-            webRtcClient =
-                WebRtcClient(application, callsCloudService, object : SimplePeerConnectionObserver {
-                    override fun onAddStream(mediaStream: MediaStream) {
-                        super.onAddStream(mediaStream)
-                        try {
-                            mediaStream.videoTracks[0].addSink(remoteView)
-                        } catch (e: Exception) {
-                            throw Exception("Can`t add stream")
+            val connectionReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
+                        val networkState = intent.getStringExtra("state")
+                        val connState = webRtcClient.provideConnectionState()
+                        if (
+                            networkState == "online" &&
+                            (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
+                        ) {
+                            reconnect(target, userId)
                         }
                     }
-                    
-                    override fun onConnectionChange(newState: PeerConnectionState) {
-                        super.onConnectionChange(newState)
-                        peerConnectionCallback.invoke(newState)
-                        if (newState == PeerConnectionState.CONNECTED) {
-                            callsCloudService.removeConnectionData(userId)
-                        }
-                        // TODO: handle reconnecting while internet connection down
-                    }
-                    
-                    override fun onIceCandidate(iceCandidate: IceCandidate) {
-                        super.onIceCandidate(iceCandidate)
-                        webRtcClient.sendIceCandidate(iceCandidate, target, userId)
-                    }
-                })
+                }
+            }
+            ContextCompat.registerReceiver(
+                application,
+                connectionReceiver,
+                IntentFilter(IntentAction.ACTION_NETWORK_STATE),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
@@ -74,25 +111,62 @@ interface CallsController {
             remoteView = view
         }
         
-        override fun initConnectionCallback(callback: PeerConnectionCallback) {
-            peerConnectionCallback = callback
+        fun reconnect(opponentId: String, userId: String) {
+            scope.launch {
+                val mediaConstraints = MediaConstraints().apply {
+                    mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
+                    mandatory.add(MediaConstraints.KeyValuePair("IceRestart", "true"))
+                }
+                val offer = webRtcClient.createOffer(mediaConstraints)
+                webRtcClient.setLocalDescription(offer)
+                callsCloudService.sendToCloud(
+                    ConnectionData(opponentId, userId, offer = MySessionDescription(offer))
+                )
+            }
         }
         
-        fun switchCamera() {
-            webRtcClient.switchCamera()
+        override fun sendOffer(opponentId: String, userId: String) {
+            scope.launch {
+                val mediaConstraints = MediaConstraints().also {
+                    it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
+                }
+                subscribeToConnectionEvents(userId)
+                val offer = webRtcClient.createOffer(mediaConstraints)
+                webRtcClient.setLocalDescription(offer)
+                callsCloudService.sendToCloud(
+                    ConnectionData(opponentId, userId, offer = MySessionDescription(offer))
+                )
+            }
         }
         
-        override fun startNegotiation(opponentId: String, userId: String) {
-            subscribeToConnectionEvents(userId)
-            webRtcClient.call(opponentId, userId)
+        override fun sendAnswer(offer: SessionDescription, opponentId: String, userId: String) {
+            scope.launch {
+                val mediaConstraints = MediaConstraints().also {
+                    it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
+                }
+                webRtcClient.setRemoteDescription(offer)
+                val answer = webRtcClient.createAnswer(mediaConstraints)
+                webRtcClient.setLocalDescription(answer)
+                callsCloudService.sendToCloud(
+                    ConnectionData(opponentId, userId, answer = MySessionDescription(answer))
+                )
+            }
+        }
+        
+        override fun handleIceCandidate(iceCandidate: MyIceCandidate) {
+            scope.launch {
+                webRtcClient.addIceCandidate(iceCandidate)
+            }
+        }
+        
+        override fun handleAnswer(answer: SessionDescription) {
+            scope.launch {
+                webRtcClient.setRemoteDescription(answer)
+            }
         }
         
         override fun setOpponentId(opponentId: String) {
             target = opponentId
-        }
-        
-        fun endCall() {
-            webRtcClient.closeConnection()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
@@ -101,7 +175,7 @@ interface CallsController {
                 object : CloudService.Callback<ConnectionData> {
                     override fun provide(data: ConnectionData) {
                         target = data.sender
-                        data.handle(webRtcClient)
+                        data.handle(this@Base)
                     }
                     
                     override fun error(message: String) {
@@ -110,4 +184,11 @@ interface CallsController {
                 })
         }
     }
+}
+
+interface InitCalls {
+    
+    fun initLocalView(view: SurfaceViewRenderer)
+    
+    fun initRemoteView(view: SurfaceViewRenderer)
 }

@@ -2,7 +2,6 @@ package com.zhigaras.calls.data
 
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
-import com.zhigaras.calls.domain.model.ConnectionDataType
 import com.zhigaras.cloudeservice.CloudService
 
 class CallsCloudServiceImpl(
@@ -33,11 +32,11 @@ class CallsCloudServiceImpl(
     
     override fun removeConnectionData(userId: String) {
         cloudService.postMultipleLevels(
-            ConnectionDataType.EMPTY,
+            null,
             CloudService.USERS_PATH,
             userId,
             CloudService.CONNECTION_EVENT_PATH,
-            "type"
+            "iceCandidate"
         )
     }
 }
