@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.zhigaras.core.IntentAction
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,12 +22,10 @@ class MainActivity : AppCompatActivity() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 sendBroadcast(intent.putExtra("state", "online"))
-                Log.d("QQQQQ activity", "available")
             }
 
             override fun onLost(network: Network) {
                 sendBroadcast(intent.putExtra("state", "offline"))
-                Log.d("QQQQQ activity", "lost")
             }
         }
         
