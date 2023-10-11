@@ -43,8 +43,7 @@ dependencies {
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.lificycle)
     implementation(Dependencies.appcompat)
+    implementation(Dependencies.recyclerView)
     
     implementation(Dependencies.koinAndroid)
-    
-    implementation("com.google.code.gson:gson:2.10.1") // todo remove??
 }
