@@ -3,7 +3,6 @@ package com.zhigaras.calls.ui
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -48,11 +47,9 @@ class MessagesLayout @JvmOverloads constructor(
         val adapter = MessagesAdapter()
         messagesRv.adapter = adapter
         viewModel.observeMessages(findViewTreeLifecycleOwner() ?: return) {
-            Log.d("QQQ message received", it)
-//            adapter.setData(it)
+            adapter.setData(it)
         }
         sendButton.setOnClickListener {
-            Log.d("QQQ message sent", messageInput.text.toString())
             viewModel.sendMessage(messageInput.text.toString())
         }
     }
