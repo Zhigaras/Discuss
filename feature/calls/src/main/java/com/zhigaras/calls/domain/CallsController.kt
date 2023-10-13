@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.zhigaras.auth.ProvideUserId
+import com.zhigaras.calls.datachannel.model.DataChannelCommunication
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
 import com.zhigaras.calls.domain.model.MySessionDescription
@@ -18,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
 import org.webrtc.MediaStream
@@ -42,14 +46,14 @@ interface CallsController {
     class Base(
         application: Context,
         private val callsCloudService: CallsCloudService,
-        private var peerConnectionCallback: PeerConnectionCallback,
+        private val peerConnectionCallback: PeerConnectionCallback,
+        private val communication: DataChannelCommunication.Mutable,
         provideUserId: ProvideUserId
-    ) : CallsController, InitCalls {
+    ) : CallsController, InitCalls, Messaging {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private lateinit var target: String
-        
         private var webRtcClient: WebRtcClient =
             WebRtcClient(application, object : SimplePeerConnectionObserver {
                 override fun onAddStream(mediaStream: MediaStream) {
@@ -76,6 +80,20 @@ interface CallsController {
                             target, userId, iceCandidate = MyIceCandidate(iceCandidate)
                         )
                     )
+                }
+                
+                override fun onDataChannel(dataChannel: DataChannel) {
+                    dataChannel.registerObserver(object : DataChannel.Observer {
+                        override fun onBufferedAmountChange(p0: Long) = Unit
+                        override fun onStateChange() = Unit
+                        override fun onMessage(buffer: DataChannel.Buffer) {
+                            val data = buffer.data
+                            val bytes = ByteArray(data.remaining())
+                            data[bytes]
+                            val text = String(bytes)
+                            communication.postBackground(text)
+                        }
+                    })
                 }
             })
         
@@ -183,6 +201,14 @@ interface CallsController {
                     }
                 })
         }
+        
+        override fun sendMessage(text: String) {
+            webRtcClient.sendMessage(text)
+        }
+        
+        override fun observe(owner: LifecycleOwner, observer: Observer<String>) {
+            communication.observe(owner, observer)
+        }
     }
 }
 
@@ -191,4 +217,10 @@ interface InitCalls {
     fun initLocalView(view: SurfaceViewRenderer)
     
     fun initRemoteView(view: SurfaceViewRenderer)
+}
+
+interface Messaging : DataChannelCommunication.Observe {
+    
+    fun sendMessage(text: String)
+    
 }

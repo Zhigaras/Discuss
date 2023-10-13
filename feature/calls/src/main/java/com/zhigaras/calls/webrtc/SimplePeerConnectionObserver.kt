@@ -23,7 +23,7 @@ interface SimplePeerConnectionObserver : PeerConnection.Observer {
     
     override fun onRemoveStream(p0: MediaStream?) {}
     
-    override fun onDataChannel(p0: DataChannel?) {}
+    override fun onDataChannel(dataChannel: DataChannel) {}
     
     override fun onRenegotiationNeeded() {}
 }
