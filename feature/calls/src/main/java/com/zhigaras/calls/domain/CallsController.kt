@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.auth.ProvideUserId
-import com.zhigaras.calls.datachannel.model.DataChannelCommunication
+import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
 import com.zhigaras.calls.domain.model.MySessionDescription
@@ -17,6 +17,7 @@ import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.core.IntentAction
+import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -217,10 +218,4 @@ interface InitCalls {
     fun initLocalView(view: SurfaceViewRenderer)
     
     fun initRemoteView(view: SurfaceViewRenderer)
-}
-
-interface Messaging : DataChannelCommunication.Observe {
-    
-    fun sendMessage(text: String)
-    
 }

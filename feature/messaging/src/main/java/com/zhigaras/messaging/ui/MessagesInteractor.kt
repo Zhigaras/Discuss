@@ -1,10 +1,10 @@
-package com.zhigaras.calls.ui
+package com.zhigaras.messaging.ui
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.zhigaras.calls.datachannel.model.Message
-import com.zhigaras.calls.datachannel.model.MessagesCommunication
-import com.zhigaras.calls.domain.Messaging
+import com.zhigaras.messaging.domain.MessagesCommunication
+import com.zhigaras.messaging.domain.Messaging
+import com.zhigaras.messaging.domain.model.Message
 
 interface MessagesInteractor : MessagesCommunication.Observe {
     

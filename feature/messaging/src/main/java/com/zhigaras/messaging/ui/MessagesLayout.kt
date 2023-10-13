@@ -1,4 +1,4 @@
-package com.zhigaras.calls.ui
+package com.zhigaras.messaging.ui
 
 import android.animation.LayoutTransition
 import android.content.Context
@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.zhigaras.webrtc.R
+import com.zhigaras.messaging.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject

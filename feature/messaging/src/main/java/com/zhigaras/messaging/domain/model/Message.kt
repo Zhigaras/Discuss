@@ -1,4 +1,4 @@
-package com.zhigaras.calls.datachannel.model
+package com.zhigaras.messaging.domain.model
 
 abstract class Message {
     abstract val text: String

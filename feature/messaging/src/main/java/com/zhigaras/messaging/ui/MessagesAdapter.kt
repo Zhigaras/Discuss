@@ -1,11 +1,11 @@
-package com.zhigaras.calls.ui
+package com.zhigaras.messaging.ui
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zhigaras.calls.datachannel.model.Message
-import com.zhigaras.webrtc.databinding.MessageItemBinding
+import com.zhigaras.messaging.databinding.MessageItemBinding
+import com.zhigaras.messaging.domain.model.Message
 
 class MessagesAdapter : RecyclerView.Adapter<MessagesViewHolder>() {
     

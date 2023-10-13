@@ -1,6 +1,7 @@
-package com.zhigaras.calls.datachannel.model
+package com.zhigaras.messaging.domain
 
 import com.zhigaras.core.Communication
+import com.zhigaras.messaging.domain.model.Message
 
 interface MessagesCommunication {
     

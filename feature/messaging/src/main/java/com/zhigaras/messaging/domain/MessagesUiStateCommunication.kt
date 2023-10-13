@@ -1,7 +1,7 @@
-package com.zhigaras.calls.domain
+package com.zhigaras.messaging.domain
 
-import com.zhigaras.calls.ui.MessagesUiState
 import com.zhigaras.core.Communication
+import com.zhigaras.messaging.ui.MessagesUiState
 
 interface MessagesUiStateCommunication {
     

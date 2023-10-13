@@ -1,7 +1,7 @@
-package com.zhigaras.calls.ui
+package com.zhigaras.messaging.ui
 
 import com.zhigaras.core.UiState
-import com.zhigaras.webrtc.databinding.MessageLayoutBinding
+import com.zhigaras.messaging.databinding.MessageLayoutBinding
 
 interface MessagesUiState : UiState<MessageLayoutBinding> {
 

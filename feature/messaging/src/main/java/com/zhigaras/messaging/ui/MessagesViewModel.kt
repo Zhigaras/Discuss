@@ -1,12 +1,12 @@
-package com.zhigaras.calls.ui
+package com.zhigaras.messaging.ui
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.zhigaras.calls.datachannel.model.Message
-import com.zhigaras.calls.domain.MessagesUiStateCommunication
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.webrtc.databinding.MessageLayoutBinding
+import com.zhigaras.messaging.databinding.MessageLayoutBinding
+import com.zhigaras.messaging.domain.MessagesUiStateCommunication
+import com.zhigaras.messaging.domain.model.Message
 
 class MessagesViewModel(
     private val messagesInteractor: MessagesInteractor,

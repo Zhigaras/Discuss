@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":auth"))
     implementation(project(":cloudservice"))
+    implementation(project(":feature:messaging"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.lificycle)

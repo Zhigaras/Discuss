@@ -30,11 +30,16 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
+    buildFeatures { viewBinding = true }
 }
 
 dependencies {
+    implementation(project(":core"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)
     implementation(Dependencies.material)
+    implementation(Dependencies.lificycle)
+    
+    implementation(Dependencies.koinAndroid)
 }
