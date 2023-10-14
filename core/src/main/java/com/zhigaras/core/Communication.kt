@@ -18,7 +18,14 @@ interface Communication {
         fun observe(owner: LifecycleOwner, observer: Observer<T>)
     }
     
-    interface Mutable<T : Any> : Post<T>, Observe<T>
+    interface ObserveForever<T : Any> {
+        
+        fun observeForever(observer: Observer<T>)
+        
+        fun removeObserver(observer: Observer<T>)
+    }
+    
+    interface Mutable<T : Any> : Post<T>, Observe<T>, ObserveForever<T>
     
     abstract class Abstract<T : Any>(private val liveData: MutableLiveData<T> = MutableLiveData()) :
         Mutable<T> {
@@ -33,6 +40,14 @@ interface Communication {
         
         override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
             liveData.observe(owner, observer)
+        }
+        
+        override fun observeForever(observer: Observer<T>) {
+            liveData.observeForever(observer)
+        }
+        
+        override fun removeObserver(observer: Observer<T>) {
+            liveData.removeObserver(observer)
         }
     }
     

@@ -1,7 +1,7 @@
 package com.zhigaras.calls.webrtc
 
-import android.content.Context
 import android.util.Log
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.webrtc.AudioTrack
@@ -12,7 +12,6 @@ import org.webrtc.EglBase
 import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
 import org.webrtc.PeerConnection
-import org.webrtc.PeerConnection.IceServer
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
@@ -20,22 +19,16 @@ import org.webrtc.VideoTrack
 import java.nio.ByteBuffer
 
 class WebRtcClient(
-    application: Context,
-    observer: PeerConnection.Observer,
-    private val eglBaseContext: EglBase.Context = EglBase.create().eglBaseContext,
-    private val peerConnectionFactory: MyPeerConnectionFactory =
-        MyPeerConnectionFactory(application, eglBaseContext),
-    private val enumerator: Camera2Enumerator = Camera2Enumerator(application),
-    private val iceServers: ArrayList<IceServer> = arrayListOf(
-        IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
-            .setUsername("83eebabf8b4cce9d5dbcb649")
-            .setPassword("2D7JvfkOQtBdYW3R").createIceServer()
-    ),
+    iceServers: IceServersList,
+    private val observer: MyPeerConnectionObserver,
+    private val eglBaseContext: EglBase.Context,
+    private val peerConnectionFactory: MyPeerConnectionFactory,
+    private val enumerator: Camera2Enumerator,
+): PeerConnectionCommunication.ObserveForever {
     private val peerConnection: PeerConnection? = peerConnectionFactory.createPeerConnection(
-        iceServers,
-        observer
+        iceServers.provide(),
+        observer.provideObserver()
     )
-) {
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
     private val videoCapturer = getVideoCapturer()
@@ -44,6 +37,14 @@ class WebRtcClient(
     private val dataChannel = peerConnection!!.createDataChannel("messaging", DataChannel.Init()) // TODO: fix no null assertion
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
+    
+    override fun observeForever(observer: Observer<PeerConnectionState>) {
+        this.observer.observeForever(observer)
+    }
+    
+    override fun removeObserver(observer: Observer<PeerConnectionState>) {
+        this.observer.removeObserver(observer)
+    }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
         initSurfaceViewRenderer(view)

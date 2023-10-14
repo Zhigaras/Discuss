@@ -8,24 +8,20 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.auth.ProvideUserId
-import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
 import com.zhigaras.calls.domain.model.MySessionDescription
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
-import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.core.IntentAction
+import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.webrtc.DataChannel
-import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
-import org.webrtc.MediaStream
 import org.webrtc.PeerConnection.PeerConnectionState
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceViewRenderer
@@ -46,59 +42,28 @@ interface CallsController {
     
     class Base(
         application: Context,
+        provideUserId: ProvideUserId,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
         private val communication: DataChannelCommunication.Mutable,
-        provideUserId: ProvideUserId
+        private val webRtcClient: WebRtcClient
     ) : CallsController, InitCalls, Messaging {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-        private lateinit var target: String
-        private var webRtcClient: WebRtcClient =
-            WebRtcClient(application, object : SimplePeerConnectionObserver {
-                override fun onAddStream(mediaStream: MediaStream) {
-                    super.onAddStream(mediaStream)
-                    try {
-                        mediaStream.videoTracks[0].addSink(remoteView)
-                    } catch (e: Exception) {
-                        throw Exception("Can`t add stream")
-                    }
-                }
-                
-                override fun onConnectionChange(newState: PeerConnectionState) {
-                    super.onConnectionChange(newState)
-                    peerConnectionCallback.invoke(newState)
-                    if (newState == PeerConnectionState.CONNECTED) {
-                        callsCloudService.removeConnectionData(userId)
-                    }
-                }
-                
-                override fun onIceCandidate(iceCandidate: IceCandidate) {
-                    super.onIceCandidate(iceCandidate)
-                    callsCloudService.sendToCloud(
-                        ConnectionData(
-                            target, userId, iceCandidate = MyIceCandidate(iceCandidate)
-                        )
-                    )
-                }
-                
-                override fun onDataChannel(dataChannel: DataChannel) {
-                    dataChannel.registerObserver(object : DataChannel.Observer {
-                        override fun onBufferedAmountChange(p0: Long) = Unit
-                        override fun onStateChange() = Unit
-                        override fun onMessage(buffer: DataChannel.Buffer) {
-                            val data = buffer.data
-                            val bytes = ByteArray(data.remaining())
-                            data[bytes]
-                            val text = String(bytes)
-                            communication.postBackground(text)
-                        }
-                    })
-                }
-            })
+        private var target: String? = null
         
         init {
+            webRtcClient.observeForever {
+                it.handle(
+                    remoteView,
+                    peerConnectionCallback,
+                    communication,
+                    callsCloudService,
+                    target,
+                    userId
+                )
+            }
             val connectionReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
@@ -108,7 +73,7 @@ interface CallsController {
                             networkState == "online" &&
                             (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
                         ) {
-                            reconnect(target, userId)
+                            reconnect(target!!, userId)
                         }
                     }
                 }
