@@ -46,8 +46,8 @@ class MessagesLayout @JvmOverloads constructor(
         }
         val adapter = MessagesAdapter()
         messagesRv.adapter = adapter
-        viewModel.observeMessages(findViewTreeLifecycleOwner() ?: return) {
-            adapter.setData(it)
+        viewModel.observe(findViewTreeLifecycleOwner() ?: return) {
+            it.handle(adapter)
         }
         sendButton.setOnClickListener {
             viewModel.sendMessage(messageInput.text.toString())

@@ -1,7 +1,6 @@
 package com.zhigaras.messaging.di
 
 import com.zhigaras.messaging.domain.DataChannelCommunication
-import com.zhigaras.messaging.domain.MessagesCommunication
 import com.zhigaras.messaging.domain.MessagesUiStateCommunication
 import com.zhigaras.messaging.ui.MessagesInteractor
 import com.zhigaras.messaging.ui.MessagesViewModel
@@ -26,11 +25,5 @@ fun messagesModule() = module {
         DataChannelCommunication.Mutable::class
     )
     
-    factory { MessagesCommunication.Base() } binds arrayOf(
-        MessagesCommunication.Observe::class,
-        MessagesCommunication.Post::class,
-        MessagesCommunication.Mutable::class
-    )
-    
-    factory { MessagesInteractor.Base(get(), get()) } bind MessagesInteractor::class
+    factory { MessagesInteractor.Base(get()) } bind MessagesInteractor::class
 }

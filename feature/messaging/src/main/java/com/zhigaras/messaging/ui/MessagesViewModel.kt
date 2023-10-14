@@ -6,7 +6,6 @@ import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.messaging.databinding.MessageLayoutBinding
 import com.zhigaras.messaging.domain.MessagesUiStateCommunication
-import com.zhigaras.messaging.domain.model.Message
 
 class MessagesViewModel(
     private val messagesInteractor: MessagesInteractor,
@@ -15,10 +14,11 @@ class MessagesViewModel(
 ) : BaseViewModel<MessageLayoutBinding, MessagesUiState>(dispatchers) {
     
     fun sendMessage(text: String) {
-        messagesInteractor.sendMessage(text)
+        messagesInteractor.sendMessage(text).let { communication.postBackground(it) }
     }
     
-    fun observeMessages(owner: LifecycleOwner, observer: Observer<List<Message>>) {
-        messagesInteractor.observe(owner, observer)
+    override fun observe(owner: LifecycleOwner, observer: Observer<MessagesUiState>) {
+        messagesInteractor.observe(owner, communication)
+        super.observe(owner, observer)
     }
 }

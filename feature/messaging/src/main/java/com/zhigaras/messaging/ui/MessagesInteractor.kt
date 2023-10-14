@@ -1,34 +1,36 @@
 package com.zhigaras.messaging.ui
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
-import com.zhigaras.messaging.domain.MessagesCommunication
+import com.zhigaras.messaging.domain.MessagesUiStateCommunication
 import com.zhigaras.messaging.domain.Messaging
 import com.zhigaras.messaging.domain.model.Message
 
-interface MessagesInteractor : MessagesCommunication.Observe {
+interface MessagesInteractor {
     
-    fun sendMessage(text: String)
+    fun sendMessage(text: String): MessagesUiState
+    
+    fun observe(owner: LifecycleOwner, communication: MessagesUiStateCommunication.Post)
     
     class Base(
         private val messaging: Messaging,
-        private val communication: MessagesCommunication.Mutable
     ) : MessagesInteractor {
         
         private val messages = mutableListOf<Message>()
         
-        override fun sendMessage(text: String) {
+        override fun sendMessage(text: String): MessagesUiState {
             messaging.sendMessage(text)
             messages.add(Message.Outgoing(text))
-            communication.postBackground(messages)
+            return MessagesUiState.MessageSent(messages)
         }
         
-        override fun observe(owner: LifecycleOwner, observer: Observer<List<Message>>) {
+        override fun observe(
+            owner: LifecycleOwner,
+            communication: MessagesUiStateCommunication.Post
+        ) {
             messaging.observe(owner) {
                 messages.add(Message.Incoming(it))
-                communication.postBackground(messages)
+                communication.postBackground(MessagesUiState.MessageReceived(messages))
             }
-            communication.observe(owner, observer)
         }
         
         // TODO: unregister observer
