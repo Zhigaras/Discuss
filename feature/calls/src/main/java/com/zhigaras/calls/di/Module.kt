@@ -23,6 +23,7 @@ import org.koin.dsl.module
 import org.webrtc.Camera2Enumerator
 import org.webrtc.EglBase
 import org.webrtc.PeerConnection
+import org.webrtc.PeerConnectionFactory
 
 fun callModule() = listOf(messagesModule(), module {
     
@@ -35,9 +36,7 @@ fun callModule() = listOf(messagesModule(), module {
     )
     
     single {
-        CallsController.Base(
-            androidApplication(), get(), get(), get(), get(), get()
-        )
+        CallsController.Base(androidApplication(), get(), get(), get(), get(), get())
     } binds arrayOf(
         CallsController::class,
         InitCalls::class,
@@ -59,7 +58,7 @@ fun webRtcModule() = module {
         PeerConnectionCommunication.Post::class
     )
     
-    factory { MyPeerConnectionObserver(get()) }
+    single { MyPeerConnectionObserver(get()) }
     
     factory {
         IceServersList(
@@ -71,11 +70,18 @@ fun webRtcModule() = module {
         )
     } bind IceServersList::class
     
+    factory {
+        PeerConnectionFactory.Options().apply {
+            disableEncryption = false
+            disableNetworkMonitor = false
+        }
+    }
+    
     factory { Camera2Enumerator(androidApplication()) }
     
-    factory { EglBase.create().eglBaseContext } bind EglBase.Context::class
+    single { EglBase.create().eglBaseContext } bind EglBase.Context::class
     
-    factory { MyPeerConnectionFactory(androidApplication(), get()) }
+    factory { MyPeerConnectionFactory(androidApplication(), get(), get()) }
     
     factory { WebRtcClient(get(), get(), get(), get(), get()) }
     

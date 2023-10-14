@@ -17,11 +17,7 @@ import org.webrtc.VideoTrack
 class MyPeerConnectionFactory(
     appContext: Context,
     eglBaseContext: EglBase.Context,
-    options: PeerConnectionFactory.Options = PeerConnectionFactory.Options()
-        .apply {
-            disableEncryption = false
-            disableNetworkMonitor = false
-        }
+    options: PeerConnectionFactory.Options
 ) {
     private val localTrackId = "local_track"
     private val localStreamId = "local_stream"
