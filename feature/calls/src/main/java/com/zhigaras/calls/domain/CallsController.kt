@@ -5,22 +5,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
 import com.zhigaras.calls.domain.model.MySessionDescription
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
-import com.zhigaras.calls.webrtc.SimplePeerConnectionObserver
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudeservice.CloudService
 import com.zhigaras.core.IntentAction
+import com.zhigaras.messaging.domain.DataChannelCommunication
+import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
-import org.webrtc.MediaStream
 import org.webrtc.PeerConnection.PeerConnectionState
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceViewRenderer
@@ -41,45 +42,22 @@ interface CallsController {
     
     class Base(
         application: Context,
+        provideUserId: ProvideUserId,
         private val callsCloudService: CallsCloudService,
-        private var peerConnectionCallback: PeerConnectionCallback,
-        provideUserId: ProvideUserId
-    ) : CallsController, InitCalls {
+        private val peerConnectionCallback: PeerConnectionCallback,
+        private val communication: DataChannelCommunication.Mutable,
+        private val webRtcClient: WebRtcClient
+    ) : CallsController, InitCalls, Messaging {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-        private lateinit var target: String
-        
-        private var webRtcClient: WebRtcClient =
-            WebRtcClient(application, object : SimplePeerConnectionObserver {
-                override fun onAddStream(mediaStream: MediaStream) {
-                    super.onAddStream(mediaStream)
-                    try {
-                        mediaStream.videoTracks[0].addSink(remoteView)
-                    } catch (e: Exception) {
-                        throw Exception("Can`t add stream")
-                    }
-                }
-                
-                override fun onConnectionChange(newState: PeerConnectionState) {
-                    super.onConnectionChange(newState)
-                    peerConnectionCallback.invoke(newState)
-                    if (newState == PeerConnectionState.CONNECTED) {
-                        callsCloudService.removeConnectionData(userId)
-                    }
-                }
-                
-                override fun onIceCandidate(iceCandidate: IceCandidate) {
-                    super.onIceCandidate(iceCandidate)
-                    callsCloudService.sendToCloud(
-                        ConnectionData(
-                            target, userId, iceCandidate = MyIceCandidate(iceCandidate)
-                        )
-                    )
-                }
-            })
+        private var target: String = ""
+        private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> {
+            it.handle(remoteView, peerConnectionCallback, communication, callsCloudService, target, userId)
+        }
         
         init {
+            webRtcClient.observeForever(observer)
             val connectionReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
@@ -100,6 +78,7 @@ interface CallsController {
                 IntentFilter(IntentAction.ACTION_NETWORK_STATE),
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
+            // TODO: unregister this
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
@@ -182,6 +161,14 @@ interface CallsController {
                         throw Exception(message)
                     }
                 })
+        }
+        
+        override fun sendMessage(text: String) {
+            webRtcClient.sendMessage(text)
+        }
+        
+        override fun observe(owner: LifecycleOwner, observer: Observer<String>) {
+            communication.observe(owner, observer)
         }
     }
 }

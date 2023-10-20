@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhigaras.webrtc"
+    namespace = "com.zhigaras.messaging"
     compileSdk = Config.compileSdk
     
     defaultConfig {
@@ -34,17 +34,12 @@ android {
 }
 
 dependencies {
-    
-    implementation(files("./libs/libwebrtc.aar"))
     implementation(project(":core"))
-    implementation(project(":auth"))
-    implementation(project(":cloudservice"))
-    implementation(project(":feature:messaging"))
     
     implementation(Dependencies.coreKtx)
-    implementation(Dependencies.lificycle)
     implementation(Dependencies.appcompat)
-    implementation(Dependencies.recyclerView)
+    implementation(Dependencies.material)
+    implementation(Dependencies.lificycle)
     
     implementation(Dependencies.koinAndroid)
 }

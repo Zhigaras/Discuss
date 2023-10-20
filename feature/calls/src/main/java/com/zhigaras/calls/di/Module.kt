@@ -7,14 +7,25 @@ import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
+import com.zhigaras.calls.webrtc.IceServersList
+import com.zhigaras.calls.webrtc.MyPeerConnectionFactory
+import com.zhigaras.calls.webrtc.MyPeerConnectionObserver
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
+import com.zhigaras.calls.webrtc.PeerConnectionCommunication
+import com.zhigaras.calls.webrtc.WebRtcClient
+import com.zhigaras.messaging.di.messagesModule
+import com.zhigaras.messaging.domain.Messaging
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
+import org.webrtc.Camera2Enumerator
+import org.webrtc.EglBase
+import org.webrtc.PeerConnection
+import org.webrtc.PeerConnectionFactory
 
-fun callModule() = module {
+fun callModule() = listOf(messagesModule(), module {
     
     viewModelOf(::CallViewModel)
     
@@ -24,14 +35,54 @@ fun callModule() = module {
         CallCommunication.Post::class
     )
     
-    single { CallsController.Base(androidApplication(), get(), get(), get()) } binds arrayOf(
+    single {
+        CallsController.Base(androidApplication(), get(), get(), get(), get(), get())
+    } binds arrayOf(
         CallsController::class,
-        InitCalls::class
+        InitCalls::class,
+        Messaging::class
     )
     
     single { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
     
     single { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
     
-    factory { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
+    single { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
+})
+
+fun webRtcModule() = module {
+    
+    single { PeerConnectionCommunication.Base() } binds arrayOf(
+        PeerConnectionCommunication.Mutable::class,
+        PeerConnectionCommunication.Observe::class,
+        PeerConnectionCommunication.Post::class
+    )
+    
+    factory { MyPeerConnectionObserver(get(), get()) }
+    
+    single {
+        IceServersList(
+            arrayListOf(
+                PeerConnection.IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
+                    .setUsername("83eebabf8b4cce9d5dbcb649")
+                    .setPassword("2D7JvfkOQtBdYW3R").createIceServer()
+            )
+        )
+    } bind IceServersList::class
+    
+    single {
+        PeerConnectionFactory.Options().apply {
+            disableEncryption = false
+            disableNetworkMonitor = false
+        }
+    }
+    
+    single { Camera2Enumerator(androidApplication()) }
+    
+    single { EglBase.create().eglBaseContext } bind EglBase.Context::class
+    
+    single { MyPeerConnectionFactory(androidApplication(), get(), get()) }
+    
+    single { WebRtcClient(get(), get(), get(), get(), get()) }
+    
 }

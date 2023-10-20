@@ -15,19 +15,15 @@ import org.webrtc.VideoSource
 import org.webrtc.VideoTrack
 
 class MyPeerConnectionFactory(
-    private val eglBaseContext: EglBase.Context,
-    private val options: PeerConnectionFactory.Options = PeerConnectionFactory.Options()
-        .apply {
-            disableEncryption = false
-            disableNetworkMonitor = false
-        }
+    appContext: Context,
+    eglBaseContext: EglBase.Context,
+    options: PeerConnectionFactory.Options
 ) {
     private val localTrackId = "local_track"
     private val localStreamId = "local_stream"
+    private val factory: PeerConnectionFactory
     
-    private lateinit var factory: PeerConnectionFactory
-    
-    fun init(appContext: Context) {
+    init {
         val initOptions = PeerConnectionFactory.InitializationOptions.builder(appContext)
             .setFieldTrials("WebRTC-H264HighProfile/Enabled/")
             .setEnableInternalTracer(true)

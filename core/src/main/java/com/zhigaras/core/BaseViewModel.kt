@@ -23,7 +23,7 @@ abstract class BaseViewModel<VB : ViewBinding, T : UiState<VB>>(
         onUi: suspend (E) -> Unit
     ) = viewModelScope.launch(dispatchers.io()) {
         val result = onBackground.invoke()
-        withContext(dispatchers.ui()) {
+        withContext(dispatchers.main()) {
             onUi.invoke(result)
         }
     }
