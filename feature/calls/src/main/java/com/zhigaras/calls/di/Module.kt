@@ -1,7 +1,5 @@
 package com.zhigaras.calls.di
 
-import android.os.Handler
-import android.os.Looper
 import com.zhigaras.calls.data.CallsCloudServiceImpl
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsCloudService
@@ -10,7 +8,6 @@ import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
 import com.zhigaras.calls.webrtc.IceServersList
-import com.zhigaras.calls.webrtc.MainHandler
 import com.zhigaras.calls.webrtc.MyPeerConnectionFactory
 import com.zhigaras.calls.webrtc.MyPeerConnectionObserver
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
@@ -61,9 +58,7 @@ fun webRtcModule() = module {
         PeerConnectionCommunication.Post::class
     )
     
-    single { MainHandler(Handler(Looper.getMainLooper())) } bind MainHandler::class
-    
-    single { MyPeerConnectionObserver(get(), get()) }
+    factory { MyPeerConnectionObserver(get(), get()) }
     
     single {
         IceServersList(

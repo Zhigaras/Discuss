@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -51,21 +50,14 @@ interface CallsController {
     ) : CallsController, InitCalls, Messaging {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
-        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-        private var target: String? = null
+        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private var target: String = ""
+        private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> {
+            it.handle(remoteView, peerConnectionCallback, communication, callsCloudService, target, userId)
+        }
         
         init {
-            webRtcClient.observeForever(scope) {
-                Log.d("QQQQQ peerConn state", it::class.simpleName.toString())
-                it.handle(
-                    remoteView,
-                    peerConnectionCallback,
-                    communication,
-                    callsCloudService,
-                    target,
-                    userId
-                )
-            }
+            webRtcClient.observeForever(observer)
             val connectionReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
@@ -75,7 +67,7 @@ interface CallsController {
                             networkState == "online" &&
                             (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
                         ) {
-                            reconnect(target!!, userId)
+                            reconnect(target, userId)
                         }
                     }
                 }
@@ -86,6 +78,7 @@ interface CallsController {
                 IntentFilter(IntentAction.ACTION_NETWORK_STATE),
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
+            // TODO: unregister this
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {

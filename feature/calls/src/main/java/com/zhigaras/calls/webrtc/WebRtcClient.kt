@@ -1,8 +1,6 @@
 package com.zhigaras.calls.webrtc
 
 import androidx.lifecycle.Observer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.webrtc.AudioTrack
@@ -21,14 +19,14 @@ import java.nio.ByteBuffer
 
 class WebRtcClient(
     iceServers: IceServersList,
-    private val observer: MyPeerConnectionObserver,
+    private val peerConnectionObserver: MyPeerConnectionObserver,
     private val eglBaseContext: EglBase.Context,
     private val peerConnectionFactory: MyPeerConnectionFactory,
     private val enumerator: Camera2Enumerator,
-) {
+) : PeerConnectionCommunication.ObserveForever{
     private val peerConnection: PeerConnection? = peerConnectionFactory.createPeerConnection(
         iceServers.provide(),
-        observer.provideObserver()
+        peerConnectionObserver.provideObserver()
     )
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
@@ -39,15 +37,13 @@ class WebRtcClient(
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
     
-    fun observeForever(scope: CoroutineScope, observer: Observer<PeerConnectionState>) {
-        scope.launch {
-            this@WebRtcClient.observer.observeForever(observer)
-        }
+    override fun observeForever(observer: Observer<PeerConnectionState>) {
+        peerConnectionObserver.observeForever(observer)
     }
     
-//    override fun removeObserver(observer: Observer<PeerConnectionState>) {
-//        this.observer.removeObserver(observer)
-//    }
+    override fun removeObserver(observer: Observer<PeerConnectionState>) {
+        peerConnectionObserver.removeObserver(observer)
+    }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
         initSurfaceViewRenderer(view)
@@ -133,7 +129,7 @@ class WebRtcClient(
         val buffer = ByteBuffer.wrap(text.toByteArray())
         dataChannel.send(DataChannel.Buffer(buffer, false))
     }
-
+    
     fun switchCamera() {
         videoCapturer.switchCamera(null)
     }

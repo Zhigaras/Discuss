@@ -1,6 +1,5 @@
 package com.zhigaras.calls.webrtc
 
-import android.util.Log
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
@@ -18,20 +17,9 @@ interface PeerConnectionState {
         peerConnectionCallback: PeerConnectionCallback,
         communication: DataChannelCommunication.Mutable,
         callsCloudService: CallsCloudService,
-        target: String?,
+        target: String,
         userId: String
     )
-    
-    object Initial: PeerConnectionState {
-        override fun handle(
-            remoteView: SurfaceViewRenderer?,
-            peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
-            callsCloudService: CallsCloudService,
-            target: String?,
-            userId: String
-        ) = Unit
-    }
     
     class SignallingChanged(private val newState: PeerConnection.SignalingState) :
         PeerConnectionState {
@@ -40,11 +28,9 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
-        ) {
-            Log.d("QQQQQ SignallingChanged", newState.name)
-        }
+        ) = Unit
     }
     
     class ConnectionChanged(private val newState: PeerConnection.PeerConnectionState) :
@@ -54,10 +40,9 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
         ) {
-            Log.d("QQQQQ ConnectionChanged", newState.name)
             peerConnectionCallback.invoke(newState)
             if (newState == PeerConnection.PeerConnectionState.CONNECTED) {
                 callsCloudService.removeConnectionData(userId)
@@ -72,11 +57,9 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
-        ) {
-            Log.d("QQQQQ IceConnectionChanged", newState.name)
-        }
+        ) = Unit
     }
     
     class IceGatheringChanged(private val newState: PeerConnection.IceGatheringState) :
@@ -86,11 +69,9 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
-        ) {
-            Log.d("QQQQQ IceGatheringChanged", newState.name)
-        }
+        ) = Unit
     }
     
     class IceCandidateCreated(private val iceCandidate: IceCandidate) : PeerConnectionState {
@@ -99,13 +80,12 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
         ) {
-            Log.d("QQQQQ IceCandidateCreated", iceCandidate.toString())
             callsCloudService.sendToCloud(
                 ConnectionData(
-                    target ?: "", userId, iceCandidate = MyIceCandidate(iceCandidate)
+                    target, userId, iceCandidate = MyIceCandidate(iceCandidate)
                 )
             )
         }
@@ -118,7 +98,7 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
         ) = Unit
     }
@@ -129,10 +109,9 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
         ) {
-            Log.d("QQQQQ StreamAdded", mediaStream.toString())
             try {
                 val track = mediaStream.videoTracks
                 track[0].addSink(remoteView)
@@ -148,7 +127,7 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
         ) = Unit
     }
@@ -159,10 +138,9 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
         ) {
-            Log.d("QQQQQ DataChannelCreated", dataChannel.toString())
             dataChannel.registerObserver(object : DataChannel.Observer {
                 override fun onBufferedAmountChange(p0: Long) = Unit
                 override fun onStateChange() = Unit
@@ -184,11 +162,8 @@ interface PeerConnectionState {
             peerConnectionCallback: PeerConnectionCallback,
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
-            target: String?,
+            target: String,
             userId: String
-        ) {
-            Log.d("QQQQQ RenegotiationNeeded", "")
-            
-        }
+        ) = Unit
     }
 }
