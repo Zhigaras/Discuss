@@ -1,5 +1,7 @@
 package com.zhigaras.calls.di
 
+import android.os.Handler
+import android.os.Looper
 import com.zhigaras.calls.data.CallsCloudServiceImpl
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsCloudService
@@ -8,6 +10,7 @@ import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
 import com.zhigaras.calls.webrtc.IceServersList
+import com.zhigaras.calls.webrtc.MainHandler
 import com.zhigaras.calls.webrtc.MyPeerConnectionFactory
 import com.zhigaras.calls.webrtc.MyPeerConnectionObserver
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
@@ -29,7 +32,7 @@ fun callModule() = listOf(messagesModule(), module {
     
     viewModelOf(::CallViewModel)
     
-    factory { CallCommunication.Base() } binds arrayOf(
+    single { CallCommunication.Base() } binds arrayOf(
         CallCommunication.Mutable::class,
         CallCommunication.Observe::class,
         CallCommunication.Post::class
@@ -47,20 +50,22 @@ fun callModule() = listOf(messagesModule(), module {
     
     single { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
     
-    factory { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
+    single { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
 })
 
 fun webRtcModule() = module {
     
-    factory { PeerConnectionCommunication.Base() } binds arrayOf(
+    single { PeerConnectionCommunication.Base() } binds arrayOf(
         PeerConnectionCommunication.Mutable::class,
         PeerConnectionCommunication.Observe::class,
         PeerConnectionCommunication.Post::class
     )
     
-    single { MyPeerConnectionObserver(get()) }
+    single { MainHandler(Handler(Looper.getMainLooper())) } bind MainHandler::class
     
-    factory {
+    single { MyPeerConnectionObserver(get(), get()) }
+    
+    single {
         IceServersList(
             arrayListOf(
                 PeerConnection.IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
@@ -70,19 +75,19 @@ fun webRtcModule() = module {
         )
     } bind IceServersList::class
     
-    factory {
+    single {
         PeerConnectionFactory.Options().apply {
             disableEncryption = false
             disableNetworkMonitor = false
         }
     }
     
-    factory { Camera2Enumerator(androidApplication()) }
+    single { Camera2Enumerator(androidApplication()) }
     
     single { EglBase.create().eglBaseContext } bind EglBase.Context::class
     
-    factory { MyPeerConnectionFactory(androidApplication(), get(), get()) }
+    single { MyPeerConnectionFactory(androidApplication(), get(), get()) }
     
-    factory { WebRtcClient(get(), get(), get(), get(), get()) }
+    single { WebRtcClient(get(), get(), get(), get(), get()) }
     
 }

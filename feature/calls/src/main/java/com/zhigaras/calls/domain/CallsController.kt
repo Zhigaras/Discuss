@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -50,11 +51,12 @@ interface CallsController {
     ) : CallsController, InitCalls, Messaging {
         private var remoteView: SurfaceViewRenderer? = null
         private val userId = provideUserId.provide()
-        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
         private var target: String? = null
         
         init {
-            webRtcClient.observeForever {
+            webRtcClient.observeForever(scope) {
+                Log.d("QQQQQ peerConn state", it::class.simpleName.toString())
                 it.handle(
                     remoteView,
                     peerConnectionCallback,

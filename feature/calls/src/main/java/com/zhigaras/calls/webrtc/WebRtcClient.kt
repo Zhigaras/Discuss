@@ -1,7 +1,8 @@
 package com.zhigaras.calls.webrtc
 
-import android.util.Log
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.webrtc.AudioTrack
@@ -24,7 +25,7 @@ class WebRtcClient(
     private val eglBaseContext: EglBase.Context,
     private val peerConnectionFactory: MyPeerConnectionFactory,
     private val enumerator: Camera2Enumerator,
-): PeerConnectionCommunication.ObserveForever {
+) {
     private val peerConnection: PeerConnection? = peerConnectionFactory.createPeerConnection(
         iceServers.provide(),
         observer.provideObserver()
@@ -38,13 +39,15 @@ class WebRtcClient(
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
     
-    override fun observeForever(observer: Observer<PeerConnectionState>) {
-        this.observer.observeForever(observer)
+    fun observeForever(scope: CoroutineScope, observer: Observer<PeerConnectionState>) {
+        scope.launch {
+            this@WebRtcClient.observer.observeForever(observer)
+        }
     }
     
-    override fun removeObserver(observer: Observer<PeerConnectionState>) {
-        this.observer.removeObserver(observer)
-    }
+//    override fun removeObserver(observer: Observer<PeerConnectionState>) {
+//        this.observer.removeObserver(observer)
+//    }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
         initSurfaceViewRenderer(view)
@@ -128,7 +131,6 @@ class WebRtcClient(
     
     fun sendMessage(text: String) {
         val buffer = ByteBuffer.wrap(text.toByteArray())
-        Log.d("QQQ webrtc", "sent $text")
         dataChannel.send(DataChannel.Buffer(buffer, false))
     }
 
