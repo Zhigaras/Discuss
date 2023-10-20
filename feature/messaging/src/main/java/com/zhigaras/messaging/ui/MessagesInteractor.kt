@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.zhigaras.messaging.domain.MessagesUiStateCommunication
 import com.zhigaras.messaging.domain.Messaging
 import com.zhigaras.messaging.domain.model.Message
+import java.util.Collections
 
 interface MessagesInteractor {
     
@@ -15,7 +16,7 @@ interface MessagesInteractor {
         private val messaging: Messaging,
     ) : MessagesInteractor {
         
-        private val messages = mutableListOf<Message>()
+        private val messages = Collections.synchronizedList(mutableListOf<Message>())
         
         override fun sendMessage(text: String): MessagesUiState {
             messaging.sendMessage(text)
