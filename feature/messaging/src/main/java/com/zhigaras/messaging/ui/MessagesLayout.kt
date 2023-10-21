@@ -3,10 +3,9 @@ package com.zhigaras.messaging.ui
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -25,8 +24,9 @@ class MessagesLayout @JvmOverloads constructor(
     
     private val showHideButton: ImageView by lazy { findViewById(R.id.show_hide_button) }
     private val messagesRv: RecyclerView by lazy { findViewById(R.id.messages_rv) }
-    private val messageInput: EditText by lazy { findViewById(R.id.new_message_edit_text) }
-    private val sendButton: Button by lazy { findViewById(R.id.send_message_button) }
+    private val editText: AppCompatEditText by lazy { findViewById(R.id.new_message_edit_text) }
+    private val sendButton: ImageView by lazy { findViewById(R.id.send_message_button) }
+    
     private var isExpanded = MutableStateFlow(false)
     private val viewModel: MessagesViewModel by inject(MessagesViewModel::class.java)
     
@@ -39,7 +39,7 @@ class MessagesLayout @JvmOverloads constructor(
                     if (isExpanded.value) R.drawable.baseline_expand_less_24
                     else R.drawable.baseline_expand_more_24
                 )
-                messagesRv.isVisible = it
+                changeVisibility(it)
             }
         }
         showHideButton.setOnClickListener {
@@ -54,7 +54,18 @@ class MessagesLayout @JvmOverloads constructor(
             it.handle(adapter)
         }
         sendButton.setOnClickListener {
-            viewModel.sendMessage(messageInput.text.trim().toString())
+            val msg = editText.text
+            if (msg.isNullOrBlank()) return@setOnClickListener
+            else {
+                viewModel.sendMessage(msg.trim().toString())
+                editText.text = null
+            }
         }
+    }
+    
+    private fun changeVisibility(isVisible: Boolean) {
+        messagesRv.isVisible = isVisible
+        editText.isVisible = isVisible
+        sendButton.isVisible = isVisible
     }
 }
