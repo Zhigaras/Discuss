@@ -33,5 +33,6 @@ android {
 }
 
 dependencies {
-
+    
+    implementation(Dependencies.recyclerView)
 }

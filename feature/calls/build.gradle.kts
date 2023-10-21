@@ -44,7 +44,6 @@ dependencies {
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.lificycle)
     implementation(Dependencies.appcompat)
-    implementation(Dependencies.recyclerView)
     
     implementation(Dependencies.koinAndroid)
 }
