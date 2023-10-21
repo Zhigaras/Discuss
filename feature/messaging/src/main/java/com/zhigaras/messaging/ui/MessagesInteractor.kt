@@ -21,7 +21,7 @@ interface MessagesInteractor {
         override fun sendMessage(text: String): MessagesUiState {
             messaging.sendMessage(text)
             messages.add(Message.Outgoing(text))
-            return MessagesUiState.MessageSent(messages)
+            return MessagesUiState.MessageSent(messages.toList())
         }
         
         override fun observe(
@@ -30,7 +30,7 @@ interface MessagesInteractor {
         ) {
             messaging.observe(owner) {
                 messages.add(Message.Incoming(it))
-                communication.postBackground(MessagesUiState.MessageReceived(messages))
+                communication.postBackground(MessagesUiState.MessageReceived(messages.toList()))
             }
         }
         

@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.zhigaras.adapterdelegate.CompositeAdapter
 import com.zhigaras.messaging.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -44,7 +45,10 @@ class MessagesLayout @JvmOverloads constructor(
         showHideButton.setOnClickListener {
             isExpanded.value = !isExpanded.value
         }
-        val adapter = MessagesAdapter()
+        val adapter = CompositeAdapter.Builder()
+            .addAdapter(IncomingMessageAdapter())
+            .addAdapter(OutgoingMessageAdapter())
+            .build()
         messagesRv.adapter = adapter
         viewModel.observe(findViewTreeLifecycleOwner() ?: return) {
             it.handle(adapter)

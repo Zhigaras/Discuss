@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":adapterDelegate"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

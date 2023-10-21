@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhigaras.webrtc"
+    namespace = "com.zhigaras.adapterdelegate"
     compileSdk = Config.compileSdk
     
     defaultConfig {
@@ -30,20 +30,9 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
-    buildFeatures { viewBinding = true }
 }
 
 dependencies {
     
-    implementation(files("./libs/libwebrtc.aar"))
-    implementation(project(":core"))
-    implementation(project(":auth"))
-    implementation(project(":cloudservice"))
-    implementation(project(":feature:messaging"))
-    
-    implementation(Dependencies.coreKtx)
-    implementation(Dependencies.lificycle)
-    implementation(Dependencies.appcompat)
-    
-    implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.recyclerView)
 }
