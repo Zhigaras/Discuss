@@ -14,6 +14,6 @@
     </style>
 
     <style name="InputMessageArea">
-        <item name="android:backgroundTint">@color/light_gray</item>
+        <item name="android:background">@color/light_gray</item>
     </style>
 </resources>

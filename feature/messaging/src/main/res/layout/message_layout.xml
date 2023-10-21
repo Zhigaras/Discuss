@@ -15,32 +15,38 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages_rv"
+        style="@style/InputMessageArea"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@android:color/holo_red_dark"
         android:orientation="vertical"
         android:paddingHorizontal="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <LinearLayout
+        style="@style/InputMessageArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/new_message_edit_text"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:background="@drawable/msg_input_bg"
             android:hint="@string/message"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:maxLines="3" />
 
         <ImageView
             android:id="@+id/send_message_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
             android:contentDescription="@string/send_message"
+            android:padding="8dp"
             android:src="@drawable/baseline_send_24" />
 
     </LinearLayout>
