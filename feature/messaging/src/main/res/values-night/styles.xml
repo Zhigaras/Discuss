@@ -13,7 +13,7 @@
         <item name="android:background">@drawable/outgoing_msg_bg_dark</item>
     </style>
 
-    <style name="InputMessageArea">
-        <item name="android:background">@color/dark_gray</item>
+    <style name="MessageArea">
+        <item name="android:background">@drawable/messages_area_bg_dark</item>
     </style>
 </resources>

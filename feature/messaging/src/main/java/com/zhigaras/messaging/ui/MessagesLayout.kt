@@ -30,6 +30,11 @@ class MessagesLayout @JvmOverloads constructor(
     private var isExpanded = MutableStateFlow(false)
     private val viewModel: MessagesViewModel by inject(MessagesViewModel::class.java)
     
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val maxHeightMeasureSpec = MeasureSpec.makeMeasureSpec(800, MeasureSpec.AT_MOST)
+        super.onMeasure(widthMeasureSpec, maxHeightMeasureSpec)
+    }
+    
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         layoutTransition = LayoutTransition()
