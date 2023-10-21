@@ -54,7 +54,7 @@ class MessagesLayout @JvmOverloads constructor(
             it.handle(adapter)
         }
         sendButton.setOnClickListener {
-            viewModel.sendMessage(messageInput.text.toString())
+            viewModel.sendMessage(messageInput.text.trim().toString())
         }
     }
 }
