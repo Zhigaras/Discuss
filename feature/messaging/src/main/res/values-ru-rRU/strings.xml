@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="send_message">отправить сообщение</string>
+    <string name="message">Сообщение</string>
+    <string name="next">Следующий</string>
+    <string name="back">Выйти</string>
+</resources>

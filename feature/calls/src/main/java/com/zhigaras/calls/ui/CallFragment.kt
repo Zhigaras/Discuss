@@ -19,8 +19,9 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
         super.onViewCreated(view, savedInstanceState)
         
         viewModel.init(binding.localView, binding.remoteView) // TODO: fix
-        arguments?.let {
-            val disputePosition = it.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return@let
+        val args = arguments
+        if (args != null && savedInstanceState == null) {
+            val disputePosition = args.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return
             val opinion = DisputeParty.valueOf(disputePosition)
             viewModel.lookForOpponent("1", opinion)
         }

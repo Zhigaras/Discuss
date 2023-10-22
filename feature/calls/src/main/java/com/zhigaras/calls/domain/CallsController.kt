@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.webrtc.MediaConstraints
+import org.webrtc.MediaStream
 import org.webrtc.PeerConnection.PeerConnectionState
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceViewRenderer
@@ -52,8 +53,16 @@ interface CallsController {
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private var target: String = ""
-        private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> {
-            it.handle(remoteView, peerConnectionCallback, communication, callsCloudService, target, userId)
+        private var remoteMediaStream: MediaStream? = null
+        private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
+            state.handle(
+                remoteView,
+                peerConnectionCallback,
+                communication,
+                callsCloudService,
+                target,
+                userId,
+            ) { remoteMediaStream = it }
         }
         
         init {
@@ -88,6 +97,10 @@ interface CallsController {
         override fun initRemoteView(view: SurfaceViewRenderer) {
             webRtcClient.initRemoteSurfaceView(view)
             remoteView = view
+            remoteMediaStream?.let {
+                val track = it.videoTracks
+                track[0].addSink(remoteView)
+            }
         }
         
         fun reconnect(opponentId: String, userId: String) {
