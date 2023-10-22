@@ -33,8 +33,8 @@ class PortraitMessagesLayout @JvmOverloads constructor(
         findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
             isExpanded.collect {
                 showHideButton.setImageResource(
-                    if (isExpanded.value) R.drawable.baseline_expand_less_24
-                    else R.drawable.baseline_expand_more_24
+                    if (isExpanded.value) R.drawable.baseline_expand_more_24
+                    else R.drawable.baseline_expand_less_24
                 )
                 layoutToHide.isVisible = it
             }

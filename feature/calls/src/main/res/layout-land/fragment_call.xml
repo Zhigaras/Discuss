@@ -47,9 +47,9 @@
 
     <Button
         android:id="@+id/stop_button"
+        style="@style/EscapeConversationButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="stop"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/quarter_guide_line"
@@ -57,9 +57,9 @@
 
     <Button
         android:id="@+id/button"
+        style="@style/NextOpponentButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="next"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/messages_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/quarter_guide_line"
