@@ -18,7 +18,8 @@ interface PeerConnectionState {
         communication: DataChannelCommunication.Mutable,
         callsCloudService: CallsCloudService,
         target: String,
-        userId: String
+        userId: String,
+        cacheStream: (MediaStream) -> Unit
     )
     
     class SignallingChanged(private val newState: PeerConnection.SignalingState) :
@@ -29,7 +30,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) = Unit
     }
     
@@ -41,7 +43,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) {
             peerConnectionCallback.invoke(newState)
             if (newState == PeerConnection.PeerConnectionState.CONNECTED) {
@@ -58,7 +61,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) = Unit
     }
     
@@ -70,7 +74,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) = Unit
     }
     
@@ -81,7 +86,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) {
             callsCloudService.sendToCloud(
                 ConnectionData(
@@ -99,7 +105,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) = Unit
     }
     
@@ -110,11 +117,13 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) {
             try {
                 val track = mediaStream.videoTracks
                 track[0].addSink(remoteView)
+                cacheStream(mediaStream)
             } catch (e: Exception) {
                 throw Exception("Can`t add stream")
             }
@@ -128,7 +137,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) = Unit
     }
     
@@ -139,7 +149,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) {
             dataChannel.registerObserver(object : DataChannel.Observer {
                 override fun onBufferedAmountChange(p0: Long) = Unit
@@ -163,7 +174,8 @@ interface PeerConnectionState {
             communication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
-            userId: String
+            userId: String,
+            cacheStream: (MediaStream) -> Unit
         ) = Unit
     }
 }

@@ -23,17 +23,20 @@ class WebRtcClient(
     private val eglBaseContext: EglBase.Context,
     private val peerConnectionFactory: MyPeerConnectionFactory,
     private val enumerator: Camera2Enumerator,
-) : PeerConnectionCommunication.ObserveForever{
+) : PeerConnectionCommunication.ObserveForever {
     private val peerConnection: PeerConnection? = peerConnectionFactory.createPeerConnection(
         iceServers.provide(),
         peerConnectionObserver.provideObserver()
     )
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
-    private val videoCapturer = getVideoCapturer()
+    private lateinit var videoCapturer: CameraVideoCapturer
     private val pendingIceMutex = Mutex()
     private val pendingIceCandidates = mutableListOf<IceCandidate>()
-    private val dataChannel = peerConnection!!.createDataChannel("messaging", DataChannel.Init()) // TODO: fix no null assertion
+    private val dataChannel = peerConnection!!.createDataChannel(
+        "messaging",
+        DataChannel.Init()
+    ) // TODO: fix no null assertion
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
     
@@ -59,6 +62,7 @@ class WebRtcClient(
     }
     
     private fun startLocalVideoStreaming(view: SurfaceViewRenderer) {
+        videoCapturer = getVideoCapturer()
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
         videoCapturer.initialize(helper, view.context, localVideoSource.capturerObserver)
         videoCapturer.startCapture(480, 360, 30)

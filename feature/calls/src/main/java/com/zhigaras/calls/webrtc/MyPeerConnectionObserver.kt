@@ -15,7 +15,7 @@ import org.webrtc.PeerConnection.SignalingState
 class MyPeerConnectionObserver(
     dispatchers: Dispatchers,
     private val communication: PeerConnectionCommunication.Mutable
-): PeerConnectionCommunication.ObserveForever {
+) : PeerConnectionCommunication.ObserveForever {
     
     private val scope = CoroutineScope(dispatchers.main()) // TODO: close this scope
     override fun observeForever(observer: Observer<PeerConnectionState>) {
@@ -30,45 +30,51 @@ class MyPeerConnectionObserver(
     
     private val observer = object : PeerConnection.Observer {
         override fun onSignalingChange(state: SignalingState) {
-            scope.launch {  communication.postUi(PeerConnectionState.SignallingChanged(state)) }
+            scope.launch { communication.postUi(PeerConnectionState.SignallingChanged(state)) }
         }
-    
+        
         override fun onConnectionChange(newState: PeerConnection.PeerConnectionState) {
-            scope.launch {  communication.postUi(PeerConnectionState.ConnectionChanged(newState)) }
+            scope.launch { communication.postUi(PeerConnectionState.ConnectionChanged(newState)) }
         }
         
         override fun onIceConnectionChange(newState: IceConnectionState) {
-            scope.launch {  communication.postUi(PeerConnectionState.IceConnectionChanged(newState)) }
+            scope.launch { communication.postUi(PeerConnectionState.IceConnectionChanged(newState)) }
         }
         
         override fun onIceConnectionReceivingChange(p0: Boolean) = Unit
         
         override fun onIceGatheringChange(newState: IceGatheringState) {
-            scope.launch {  communication.postUi(PeerConnectionState.IceGatheringChanged(newState)) }
+            scope.launch { communication.postUi(PeerConnectionState.IceGatheringChanged(newState)) }
         }
         
         override fun onIceCandidate(iceCandidate: IceCandidate) {
-            scope.launch {  communication.postUi(PeerConnectionState.IceCandidateCreated(iceCandidate)) }
+            scope.launch { communication.postUi(PeerConnectionState.IceCandidateCreated(iceCandidate)) }
         }
         
         override fun onIceCandidatesRemoved(iceCandidates: Array<out IceCandidate>?) {
-            scope.launch {  communication.postUi(PeerConnectionState.IceCandidatesRemoved(iceCandidates)) }
+            scope.launch {
+                communication.postUi(
+                    PeerConnectionState.IceCandidatesRemoved(
+                        iceCandidates
+                    )
+                )
+            }
         }
         
         override fun onAddStream(mediaStream: MediaStream) {
-            scope.launch {  communication.postUi(PeerConnectionState.StreamAdded(mediaStream)) }
+            scope.launch { communication.postUi(PeerConnectionState.StreamAdded(mediaStream)) }
         }
         
         override fun onRemoveStream(mediaStream: MediaStream) {
-            scope.launch {  communication.postUi(PeerConnectionState.StreamRemoved(mediaStream)) }
+            scope.launch { communication.postUi(PeerConnectionState.StreamRemoved(mediaStream)) }
         }
         
         override fun onDataChannel(dataChannel: DataChannel) {
-            scope.launch {  communication.postUi(PeerConnectionState.DataChannelCreated(dataChannel)) }
+            scope.launch { communication.postUi(PeerConnectionState.DataChannelCreated(dataChannel)) }
         }
         
         override fun onRenegotiationNeeded() {
-            scope.launch {  communication.postUi(PeerConnectionState.RenegotiationNeeded()) }
+            scope.launch { communication.postUi(PeerConnectionState.RenegotiationNeeded()) }
         }
     }
 }
