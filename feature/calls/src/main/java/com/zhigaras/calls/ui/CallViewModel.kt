@@ -3,6 +3,7 @@ package com.zhigaras.calls.ui
 import androidx.lifecycle.viewModelScope
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.CallCommunication
+import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
@@ -18,6 +19,7 @@ class CallViewModel(
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
     private val provideUserId: ProvideUserId,
+    private val routes: CallRoutes,
     override val communication: CallCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
@@ -33,5 +35,9 @@ class CallViewModel(
             matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion)
                 .handle(callsController, matchingInteractor, communication)
         }
+    }
+    
+    fun closeConnection() {
+        routes.goBack()
     }
 }

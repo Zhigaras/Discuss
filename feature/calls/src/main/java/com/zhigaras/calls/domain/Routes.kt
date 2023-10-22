@@ -1,6 +1,8 @@
 package com.zhigaras.calls.domain
 
-interface CallRoutes {
+import com.zhigaras.core.GoBack
+
+interface CallRoutes : GoBack {
     
     companion object {
         const val SUBJECT_ID_KEY = "subjectIdKey"

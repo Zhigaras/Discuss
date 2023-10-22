@@ -29,5 +29,9 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
         viewModel.observe(this) {
             it.update(binding)
         }
+        
+        binding.escapeButton.setOnClickListener {
+            viewModel.closeConnection()
+        }
     }
 }
