@@ -15,7 +15,7 @@ class OutgoingMessageAdapter :
     
     override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         return OutgoingMessageViewHolder(
-            OutgoingMessageItemBinding.inflate(LayoutInflater.from(parent.context))
+            OutgoingMessageItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
     

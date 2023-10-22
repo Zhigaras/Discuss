@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.zhigaras.messaging.ui.MessagesLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/MessageArea"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/show_hide_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@android:color/white"
         android:contentDescription="@string/show_and_hide_messages" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messages_rv"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@android:color/holo_red_dark"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
     <LinearLayout
+        android:id="@+id/layout_to_hide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/new_message_edit_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messages_rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <Button
-            android:id="@+id/send_message_button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="send" />
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/new_message_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/msg_input_bg"
+                android:hint="@string/message"
+                android:inputType="textMultiLine"
+                android:maxLines="3"
+                android:paddingVertical="10dp" />
+
+            <ImageView
+                android:id="@+id/send_message_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:contentDescription="@string/send_message"
+                android:padding="8dp"
+                android:src="@drawable/baseline_send_24"
+                android:visibility="invisible" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
