@@ -13,7 +13,11 @@
         <item name="android:background">@drawable/outgoing_msg_bg_light</item>
     </style>
 
-    <style name="MessageArea">
+    <style name="PortraitMessageArea">
         <item name="android:background">@drawable/messages_area_bg_light</item>
+    </style>
+
+    <style name="LandscapeMessageArea">
+        <item name="android:background">@color/light_gray</item>
     </style>
 </resources>
