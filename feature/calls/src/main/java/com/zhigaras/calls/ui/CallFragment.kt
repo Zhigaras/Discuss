@@ -33,5 +33,13 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
         binding.escapeButton.setOnClickListener {
             viewModel.closeConnection()
         }
+        binding.nextButton.setOnClickListener {
+            if (args != null && savedInstanceState == null) {
+                val disputePosition =
+                    args.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return@setOnClickListener
+                val opinion = DisputeParty.valueOf(disputePosition)
+                viewModel.nextOpponent("1", opinion)
+            }
+        }
     }
 }

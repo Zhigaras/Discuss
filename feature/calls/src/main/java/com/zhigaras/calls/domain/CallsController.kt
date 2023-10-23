@@ -20,6 +20,7 @@ import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.webrtc.MediaConstraints
 import org.webrtc.MediaStream
@@ -41,19 +42,23 @@ interface CallsController {
     
     fun handleIceCandidate(iceCandidate: MyIceCandidate)
     
+    fun closeCurrentAndCreateNewConnection()
+    
+    fun closeConnectionTotally()
+    
     class Base(
         application: Context,
         provideUserId: ProvideUserId,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
-        private val communication: DataChannelCommunication.Mutable,
-        private val webRtcClient: WebRtcClient
+        private val communication: DataChannelCommunication.Mutable, //??
+        private val webRtcClient: WebRtcClient //??
     ) : CallsController, InitCalls, Messaging {
-        private var remoteView: SurfaceViewRenderer? = null
+        private var remoteView: SurfaceViewRenderer? = null //??
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private var target: String = ""
-        private var remoteMediaStream: MediaStream? = null
+        private var remoteMediaStream: MediaStream? = null //??
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(
                 remoteView,
@@ -159,6 +164,15 @@ interface CallsController {
         
         override fun setOpponentId(opponentId: String) {
             target = opponentId
+        }
+        
+        override fun closeCurrentAndCreateNewConnection() {
+            webRtcClient.closeCurrentAndCreateNewConnection()
+        }
+        
+        override fun closeConnectionTotally() {
+            webRtcClient.closeConnectionTotally()
+            scope.cancel()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {

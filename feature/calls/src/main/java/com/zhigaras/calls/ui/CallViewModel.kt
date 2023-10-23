@@ -37,7 +37,13 @@ class CallViewModel(
         }
     }
     
+    fun nextOpponent(subjectId: String, opinion: DisputeParty) {
+        callsController.closeCurrentAndCreateNewConnection()
+        lookForOpponent(subjectId, opinion)
+    }
+    
     fun closeConnection() {
+        callsController.closeConnectionTotally()
         routes.goBack()
     }
 }
