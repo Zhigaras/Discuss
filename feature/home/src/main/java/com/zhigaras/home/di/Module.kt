@@ -15,15 +15,15 @@ fun homeModule() = module {
     
     viewModelOf(::HomeViewModel)
     
-    factory { HomeCommunication.Base() } binds arrayOf(
+    single { HomeCommunication.Base() } binds arrayOf(
         HomeCommunication.Mutable::class,
         HomeCommunication.Observe::class,
         HomeCommunication.Post::class
     )
     
-    factory { CloudServiceImpl(get()) } bind CloudService::class
+    single { CloudServiceImpl(get()) } bind CloudService::class
     
-    factory { ProvideDatabase.Base() } bind ProvideDatabase::class
+    single { ProvideDatabase.Base() } bind ProvideDatabase::class
     
-    factory { SaveUserToCloud.Base(get()) } bind SaveUserToCloud::class
+    single { SaveUserToCloud.Base(get()) } bind SaveUserToCloud::class
 }

@@ -25,11 +25,6 @@ import org.webrtc.EglBase
 import org.webrtc.PeerConnection
 import org.webrtc.PeerConnectionFactory
 
-/**
- * scope = CallsController, WebRTCClient, EglBase.Context, PeerConnectionFactory??
- *
- */
-
 fun callModule() = listOf(messagesModule(), module {
     
     viewModelOf(::CallViewModel)
@@ -48,11 +43,11 @@ fun callModule() = listOf(messagesModule(), module {
         Messaging::class
     )
     
-    factory { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
+    single { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
     
-    factory { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
+    single { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
     
-    factory { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
+    single { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
 })
 
 fun webRtcModule() = module {
@@ -65,7 +60,7 @@ fun webRtcModule() = module {
     
     factory { MyPeerConnectionObserver(get(), get()) }
     
-    factory {
+    single {
         IceServersList(
             arrayListOf(
                 PeerConnection.IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
@@ -75,18 +70,18 @@ fun webRtcModule() = module {
         )
     } bind IceServersList::class
     
-    factory {
+    single {
         PeerConnectionFactory.Options().apply {
             disableEncryption = false
             disableNetworkMonitor = false
         }
     }
     
-    factory { Camera2Enumerator(androidApplication()) }
+    single { Camera2Enumerator(androidApplication()) }
     
     single { EglBase.create().eglBaseContext } bind EglBase.Context::class
     
-    factory { MyPeerConnectionFactory(androidApplication(), get(), get()) }
+    single { MyPeerConnectionFactory(androidApplication(), get(), get()) }
     
     single { WebRtcClient(get(), get(), get(), get(), get()) }
     

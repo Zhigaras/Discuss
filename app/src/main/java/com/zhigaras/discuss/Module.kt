@@ -21,7 +21,7 @@ fun mainModule() = module {
         NavigationCommunication.Post::class
     )
     
-    factory { AvailableRouts.Base(get()) } binds arrayOf(
+    single { AvailableRouts.Base(get()) } binds arrayOf(
         NavigateToSignIn::class,
         NavigateToSignUp::class,
         NavigateToHome::class,
@@ -29,6 +29,6 @@ fun mainModule() = module {
         CallRoutes::class
     )
     
-    factory { Dispatchers.Base() } bind Dispatchers::class
+    single { Dispatchers.Base() } bind Dispatchers::class
     
 }

@@ -32,35 +32,35 @@ fun loginModule() = module {
     
     // TODO: change singles to factories
     
-    factory { AuthRepository() } bind Auth::class
+    single { AuthRepository() } bind Auth::class
     
-    factory { SignInCommunication.Base() } binds arrayOf(
+    single { SignInCommunication.Base() } binds arrayOf(
         SignInCommunication.Mutable::class,
         SignInCommunication.Observe::class,
         SignInCommunication.Post::class
     )
     
-    factory { SignUpCommunication.Base() } binds arrayOf(
+    single { SignUpCommunication.Base() } binds arrayOf(
         SignUpCommunication.Mutable::class,
         SignUpCommunication.Observe::class,
         SignUpCommunication.Post::class
     )
     
-    factory { ResetPasswordCommunication.Base() } binds arrayOf(
+    single { ResetPasswordCommunication.Base() } binds arrayOf(
         ResetPasswordCommunication.Mutable::class,
         ResetPasswordCommunication.Observe::class,
         ResetPasswordCommunication.Post::class
     )
     
-    factory { OneTapSignIn.Base(get()) } bind OneTapSignIn::class
+    single { OneTapSignIn.Base(get()) } bind OneTapSignIn::class
     
-    factory { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
+    single { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
     
-    factory { SignInRepositoryImpl(get(), get()) } bind SignInRepository::class
+    single { SignInRepositoryImpl(get(), get()) } bind SignInRepository::class
     
-    factory { ResetPasswordRepositoryImpl(get()) } bind ResetPasswordRepository::class
+    single { ResetPasswordRepositoryImpl(get()) } bind ResetPasswordRepository::class
     
-    factory { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
+    single { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
     
     factory { ProvideUserId.Base() } bind ProvideUserId::class
     
