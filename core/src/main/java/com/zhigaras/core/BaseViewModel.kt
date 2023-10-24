@@ -9,30 +9,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 abstract class BaseViewModel<VB : ViewBinding, T : UiState<VB>>(
-    protected val communication: Communication.Mutable<T>,
-    private val dispatchers: Dispatchers
+    private val dispatchers: Dispatchers,
 ) : ViewModel(), Communication.Observe<T> {
+    
+    protected abstract val communication: Communication.Mutable<T>
     
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
         communication.observe(owner, observer)
     }
     
     protected fun <E> scopeLaunch(
-        onLoading: () -> Unit = {},
-        onSuccess: suspend (E) -> Unit = {},
-        onError: suspend (e: DiscussException) -> Unit = {},
-        payload: suspend () -> E,
-    ) = viewModelScope.launch(dispatchers.ui()) {
-        onLoading.invoke()
-        try {
-            withContext(dispatchers.io()) {
-                val result = payload.invoke()
-                withContext(dispatchers.ui()) {
-                    onSuccess.invoke(result)
-                }
-            }
-        } catch (e: DiscussException) {
-            onError.invoke(e)
+        onBackground: suspend () -> E,
+        onUi: suspend (E) -> Unit
+    ) = viewModelScope.launch(dispatchers.io()) {
+        val result = onBackground.invoke()
+        withContext(dispatchers.main()) {
+            onUi.invoke(result)
         }
     }
 }

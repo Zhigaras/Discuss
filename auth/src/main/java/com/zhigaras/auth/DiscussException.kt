@@ -1,4 +1,4 @@
-package com.zhigaras.core
+package com.zhigaras.auth
 
 abstract class DiscussException : Throwable() {
     

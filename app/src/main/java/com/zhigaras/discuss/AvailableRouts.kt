@@ -6,8 +6,8 @@ import com.zhigaras.core.NavigationCommunication
 import com.zhigaras.home.domain.HomeRoutes
 import com.zhigaras.home.domain.HomeScreen
 import com.zhigaras.login.domain.LoginRoutes
-import com.zhigaras.login.domain.SignInScreen
-import com.zhigaras.login.domain.SignUpScreen
+import com.zhigaras.login.domain.signin.SignInScreen
+import com.zhigaras.login.domain.signup.SignUpScreen
 
 interface AvailableRouts : MainRouts, LoginRoutes, HomeRoutes {
     
@@ -15,12 +15,12 @@ interface AvailableRouts : MainRouts, LoginRoutes, HomeRoutes {
         private val navigation: NavigationCommunication.Post
     ) : AvailableRouts {
         
-        override fun navigateToHome() = navigation.post(HomeScreen)
+        override fun navigateToHome() = navigation.postUi(HomeScreen)
         
-        override fun navigateToCall(args: Bundle?) = navigation.post(CallScreen(args))
+        override fun navigateToCall(args: Bundle?) = navigation.postUi(CallScreen(args))
         
-        override fun navigateToSignIn() = navigation.post(SignInScreen)
+        override fun navigateToSignIn() = navigation.postUi(SignInScreen)
         
-        override fun navigateToSignUp(args: Bundle?) = navigation.post(SignUpScreen(args))
+        override fun navigateToSignUp(args: Bundle?) = navigation.postUi(SignUpScreen(args))
     }
 }

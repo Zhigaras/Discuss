@@ -1,55 +1,59 @@
 package com.zhigaras.calls.webrtc
 
-import android.content.Context
-import com.google.gson.Gson
-import com.zhigaras.calls.domain.CallsCloudService
-import com.zhigaras.calls.domain.model.ConnectionData
-import com.zhigaras.calls.domain.model.ConnectionDataType
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
+import org.webrtc.DataChannel
 import org.webrtc.EglBase
 import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
 import org.webrtc.PeerConnection
-import org.webrtc.PeerConnection.IceServer
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoTrack
+import java.nio.ByteBuffer
 
 class WebRtcClient(
-    private val application: Context,
-    private val callsCloudService: CallsCloudService,
-    observer: PeerConnection.Observer,
-    private val gson: Gson = Gson()
-) {
-    private val eglBaseContext = EglBase.create().eglBaseContext
-    private val peerConnectionFactory = MyPeerConnectionFactory(eglBaseContext)
-    private val mediaConstraints = MediaConstraints().also {
-        it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
-    }
-    
-    init {
-        peerConnectionFactory.init(application)
-    }
-    
-    private val iceServers = arrayListOf(
-        IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
-            .setUsername("83eebabf8b4cce9d5dbcb649")
-            .setPassword("2D7JvfkOQtBdYW3R").createIceServer()
+    iceServers: IceServersList,
+    private val peerConnectionObserver: MyPeerConnectionObserver,
+    private val eglBaseContext: EglBase.Context,
+    private val peerConnectionFactory: MyPeerConnectionFactory,
+    private val enumerator: Camera2Enumerator,
+) : PeerConnectionCommunication.ObserveForever {
+    private val peerConnection: PeerConnection? = peerConnectionFactory.createPeerConnection(
+        iceServers.provide(),
+        peerConnectionObserver.provideObserver()
     )
-    private val peerConnection = peerConnectionFactory.createPeerConnection(iceServers, observer)
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
-    private val videoCapturer = getVideoCapturer()
+    private lateinit var videoCapturer: CameraVideoCapturer
+    private val pendingIceMutex = Mutex()
+    private val pendingIceCandidates = mutableListOf<IceCandidate>()
+    private val dataChannel = peerConnection!!.createDataChannel(
+        "messaging",
+        DataChannel.Init()
+    ) // TODO: fix no null assertion
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
+    
+    override fun observeForever(observer: Observer<PeerConnectionState>) {
+        peerConnectionObserver.observeForever(observer)
+    }
+    
+    override fun removeObserver(observer: Observer<PeerConnectionState>) {
+        peerConnectionObserver.removeObserver(observer)
+    }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
         initSurfaceViewRenderer(view)
         startLocalVideoStreaming(view)
     }
+    
+    fun provideConnectionState() = peerConnection?.connectionState()
     
     private fun initSurfaceViewRenderer(viewRenderer: SurfaceViewRenderer) {
         viewRenderer.setEnableHardwareScaler(true)
@@ -58,8 +62,9 @@ class WebRtcClient(
     }
     
     private fun startLocalVideoStreaming(view: SurfaceViewRenderer) {
+        videoCapturer = getVideoCapturer()
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
-        videoCapturer.initialize(helper, application, localVideoSource.capturerObserver)
+        videoCapturer.initialize(helper, view.context, localVideoSource.capturerObserver)
         videoCapturer.startCapture(480, 360, 30)
         localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
             .apply { addSink(view) }
@@ -72,7 +77,6 @@ class WebRtcClient(
     }
     
     private fun getVideoCapturer(): CameraVideoCapturer {
-        val enumerator = Camera2Enumerator(application)
         val deviceNames = enumerator.deviceNames
         for (device in deviceNames) {
             if (enumerator.isFrontFacing(device)) {
@@ -86,55 +90,48 @@ class WebRtcClient(
         initSurfaceViewRenderer(view)
     }
     
-    @Throws(NullPointerException::class)
-    fun call(target: String, userId: String) {
+    suspend fun createOffer(mediaConstraints: MediaConstraints): SessionDescription {
         if (peerConnection == null) throw NullPointerException()
-        val data: (SessionDescription) -> ConnectionData = {
-            ConnectionData(target, userId, it.description, ConnectionDataType.OFFER)
-        }
-        peerConnection.createOffer(object : SimpleSdpObserver() {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                peerConnection.setLocalDescription(object : SimpleSdpObserver() {
-                    override fun onSetSuccess() {
-                        callsCloudService.sendToCloud(data(sessionDescription))
-                    }
-                }, sessionDescription)
-            }
-        }, mediaConstraints)
+        return suspendCreateSessionDescription { peerConnection.createOffer(it, mediaConstraints) }
     }
     
-    @Throws(NullPointerException::class)
-    fun answer(target: String, userId: String) {
+    suspend fun createAnswer(mediaConstraints: MediaConstraints): SessionDescription {
         if (peerConnection == null) throw NullPointerException()
-        val data: (SessionDescription) -> ConnectionData = {
-            ConnectionData(target, userId, it.description, ConnectionDataType.ANSWER)
-        }
-        peerConnection.createAnswer(object : SimpleSdpObserver() {
-            override fun onCreateSuccess(sessionDescription: SessionDescription) {
-                peerConnection.setLocalDescription(object : SimpleSdpObserver() {
-                    override fun onSetSuccess() {
-                        callsCloudService.sendToCloud(data(sessionDescription))
-                    }
-                }, sessionDescription)
+        return suspendCreateSessionDescription { peerConnection.createAnswer(it, mediaConstraints) }
+    }
+    
+    suspend fun setRemoteDescription(sessionDescription: SessionDescription) {
+        if (peerConnection == null) throw NullPointerException()
+        return suspendSdpObserver {
+            peerConnection.setRemoteDescription(it, sessionDescription)
+        }.also {
+            pendingIceMutex.withLock {
+                pendingIceCandidates.forEach { iceCandidate ->
+                    peerConnection.addRtcIceCandidate(iceCandidate)
+                }
+                pendingIceCandidates.clear()
             }
-        }, mediaConstraints)
+        }
     }
     
-    fun onRemoteSessionReceived(sessionDescription: SessionDescription?) {
-        peerConnection!!.setRemoteDescription(SimpleSdpObserver(), sessionDescription)
+    suspend fun setLocalDescription(sessionDescription: SessionDescription) {
+        if (peerConnection == null) throw NullPointerException()
+        return suspendSdpObserver { peerConnection.setLocalDescription(it, sessionDescription) }
     }
     
-    fun addIceCandidate(iceCandidate: IceCandidate?) {
-        peerConnection!!.addIceCandidate(iceCandidate)
+    suspend fun addIceCandidate(iceCandidate: IceCandidate) {
+        if (peerConnection?.remoteDescription == null) {
+            pendingIceMutex.withLock {
+                pendingIceCandidates.add(iceCandidate)
+            }
+            return
+        }
+        peerConnection.addRtcIceCandidate(iceCandidate)
     }
     
-    fun sendIceCandidate(iceCandidate: IceCandidate?, target: String, userId: String) {
-        addIceCandidate(iceCandidate)
-        callsCloudService.sendToCloud(
-            ConnectionData(
-                target, userId, gson.toJson(iceCandidate), ConnectionDataType.ICE_CANDIDATE
-            )
-        )
+    fun sendMessage(text: String) {
+        val buffer = ByteBuffer.wrap(text.toByteArray())
+        dataChannel.send(DataChannel.Buffer(buffer, false))
     }
     
     fun switchCamera() {

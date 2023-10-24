@@ -11,9 +11,9 @@ import com.zhigaras.home.domain.NavigateToCall
 
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
-    dispatchers: Dispatchers,
-    communication: HomeCommunication.Mutable
-) : BaseViewModel<FragmentHomeBinding, HomeUiState>(communication, dispatchers), NavigateToCall {
+    override val communication: HomeCommunication.Mutable,
+    dispatchers: Dispatchers
+) : BaseViewModel<FragmentHomeBinding, HomeUiState>(dispatchers), NavigateToCall {
     
     fun startObservingSubjects(callback: CloudService.Callback<Subject>) {
 //        matchingInteractor.subscribeToSubjects(callback) // TODO: navigate right here???

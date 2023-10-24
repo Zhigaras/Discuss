@@ -1,29 +1,53 @@
 package com.zhigaras.login.presentation.signin
 
 import android.os.Bundle
-import com.zhigaras.auth.Auth
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import com.zhigaras.auth.AuthResultWrapper
+import com.zhigaras.auth.OneTapSignInClient
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
+import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.login.databinding.FragmentSignInBinding
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
-import com.zhigaras.login.domain.SignInCommunication
+import com.zhigaras.login.domain.signin.SignInCommunication
+import com.zhigaras.login.domain.signin.SignInRepository
 
 class SignInViewModel(
-    private val auth: Auth,
+    private val signInRepository: SignInRepository,
     private val navigateToSignUp: NavigateToSignUp,
+    private val saveUserToCloud: SaveUserToCloud,
     private val navigateToHome: NavigateToHome,
-    communication: SignInCommunication.Mutable,
+    override val communication: SignInCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentSignInBinding, SignInUiState>(communication, dispatchers),
+) : BaseViewModel<FragmentSignInBinding, SignInUiState>(dispatchers),
     NavigateToSignUp {
     
-    fun signIn(email: String, password: String) = scopeLaunch(
-        onLoading = { communication.post(SignInUiState.Progress) },
-        onSuccess = { navigateToHome.navigateToHome() },
-        onError = { communication.post(SignInUiState.SingleEventError(it.errorId())) }
+    
+    fun signIn(email: String, password: String) {
+        communication.postUi(SignInUiState.Progress)
+        scopeLaunch({
+            signInRepository.signInWithEmailAndPassword(email, password)
+        }) {
+            it.handle(communication, saveUserToCloud, navigateToHome)
+        }
+    }
+    
+    fun handleResult(authResult: AuthResultWrapper, client: OneTapSignInClient) = scopeLaunch({
+        signInRepository.handelOneTapSignInResult(authResult, client)
+    }) {
+        it.handle(communication, saveUserToCloud, navigateToHome)
+    }
+    
+    fun startGoogleSignIn(
+        launcher: ActivityResultLauncher<IntentSenderRequest>,
+        client: OneTapSignInClient
     ) {
-        auth.signInWithEmailAndPassword(email, password)
+        communication.postUi(SignInUiState.Progress)
+        scopeLaunch({ signInRepository.handleOneTapSignInLaunch(launcher, client) }) {
+            it.handle(communication, saveUserToCloud, navigateToHome)
+        }
     }
     
     override fun navigateToSignUp(args: Bundle?) {

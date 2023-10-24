@@ -11,7 +11,8 @@ class CallsCloudServiceImpl(
     override fun sendToCloud(data: ConnectionData) {
         cloudService.postMultipleLevels(
             data,
-            CloudService.USERS_PATH, data.target,
+            CloudService.USERS_PATH,
+            data.target,
             CloudService.CONNECTION_EVENT_PATH
         )
     }
@@ -26,6 +27,16 @@ class CallsCloudServiceImpl(
             CloudService.USERS_PATH,
             userId,
             CloudService.CONNECTION_EVENT_PATH
+        )
+    }
+    
+    override fun removeConnectionData(userId: String) {
+        cloudService.postMultipleLevels(
+            null,
+            CloudService.USERS_PATH,
+            userId,
+            CloudService.CONNECTION_EVENT_PATH,
+            "iceCandidate"
         )
     }
 }

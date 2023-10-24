@@ -3,6 +3,9 @@ package com.zhigaras.login.presentation.signin
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import com.zhigaras.auth.AuthResultWrapper
+import com.zhigaras.auth.OneTapSignInClient
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.login.databinding.FragmentSignInBinding
 import com.zhigaras.login.domain.LoginRoutes
@@ -17,6 +20,11 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val client = OneTapSignInClient(requireContext())
+        val signInWithGoogleLauncher =
+            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+                viewModel.handleResult(AuthResultWrapper.Base(it), client)
+            }
         
         val inputList = listOf(binding.emailInput.root, binding.passwordInput.root)
         
@@ -34,6 +42,9 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
                 it.arguments = binding.emailInput.root.makeBundle(LoginRoutes.EMAIL_KEY)
                 it.show(parentFragmentManager, it.tag)
             }
+        }
+        binding.signInWithGoogle.setOnClickListener {
+            viewModel.startGoogleSignIn(signInWithGoogleLauncher, client)
         }
         
         viewModel.observe(this) {// TODO: move to baseFragment

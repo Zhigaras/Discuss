@@ -15,7 +15,7 @@ interface CloudService {
     
     suspend fun <T : Any> getDataSnapshot(path: String, child: String, clazz: Class<T>): T
     
-    fun postMultipleLevels(obj: Any, vararg children: String)
+    fun postMultipleLevels(obj: Any?, vararg children: String)
     
     fun <T : Any> subscribeMultipleLevels(
         callback: Callback<T>,
@@ -30,6 +30,6 @@ interface CloudService {
     companion object {
         const val USERS_PATH = "Users"
         const val SUBJECTS_PATH = "Subjects"
-        const val CONNECTION_EVENT_PATH = "connectionEvent"
+        const val CONNECTION_EVENT_PATH = "connectionData"
     }
 }

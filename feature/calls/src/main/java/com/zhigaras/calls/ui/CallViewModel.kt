@@ -4,8 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.zhigaras.auth.ProvideUserId
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsController
+import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
-import com.zhigaras.calls.domain.model.DisputePosition
+import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
@@ -13,23 +14,24 @@ import kotlinx.coroutines.launch
 import org.webrtc.SurfaceViewRenderer
 
 class CallViewModel(
+    private val initCalls: InitCalls,
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
     private val provideUserId: ProvideUserId,
-    communication: CallCommunication.Mutable,
+    override val communication: CallCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentCallBinding, CallUiState>(communication, dispatchers) {
+) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
     
     fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
-        callsController.initLocalView(localView)
-        callsController.initRemoteView(remoteView)
+        initCalls.initLocalView(localView)
+        initCalls.initRemoteView(remoteView)
     }
     
-    fun lookForOpponent(subjectId: String, opinion: DisputePosition) {
+    fun lookForOpponent(subjectId: String, opinion: DisputeParty) {
         viewModelScope.launch {
-            matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion).let {
-                it.handle(callsController, matchingInteractor)
-            }
+            communication.postUi(CallUiState.LookingForOpponent)
+            matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion)
+                .handle(callsController, matchingInteractor, communication)
         }
     }
 }

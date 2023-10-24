@@ -42,7 +42,7 @@ class AuthRepository : Auth {
         }
     }
     
-    override suspend fun signUpWithGoogle(token: String): UserDto {
+    override suspend fun signInWithGoogle(token: String): UserDto {
         val firebaseCredentials = GoogleAuthProvider.getCredential(token, null)
         try {
             val user = auth.signInWithCredential(firebaseCredentials).await().user!!

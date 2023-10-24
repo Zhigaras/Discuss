@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="show_and_hide_messages" translatable="false">show and hide messages</string>
+    <string name="send_message">send message</string>
+    <string name="message">Message</string>
+    <string name="next">Next</string>
+    <string name="back">Escape</string>
+</resources>

@@ -39,12 +39,12 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":auth"))
     implementation(project(":cloudservice"))
+    implementation(project(":feature:messaging"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.lificycle)
     implementation(Dependencies.appcompat)
+    implementation(Dependencies.material)
     
     implementation(Dependencies.koinAndroid)
-    
-    implementation("com.google.code.gson:gson:2.10.1") // todo remove??
 }

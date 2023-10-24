@@ -9,24 +9,45 @@ import java.util.concurrent.atomic.AtomicBoolean
 interface Communication {
     
     interface Post<T : Any> {
-        fun post(item: T)
+        fun postUi(item: T)
+        
+        fun postBackground(item: T)
     }
     
     interface Observe<T : Any> {
         fun observe(owner: LifecycleOwner, observer: Observer<T>)
     }
     
-    interface Mutable<T : Any> : Post<T>, Observe<T>
+    interface ObserveForever<T : Any> {
+        
+        fun observeForever(observer: Observer<T>)
+        
+        fun removeObserver(observer: Observer<T>)
+    }
+    
+    interface Mutable<T : Any> : Post<T>, Observe<T>, ObserveForever<T>
     
     abstract class Abstract<T : Any>(private val liveData: MutableLiveData<T> = MutableLiveData()) :
         Mutable<T> {
         
-        override fun post(item: T) {
+        override fun postUi(item: T) {
             liveData.value = item
+        }
+        
+        override fun postBackground(item: T) {
+            liveData.postValue(item)
         }
         
         override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
             liveData.observe(owner, observer)
+        }
+        
+        override fun observeForever(observer: Observer<T>) {
+            liveData.observeForever(observer)
+        }
+        
+        override fun removeObserver(observer: Observer<T>) {
+            liveData.removeObserver(observer)
         }
     }
     

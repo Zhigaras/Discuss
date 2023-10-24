@@ -25,7 +25,7 @@ interface SignInUiState : UiState<FragmentSignInBinding> {
         }
     }
     
-    class PersistentError(@StringRes val messageId: Int): SignInUiState {
+    class PersistentError(@StringRes val messageId: Int) : SignInUiState {
         override fun update(binding: FragmentSignInBinding) {
             binding.progressLayout.root.visibility = View.GONE
             Snackbar.make(binding.root, messageId, Snackbar.LENGTH_INDEFINITE).also { snackbar ->

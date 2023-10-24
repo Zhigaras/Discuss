@@ -1,24 +1,25 @@
 package com.zhigaras.login.presentation.resetpassword
 
-import com.zhigaras.auth.Auth
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.login.databinding.DialogResetPasswordBinding
-import com.zhigaras.login.domain.ResetPasswordCommunication
+import com.zhigaras.login.domain.resetpassword.ResetPasswordCommunication
+import com.zhigaras.login.domain.resetpassword.ResetPasswordRepository
 
 class ResetPasswordViewModel(
-    private val auth: Auth,
-    communication: ResetPasswordCommunication.Mutable,
+    private val resetPasswordRepository: ResetPasswordRepository,
+    override val communication: ResetPasswordCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<DialogResetPasswordBinding, ResetPasswordUiState>(communication, dispatchers) {
+) : BaseViewModel<DialogResetPasswordBinding, ResetPasswordUiState>(dispatchers) {
     
-    fun resetPassword(email: String) = scopeLaunch(
-        onLoading = { communication.post(ResetPasswordUiState.Progress) },
-        onSuccess = { communication.post(ResetPasswordUiState.Success) },
-        onError = { communication.post(ResetPasswordUiState.SingleEventError(it.errorId())) }
-    ) {
-        auth.resetPassword(email)
+    fun resetPassword(email: String) {
+        communication.postUi(ResetPasswordUiState.Progress)
+        scopeLaunch({
+            resetPasswordRepository.resetPassword(email)
+        }) {
+            it.handle(communication)
+        }
     }
     
-    fun setInitialState() = communication.post(ResetPasswordUiState.Initial)
+    fun setInitialState() = communication.postUi(ResetPasswordUiState.Initial)
 }
