@@ -67,7 +67,13 @@ interface CallsController {
                 callsCloudService,
                 target,
                 userId,
-            ) { remoteMediaStream = it }
+            ) {
+                remoteMediaStream = it
+                remoteMediaStream?.let {
+                    val track = it.videoTracks
+                    track[0].addSink(remoteView)
+                }
+            }
         }
         
         init {
@@ -127,7 +133,7 @@ interface CallsController {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
                 }
-                subscribeToConnectionEvents(userId)
+//                subscribeToConnectionEvents(userId)
                 val offer = webRtcClient.createOffer(mediaConstraints)
                 webRtcClient.setLocalDescription(offer)
                 callsCloudService.sendToCloud(
@@ -168,6 +174,7 @@ interface CallsController {
         
         override fun closeCurrentAndCreateNewConnection() {
             webRtcClient.closeCurrentAndCreateNewConnection()
+            remoteMediaStream = null
         }
         
         override fun closeConnectionTotally() {

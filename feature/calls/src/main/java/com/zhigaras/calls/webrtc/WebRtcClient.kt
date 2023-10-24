@@ -105,10 +105,7 @@ class WebRtcClient(
     
     suspend fun createAnswer(mediaConstraints: MediaConstraints): SessionDescription {
         return suspendCreateSessionDescription {
-            peerConnection?.createAnswer(
-                it,
-                mediaConstraints
-            )
+            peerConnection?.createAnswer(it, mediaConstraints)
         }
     }
     
@@ -146,6 +143,7 @@ class WebRtcClient(
     
     fun closeCurrentAndCreateNewConnection() {
         peerConnection?.close()
+        dataChannel?.close()
         initNewConnection()
     }
     
@@ -155,6 +153,7 @@ class WebRtcClient(
             videoCapturer.stopCapture()
             videoCapturer.dispose()
             peerConnection!!.close()
+            dataChannel?.close()
             peerConnectionObserver.closeConnection()
         } catch (e: Exception) {
             e.printStackTrace()

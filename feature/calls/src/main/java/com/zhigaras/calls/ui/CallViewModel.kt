@@ -29,17 +29,17 @@ class CallViewModel(
         initCalls.initRemoteView(remoteView)
     }
     
-    fun lookForOpponent(subjectId: String, opinion: DisputeParty) {
+    fun lookForOpponent(subjectId: String, opinion: DisputeParty, isConnectionRecreated: Boolean = false) {
         viewModelScope.launch {
             communication.postUi(CallUiState.LookingForOpponent)
-            matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion)
+            matchingInteractor.checkMatching(subjectId, provideUserId.provide(), opinion,isConnectionRecreated)
                 .handle(callsController, matchingInteractor, communication)
         }
     }
     
     fun nextOpponent(subjectId: String, opinion: DisputeParty) {
         callsController.closeCurrentAndCreateNewConnection()
-        lookForOpponent(subjectId, opinion)
+        lookForOpponent(subjectId, opinion, true)
     }
     
     fun closeConnection() {

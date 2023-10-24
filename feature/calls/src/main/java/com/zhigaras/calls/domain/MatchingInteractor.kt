@@ -16,7 +16,8 @@ interface MatchingInteractor {
     suspend fun checkMatching(
         subjectId: String,
         userId: String,
-        userOpinion: DisputeParty
+        userOpinion: DisputeParty,
+        isConnectionRecreated: Boolean
     ): MatchingResult
     
     suspend fun removeUserFromWaitList(
@@ -36,13 +37,25 @@ interface MatchingInteractor {
         override suspend fun checkMatching(
             subjectId: String,
             userId: String,
-            userOpinion: DisputeParty
+            userOpinion: DisputeParty,
+            isConnectionRecreated: Boolean
         ): MatchingResult {
             val subject =
                 cloudService.getDataSnapshot(SUBJECTS_PATH, subjectId, Subject::class.java)
             return if (subject.hasOpponent(userOpinion)) {
                 val opponentId = subject.getOpponentId(userOpinion)
-                MatchingResult.OpponentFound(userId, opponentId, subjectId, userOpinion.opposite())
+                if (isConnectionRecreated) MatchingResult.NextOpponentFound(
+                    userId,
+                    opponentId,
+                    subjectId,
+                    userOpinion.opposite()
+                )
+                else MatchingResult.OpponentFound(
+                    userId,
+                    opponentId,
+                    subjectId,
+                    userOpinion.opposite()
+                )
             } else {
                 MatchingResult.NoMatch(userId, subjectId, userOpinion)
             }

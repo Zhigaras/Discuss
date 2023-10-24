@@ -1,5 +1,6 @@
 package com.zhigaras.calls.webrtc
 
+import android.util.Log
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
@@ -32,7 +33,9 @@ interface PeerConnectionState {
             target: String,
             userId: String,
             cacheStream: (MediaStream) -> Unit
-        ) = Unit
+        ) {
+            Log.d("QQQWW signal change", newState.toString())
+        }
     }
     
     class ConnectionChanged(private val newState: PeerConnection.PeerConnectionState) :
@@ -46,6 +49,7 @@ interface PeerConnectionState {
             userId: String,
             cacheStream: (MediaStream) -> Unit
         ) {
+            Log.d("QQQWW conn change", newState.toString())
             peerConnectionCallback.invoke(newState)
             if (newState == PeerConnection.PeerConnectionState.CONNECTED) {
                 callsCloudService.removeConnectionData(userId)
@@ -63,7 +67,9 @@ interface PeerConnectionState {
             target: String,
             userId: String,
             cacheStream: (MediaStream) -> Unit
-        ) = Unit
+        ) {
+            Log.d("QQQWW ice conn change", newState.toString())
+        }
     }
     
     class IceGatheringChanged(private val newState: PeerConnection.IceGatheringState) :
@@ -76,7 +82,9 @@ interface PeerConnectionState {
             target: String,
             userId: String,
             cacheStream: (MediaStream) -> Unit
-        ) = Unit
+        ) {
+            Log.d("QQQWW gath change", newState.toString())
+        }
     }
     
     class IceCandidateCreated(private val iceCandidate: IceCandidate) : PeerConnectionState {
@@ -89,6 +97,7 @@ interface PeerConnectionState {
             userId: String,
             cacheStream: (MediaStream) -> Unit
         ) {
+            Log.d("QQQWW ice created", iceCandidate.toString())
             callsCloudService.sendToCloud(
                 ConnectionData(
                     target, userId, iceCandidate = MyIceCandidate(iceCandidate)
@@ -107,7 +116,9 @@ interface PeerConnectionState {
             target: String,
             userId: String,
             cacheStream: (MediaStream) -> Unit
-        ) = Unit
+        ) {
+            Log.d("QQQWW ice removed", iceCandidates.toString())
+        }
     }
     
     class StreamAdded(private val mediaStream: MediaStream) : PeerConnectionState {
@@ -176,6 +187,8 @@ interface PeerConnectionState {
             target: String,
             userId: String,
             cacheStream: (MediaStream) -> Unit
-        ) = Unit
+        ) {
+            Log.d("QQQWW", "renegotiaton needed")
+        }
     }
 }

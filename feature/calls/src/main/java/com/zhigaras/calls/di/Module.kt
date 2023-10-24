@@ -58,7 +58,7 @@ fun webRtcModule() = module {
         PeerConnectionCommunication.Post::class
     )
     
-    factory { MyPeerConnectionObserver(get(), get()) }
+    single { MyPeerConnectionObserver(get(), get()) }
     
     single {
         IceServersList(
