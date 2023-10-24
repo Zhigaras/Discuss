@@ -56,11 +56,7 @@ class MyPeerConnectionObserver(
         
         override fun onIceCandidatesRemoved(iceCandidates: Array<out IceCandidate>?) {
             scope.launch {
-                communication.postUi(
-                    PeerConnectionState.IceCandidatesRemoved(
-                        iceCandidates
-                    )
-                )
+                communication.postUi(PeerConnectionState.IceCandidatesRemoved(iceCandidates))
             }
         }
         

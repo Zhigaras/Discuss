@@ -51,8 +51,10 @@ interface PeerConnectionState {
         ) {
             Log.d("QQQWW conn change", newState.toString())
             peerConnectionCallback.invoke(newState)
-            if (newState == PeerConnection.PeerConnectionState.CONNECTED) {
-                callsCloudService.removeConnectionData(userId)
+            when(newState) {
+                PeerConnection.PeerConnectionState.CONNECTED -> callsCloudService.removeConnectionData(userId)
+//                PeerConnection.PeerConnectionState.FAILED -> callsController.reconnect(target,userId)
+                else -> Unit
             }
         }
     }
@@ -132,8 +134,8 @@ interface PeerConnectionState {
             cacheStream: (MediaStream) -> Unit
         ) {
             try {
-                val track = mediaStream.videoTracks
-                track[0].addSink(remoteView)
+//                val track = mediaStream.videoTracks
+//                track[0].addSink(remoteView)
                 cacheStream(mediaStream)
             } catch (e: Exception) {
                 throw Exception("Can`t add stream")
