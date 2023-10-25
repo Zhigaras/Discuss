@@ -27,17 +27,14 @@ class CallViewModel(
     fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
         initCalls.initLocalView(localView)
         initCalls.initRemoteView(remoteView)
+        initCalls.subscribeToConnectionEvents(provideUserId.provide())
     }
     
-    fun lookForOpponent(
-        subjectId: String,
-        opinion: DisputeParty,
-        isConnectionRecreated: Boolean = false
-    ) {
+    fun lookForOpponent(subjectId: String, opinion: DisputeParty) {
         viewModelScope.launch {
             communication.postUi(CallUiState.LookingForOpponent())
             matchingInteractor
-                .checkMatching(subjectId, provideUserId.provide(), opinion, isConnectionRecreated)
+                .checkMatching(subjectId, provideUserId.provide(), opinion)
                 .handle(callsController, matchingInteractor, communication)
         }
     }
@@ -45,7 +42,7 @@ class CallViewModel(
     fun nextOpponent(subjectId: String, opinion: DisputeParty) {
         callsController.sendInterruptionToOpponent(true)
         callsController.closeCurrentAndCreateNewConnection()
-        lookForOpponent(subjectId, opinion, true)
+        lookForOpponent(subjectId, opinion)
     }
     
     fun closeConnection() {

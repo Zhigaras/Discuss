@@ -36,8 +36,6 @@ interface CallsController {
     
     fun handleAnswer(answer: SessionDescription)
     
-    fun subscribeToConnectionEvents(userId: String)
-    
     fun setOpponentId(opponentId: String)
     
     fun handleIceCandidate(iceCandidate: MyIceCandidate)
@@ -248,4 +246,6 @@ interface InitCalls {
     fun initLocalView(view: SurfaceViewRenderer)
     
     fun initRemoteView(view: SurfaceViewRenderer)
+    
+    fun subscribeToConnectionEvents(userId: String)
 }
