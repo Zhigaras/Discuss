@@ -75,6 +75,10 @@ class WebRtcClient(
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
         videoCapturer.initialize(helper, view.context, localVideoSource.capturerObserver)
         videoCapturer.startCapture(480, 360, 30)
+        addStreamTo(view)
+    }
+    
+    fun addStreamTo(view: SurfaceViewRenderer) {
         localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
             .apply { addSink(view) }
         localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)

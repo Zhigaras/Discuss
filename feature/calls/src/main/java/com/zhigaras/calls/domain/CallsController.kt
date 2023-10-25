@@ -54,7 +54,10 @@ interface CallsController {
         private val communication: DataChannelCommunication.Mutable, //??
         private val webRtcClient: WebRtcClient //??
     ) : CallsController, InitCalls, Messaging {
+        private var makingOffer = false
+        private var isHandlingAnswer = false
         private var remoteView: SurfaceViewRenderer? = null //??
+        private var localView: SurfaceViewRenderer? = null //??
         private val userId = provideUserId.provide()
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private var target: String = ""
@@ -102,6 +105,7 @@ interface CallsController {
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
+            localView = view
             webRtcClient.initLocalSurfaceView(view)
         }
         
@@ -112,6 +116,10 @@ interface CallsController {
                 val track = it.videoTracks
                 track[0].addSink(remoteView)
             }
+        }
+        
+        private fun addStream() {
+            webRtcClient.addStreamTo(localView ?: return)
         }
         
         fun reconnect(opponentId: String, userId: String) {
@@ -129,6 +137,7 @@ interface CallsController {
         }
         
         override fun sendOffer(opponentId: String, userId: String) {
+            makingOffer = true
             scope.launch {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
@@ -139,10 +148,12 @@ interface CallsController {
                 callsCloudService.sendToCloud(
                     ConnectionData(opponentId, userId, offer = MySessionDescription(offer))
                 )
+                makingOffer = false
             }
         }
         
         override fun sendAnswer(offer: SessionDescription, opponentId: String, userId: String) {
+            if (makingOffer) return
             scope.launch {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
@@ -157,6 +168,7 @@ interface CallsController {
         }
         
         override fun handleIceCandidate(iceCandidate: MyIceCandidate) {
+            if (isHandlingAnswer) return
             scope.launch {
                 webRtcClient.addIceCandidate(iceCandidate)
             }
@@ -164,7 +176,9 @@ interface CallsController {
         
         override fun handleAnswer(answer: SessionDescription) {
             scope.launch {
+                isHandlingAnswer = true
                 webRtcClient.setRemoteDescription(answer)
+                isHandlingAnswer = false
             }
         }
         
@@ -175,10 +189,13 @@ interface CallsController {
         override fun closeCurrentAndCreateNewConnection() {
             webRtcClient.closeCurrentAndCreateNewConnection()
             remoteMediaStream = null
+            addStream()
         }
         
         override fun closeConnectionTotally() {
             webRtcClient.closeConnectionTotally()
+            remoteView = null
+            localView = null
             scope.cancel()
         }
         
