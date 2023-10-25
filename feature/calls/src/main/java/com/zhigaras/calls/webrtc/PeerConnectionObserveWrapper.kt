@@ -13,7 +13,7 @@ import org.webrtc.PeerConnection.IceConnectionState
 import org.webrtc.PeerConnection.IceGatheringState
 import org.webrtc.PeerConnection.SignalingState
 
-class MyPeerConnectionObserver(
+class PeerConnectionObserveWrapper(
     dispatchers: Dispatchers,
     private val communication: PeerConnectionCommunication.Mutable
 ) : PeerConnectionCommunication.ObserveForever {

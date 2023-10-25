@@ -46,6 +46,10 @@ interface CallsController {
     
     fun closeConnectionTotally()
     
+    fun onConnectionInterruptedByOpponent()
+    
+    fun sendInterruptionToOpponent(isInterrupted: Boolean)
+    
     class Base(
         application: Context,
         provideUserId: ProvideUserId,
@@ -120,6 +124,21 @@ interface CallsController {
         
         private fun addStream() {
             webRtcClient.addStreamTo(localView ?: return)
+        }
+        
+        override fun onConnectionInterruptedByOpponent() {
+            peerConnectionCallback.postInterrupted()
+            sendInterruptionToOpponent(false)
+        }
+        
+        override fun sendInterruptionToOpponent(isInterrupted: Boolean) {
+            callsCloudService.sendToCloud(
+                ConnectionData(
+                    target,
+                    userId,
+                    interruptedByOpponent = isInterrupted
+                )
+            )
         }
         
         fun reconnect(opponentId: String, userId: String) {

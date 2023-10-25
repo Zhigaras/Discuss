@@ -50,7 +50,7 @@ interface MatchingInteractor {
                     subjectId,
                     userOpinion.opposite()
                 )
-                else MatchingResult.OpponentFound(
+                else MatchingResult.FirstOpponentFound(
                     userId,
                     opponentId,
                     subjectId,

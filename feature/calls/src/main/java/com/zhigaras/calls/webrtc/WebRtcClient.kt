@@ -19,7 +19,7 @@ import java.nio.ByteBuffer
 
 class WebRtcClient(
     private val iceServers: IceServersList,
-    private val peerConnectionObserver: MyPeerConnectionObserver,
+    private val peerConnectionObserver: PeerConnectionObserveWrapper,
     private val eglBaseContext: EglBase.Context,
     private val peerConnectionFactory: MyPeerConnectionFactory,
     private val enumerator: Camera2Enumerator,

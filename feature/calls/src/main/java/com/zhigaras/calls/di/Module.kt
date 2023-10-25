@@ -9,7 +9,7 @@ import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.ui.CallViewModel
 import com.zhigaras.calls.webrtc.IceServersList
 import com.zhigaras.calls.webrtc.MyPeerConnectionFactory
-import com.zhigaras.calls.webrtc.MyPeerConnectionObserver
+import com.zhigaras.calls.webrtc.PeerConnectionObserveWrapper
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.PeerConnectionCommunication
 import com.zhigaras.calls.webrtc.WebRtcClient
@@ -47,7 +47,7 @@ fun callModule() = listOf(messagesModule(), module {
     
     single { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
     
-    single { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
+    single { PeerConnectionCallback(get()) } /*bind PeerConnectionCallback::class*/
 })
 
 fun webRtcModule() = module {
@@ -58,7 +58,7 @@ fun webRtcModule() = module {
         PeerConnectionCommunication.Post::class
     )
     
-    single { MyPeerConnectionObserver(get(), get()) }
+    single { PeerConnectionObserveWrapper(get(), get()) }
     
     single {
         IceServersList(

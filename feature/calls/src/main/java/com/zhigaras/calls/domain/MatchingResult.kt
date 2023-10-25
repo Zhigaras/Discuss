@@ -11,7 +11,7 @@ interface MatchingResult {
         communication: CallCommunication.Post,
     )
     
-    class OpponentFound(
+    class FirstOpponentFound(
         private val userId: String,
         private val opponentId: String,
         private val subjectId: String,
@@ -25,6 +25,7 @@ interface MatchingResult {
         ) {
             callsController.setOpponentId(opponentId)
             matchingInteractor.removeUserFromWaitList(subjectId, opponentId, opponentOpinion)
+            // TODO: move removing user away from here
             callsController.subscribeToConnectionEvents(userId)
             callsController.sendOffer(opponentId, userId)
         }
@@ -59,7 +60,7 @@ interface MatchingResult {
             matchingInteractor: MatchingInteractor,
             communication: CallCommunication.Post
         ) {
-            communication.postUi(CallUiState.WaitingForOpponent)
+            communication.postUi(CallUiState.WaitingForOpponent())
             matchingInteractor.addUserToWaitList(subjectId, userId, userOpinion)
             callsController.subscribeToConnectionEvents(userId)
         }

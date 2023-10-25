@@ -6,6 +6,7 @@ import com.zhigaras.calls.domain.CallsController
 data class ConnectionData(
     val target: String = "",
     val sender: String = "",
+    val interruptedByOpponent: Boolean = false,
     val offer: MySessionDescription? = null,
     val answer: MySessionDescription? = null,
     val iceCandidate: MyIceCandidate? = null
@@ -26,6 +27,10 @@ data class ConnectionData(
             Log.d("QQQWW", "iceCandidate")
             controller.handleIceCandidate(iceCandidate)
             return
+        }
+        if (interruptedByOpponent) {
+            Log.d("QQQWW", "isCanceledByOpponent")
+            controller.onConnectionInterruptedByOpponent()
         }
     }
 }

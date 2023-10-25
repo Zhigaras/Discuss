@@ -16,7 +16,7 @@ interface PeerConnectionState {
     fun handle(
         remoteView: SurfaceViewRenderer?,
         peerConnectionCallback: PeerConnectionCallback,
-        communication: DataChannelCommunication.Mutable,
+        messagesCommunication: DataChannelCommunication.Mutable,
         callsCloudService: CallsCloudService,
         target: String,
         userId: String,
@@ -28,7 +28,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -43,7 +43,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -51,8 +51,9 @@ interface PeerConnectionState {
         ) {
             Log.d("QQQWW conn change", newState.toString())
             peerConnectionCallback.invoke(newState)
-            when(newState) {
-                PeerConnection.PeerConnectionState.CONNECTED -> callsCloudService.removeConnectionData(userId)
+            when (newState) {
+                PeerConnection.PeerConnectionState.CONNECTED ->
+                    callsCloudService.removeConnectionData(userId)
 //                PeerConnection.PeerConnectionState.FAILED -> callsController.reconnect(target,userId)
                 else -> Unit
             }
@@ -64,7 +65,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -79,7 +80,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -93,7 +94,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -113,7 +114,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -127,7 +128,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -147,7 +148,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -159,7 +160,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
@@ -173,7 +174,7 @@ interface PeerConnectionState {
                     val bytes = ByteArray(data.remaining())
                     data[bytes]
                     val text = String(bytes)
-                    communication.postBackground(text)
+                    messagesCommunication.postBackground(text)
                 }
             })
             // TODO: unregister this
@@ -184,7 +185,7 @@ interface PeerConnectionState {
         override fun handle(
             remoteView: SurfaceViewRenderer?,
             peerConnectionCallback: PeerConnectionCallback,
-            communication: DataChannelCommunication.Mutable,
+            messagesCommunication: DataChannelCommunication.Mutable,
             callsCloudService: CallsCloudService,
             target: String,
             userId: String,
