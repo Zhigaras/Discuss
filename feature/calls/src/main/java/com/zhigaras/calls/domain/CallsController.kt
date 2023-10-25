@@ -46,7 +46,7 @@ interface CallsController {
     
     fun onConnectionInterruptedByOpponent()
     
-    fun sendInterruptionToOpponent(isInterrupted: Boolean)
+    fun sendInterruptionToOpponent()
     
     class Base(
         application: Context,
@@ -126,17 +126,13 @@ interface CallsController {
         
         override fun onConnectionInterruptedByOpponent() {
             peerConnectionCallback.postInterrupted()
-            sendInterruptionToOpponent(false)
+            remoteView?.clearImage()
+            callsCloudService.removeInterruptionFlag(userId)
         }
         
-        override fun sendInterruptionToOpponent(isInterrupted: Boolean) {
-            callsCloudService.sendToCloud(
-                ConnectionData(
-                    target,
-                    userId,
-                    interruptedByOpponent = isInterrupted
-                )
-            )
+        override fun sendInterruptionToOpponent() {
+            callsCloudService
+                .sendToCloud(ConnectionData(target, userId, interruptedByOpponent = true))
         }
         
         fun reconnect(opponentId: String, userId: String) {
@@ -159,7 +155,6 @@ interface CallsController {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
                 }
-//                subscribeToConnectionEvents(userId)
                 val offer = webRtcClient.createOffer(mediaConstraints)
                 webRtcClient.setLocalDescription(offer)
                 callsCloudService.sendToCloud(
@@ -206,6 +201,7 @@ interface CallsController {
         override fun closeCurrentAndCreateNewConnection() {
             webRtcClient.closeCurrentAndCreateNewConnection()
             remoteMediaStream = null
+            remoteView?.clearImage()
             addStream()
         }
         

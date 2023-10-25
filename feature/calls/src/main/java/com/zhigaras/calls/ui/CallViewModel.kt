@@ -40,7 +40,7 @@ class CallViewModel(
     }
     
     fun nextOpponent(subjectId: String, opinion: DisputeParty) {
-        callsController.sendInterruptionToOpponent(true)
+        callsController.sendInterruptionToOpponent()
         callsController.closeCurrentAndCreateNewConnection()
         lookForOpponent(subjectId, opinion)
     }

@@ -39,4 +39,14 @@ class CallsCloudServiceImpl(
             "iceCandidate"
         )
     }
+    
+    override fun removeInterruptionFlag(userId: String) {
+        cloudService.postMultipleLevels(
+            false,
+            CloudService.USERS_PATH,
+            userId,
+            CloudService.CONNECTION_EVENT_PATH,
+            "interruptedByOpponent"
+        )
+    }
 }

@@ -156,7 +156,7 @@ class WebRtcClient(
             localVideoTrack.dispose()
             videoCapturer.stopCapture()
             videoCapturer.dispose()
-            peerConnection!!.close()
+            peerConnection?.close()
             dataChannel?.close()
             peerConnectionObserver.closeConnection()
         } catch (e: Exception) {

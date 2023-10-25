@@ -10,4 +10,6 @@ interface CallsCloudService {
     fun observeUpdates(userId: String, callback: CloudService.Callback<ConnectionData>)
     
     fun removeConnectionData(userId: String)
+    
+    fun removeInterruptionFlag(userId: String)
 }
