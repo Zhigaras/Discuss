@@ -18,7 +18,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        viewModel.init(binding.localView, binding.remoteView) // TODO: fix
+        viewModel.init(binding.localView, binding.remoteView)
         val args = arguments
         if (args != null && savedInstanceState == null) {
             val disputePosition = args.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return

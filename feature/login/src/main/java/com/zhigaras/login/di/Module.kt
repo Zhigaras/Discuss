@@ -30,8 +30,6 @@ fun loginModule() = module {
     viewModelOf(::SignUpViewModel)
     viewModelOf(::ResetPasswordViewModel)
     
-    // TODO: change singles to factories
-    
     factory { AuthRepository() } bind Auth::class
     
     factory { SignInCommunication.Base() } binds arrayOf(
