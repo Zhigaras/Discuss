@@ -49,6 +49,7 @@ class CallViewModel(
     }
     
     fun closeConnection() {
+        callsController.sendInterruptionToOpponent()
         callsController.closeConnectionTotally()
         routes.goBack()
     }

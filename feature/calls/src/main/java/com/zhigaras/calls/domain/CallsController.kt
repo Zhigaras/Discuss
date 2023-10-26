@@ -71,6 +71,7 @@ interface CallsController {
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
+                setOpponent(data.opponent)
                 data.handle(this@Base)
             }
             
@@ -209,7 +210,7 @@ interface CallsController {
         
         override fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser) {
             if (makingOffer) return
-            this.opponent = opponent
+            //setOpponent()??
             scope.launch {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
@@ -248,6 +249,7 @@ interface CallsController {
         }
         
         override fun closeCurrentConnection() {
+            isConnected = false
             webRtcClient.closeCurrentConnection(observer)
             remoteMediaStream = null
             opponent = ReadyToCallUser()

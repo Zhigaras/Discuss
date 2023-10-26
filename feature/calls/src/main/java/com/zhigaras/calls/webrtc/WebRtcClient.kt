@@ -39,10 +39,7 @@ class WebRtcClient(
             iceServers.provide(),
             peerConnectionObserver.provideObserver()
         )
-        dataChannel = peerConnection?.createDataChannel(
-            "messaging",
-            DataChannel.Init()
-        )
+        dataChannel = peerConnection?.createDataChannel("messaging", DataChannel.Init())
         peerConnectionObserver.observeForever(observer)
     }
     
