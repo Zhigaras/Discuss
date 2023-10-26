@@ -1,4 +1,4 @@
-package com.zhigaras.cloudeservice // TODO: rename
+package com.zhigaras.cloudservice // TODO: rename
 
 interface CloudService {
     

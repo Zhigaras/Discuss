@@ -3,7 +3,7 @@ package com.zhigaras.calls.data
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ReadyToCallUser
-import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudservice.CloudService
 
 class CallsCloudServiceImpl(
     private val cloudService: CloudService

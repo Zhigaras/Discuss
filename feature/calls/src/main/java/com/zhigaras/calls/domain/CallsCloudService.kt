@@ -2,7 +2,7 @@ package com.zhigaras.calls.domain
 
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ReadyToCallUser
-import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudservice.CloudService
 
 interface CallsCloudService {
     

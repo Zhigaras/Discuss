@@ -1,6 +1,6 @@
 package com.zhigaras.calls.domain.model
 
-import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudservice.CloudService
 
 open class ReadyToCallUser(
     val id: String = "",

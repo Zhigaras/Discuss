@@ -1,7 +1,7 @@
 package com.zhigaras.home.domain
 
-import com.zhigaras.cloudeservice.CloudService
-import com.zhigaras.cloudeservice.CloudService.Companion.USERS_PATH
+import com.zhigaras.cloudservice.CloudService
+import com.zhigaras.cloudservice.CloudService.Companion.USERS_PATH
 import com.zhigaras.home.domain.model.User
 
 interface SaveUserToCloud { // TODO: move to auth module??

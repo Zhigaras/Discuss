@@ -1,4 +1,4 @@
-package com.zhigaras.cloudeservice
+package com.zhigaras.cloudservice
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

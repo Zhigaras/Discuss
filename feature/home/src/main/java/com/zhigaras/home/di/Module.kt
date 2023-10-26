@@ -1,8 +1,8 @@
 package com.zhigaras.home.di
 
-import com.zhigaras.cloudeservice.CloudService
-import com.zhigaras.cloudeservice.CloudServiceImpl
-import com.zhigaras.cloudeservice.ProvideDatabase
+import com.zhigaras.cloudservice.CloudService
+import com.zhigaras.cloudservice.CloudServiceImpl
+import com.zhigaras.cloudservice.ProvideDatabase
 import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.home.presentation.HomeViewModel

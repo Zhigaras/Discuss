@@ -13,7 +13,7 @@ import com.zhigaras.calls.domain.model.MySessionDescription
 import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.WebRtcClient
-import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.IntentAction
 import com.zhigaras.messaging.domain.DataChannelCommunication

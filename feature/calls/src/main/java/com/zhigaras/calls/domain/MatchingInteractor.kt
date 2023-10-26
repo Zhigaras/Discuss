@@ -2,9 +2,9 @@ package com.zhigaras.calls.domain
 
 import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.calls.domain.model.ReadyToCallUser
-import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.calls.domain.model.Subject
-import com.zhigaras.cloudeservice.CloudService.Companion.SUBJECTS_PATH
+import com.zhigaras.cloudservice.CloudService.Companion.SUBJECTS_PATH
 
 interface MatchingInteractor {
     
