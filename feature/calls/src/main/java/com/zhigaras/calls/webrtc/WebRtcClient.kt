@@ -23,22 +23,18 @@ class WebRtcClient(
     private val eglBaseContext: EglBase.Context,
     private val peerConnectionFactory: MyPeerConnectionFactory,
     private val enumerator: Camera2Enumerator,
-) : PeerConnectionCommunication.ObserveForever {
+) {
     private var peerConnection: PeerConnection? = null
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
-    private lateinit var videoCapturer: CameraVideoCapturer
     private val pendingIceMutex = Mutex()
     private val pendingIceCandidates = mutableListOf<IceCandidate>()
     private var dataChannel: DataChannel? = null
+    private lateinit var videoCapturer: CameraVideoCapturer
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
     
-    init {
-        initNewConnection()
-    }
-    
-    private fun initNewConnection() {
+    fun initNewConnection(observer: Observer<PeerConnectionState>) {
         peerConnection = peerConnectionFactory.createPeerConnection(
             iceServers.provide(),
             peerConnectionObserver.provideObserver()
@@ -47,14 +43,7 @@ class WebRtcClient(
             "messaging",
             DataChannel.Init()
         )
-    }
-    
-    override fun observeForever(observer: Observer<PeerConnectionState>) {
         peerConnectionObserver.observeForever(observer)
-    }
-    
-    override fun removeObserver(observer: Observer<PeerConnectionState>) {
-        peerConnectionObserver.removeObserver(observer)
     }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
@@ -145,18 +134,19 @@ class WebRtcClient(
         dataChannel?.send(DataChannel.Buffer(buffer, false))
     }
     
-    fun closeCurrentAndCreateNewConnection() {
+    fun closeCurrentConnection(observer: Observer<PeerConnectionState>) {
         peerConnection?.close()
         dataChannel?.close()
-        initNewConnection()
+        peerConnectionObserver.removeObserver(observer)
     }
     
-    fun closeConnectionTotally() {
+    fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
         localVideoTrack.dispose()
         videoCapturer.stopCapture()
         videoCapturer.dispose()
         peerConnection?.close()
         dataChannel?.close()
         peerConnectionObserver.closeConnection()
+        peerConnectionObserver.removeObserver(observer)
     }
 }

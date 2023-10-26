@@ -15,4 +15,6 @@ interface CallsCloudService {
     fun removeInterruptionFlag(userId: String)
     
     fun removeUserFromWaitList(opponent: ReadyToCallUser)
+    
+    fun removeCallback(callback: CloudService.Callback<*>)
 }

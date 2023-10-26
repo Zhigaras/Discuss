@@ -42,7 +42,9 @@ interface CallsController {
     
     fun handleIceCandidate(iceCandidate: MyIceCandidate)
     
-    fun closeCurrentAndCreateNewConnection()
+    fun closeCurrentConnection()
+    
+    fun createNewConnection()
     
     fun closeConnectionTotally()
     
@@ -67,6 +69,15 @@ interface CallsController {
         private var user: ReadyToCallUser = ReadyToCallUser()
         private var opponent: ReadyToCallUser = ReadyToCallUser()
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
+        private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
+            override fun provide(data: ConnectionData) {
+                data.handle(this@Base)
+            }
+            
+            override fun error(message: String) {
+                throw Exception(message)
+            }
+        }
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
@@ -117,7 +128,7 @@ interface CallsController {
         }
         
         init {
-            webRtcClient.observeForever(observer)
+            webRtcClient.initNewConnection(observer)
             val connectionReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
@@ -159,13 +170,9 @@ interface CallsController {
             this.user = user
         }
         
-        private fun addStream() {
-            webRtcClient.addStreamTo(localView ?: return)
-        }
-        
         override fun onConnectionInterruptedByOpponent() {
             peerConnectionCallback.postInterrupted()
-            remoteView?.clearImage()
+            closeCurrentConnection()
             callsCloudService.removeInterruptionFlag(user.id)
         }
         
@@ -235,33 +242,29 @@ interface CallsController {
             this.opponent = opponent
         }
         
-        override fun closeCurrentAndCreateNewConnection() {
-            webRtcClient.closeCurrentAndCreateNewConnection()
+        override fun createNewConnection() {
+            webRtcClient.initNewConnection(observer)
+            webRtcClient.addStreamTo(localView ?: return)
+        }
+        
+        override fun closeCurrentConnection() {
+            webRtcClient.closeCurrentConnection(observer)
             remoteMediaStream = null
             opponent = ReadyToCallUser()
             remoteView?.clearImage()
-            addStream()
         }
         
         override fun closeConnectionTotally() {
-            webRtcClient.closeConnectionTotally()
+            webRtcClient.closeConnectionTotally(observer)
+            callsCloudService.removeCallback(connectionEventCallback)
+            remoteMediaStream = null
             remoteView = null
             localView = null
             scope.cancel()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
-            callsCloudService.observeUpdates(
-                userId,
-                object : CloudService.Callback<ConnectionData> {
-                    override fun provide(data: ConnectionData) {
-                        data.handle(this@Base)
-                    }
-                    
-                    override fun error(message: String) {
-                        throw Exception(message)
-                    }
-                })
+            callsCloudService.observeUpdates(userId, connectionEventCallback)
         }
         
         override fun sendMessage(text: String) {

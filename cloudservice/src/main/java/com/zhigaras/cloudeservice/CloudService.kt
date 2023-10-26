@@ -1,4 +1,4 @@
-package com.zhigaras.cloudeservice
+package com.zhigaras.cloudeservice // TODO: rename
 
 interface CloudService {
     
@@ -26,6 +26,8 @@ interface CloudService {
     fun addItemToList(item: String, vararg children: String)
     
     fun removeListItem(itemId: String, vararg children: String)
+    
+    fun removeListener(callback: Callback<*>)
     
     companion object {
         const val USERS_PATH = "Users"

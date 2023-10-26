@@ -10,6 +10,9 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     
     private val reference = provideDatabase.database()
     
+    private val listeners =
+        hashMapOf<CloudService.Callback<*>, Pair<DatabaseReference, ValueEventListener>>()
+    
     override fun postWithId(path: String, id: String, obj: Any) {
         reference.child(path).child(id).setValue(obj)
     }
@@ -40,7 +43,7 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         clazz: Class<T>,
         vararg children: String
     ) {
-        makeReference(*children).addValueEventListener(object : ValueEventListener {
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val result = snapshot.getValue(clazz)
                 if (result == null) callback.error("Data is null")
@@ -50,7 +53,10 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
             override fun onCancelled(error: DatabaseError) {
                 callback.error(error.message)
             }
-        })
+        }
+        val ref = makeReference(*children)
+        listeners[callback] = ref to listener
+        ref.addValueEventListener(listener)
     }
     
     override fun addItemToList(item: String, vararg children: String) {
@@ -61,6 +67,11 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     override fun removeListItem(itemId: String, vararg children: String) {
         val ref = makeReference(*children)
         ref.updateChildren(mapOf(itemId to null))
+    }
+    
+    override fun removeListener(callback: CloudService.Callback<*>) {
+        val refAndListenerPair = listeners.remove(callback)
+        refAndListenerPair?.first?.removeEventListener(refAndListenerPair.second)
     }
     
     private fun makeReference(vararg children: String): DatabaseReference {
