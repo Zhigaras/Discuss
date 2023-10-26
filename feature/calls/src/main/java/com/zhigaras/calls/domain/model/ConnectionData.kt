@@ -4,8 +4,7 @@ import android.util.Log
 import com.zhigaras.calls.domain.CallsController
 
 data class ConnectionData(
-    val target: String = "",
-    val sender: String = "",
+    val opponent: ReadyToCallUser = ReadyToCallUser(),
     val interruptedByOpponent: Boolean = false,
     val offer: MySessionDescription? = null,
     val answer: MySessionDescription? = null,
@@ -15,7 +14,7 @@ data class ConnectionData(
         
         if (offer != null) {
             Log.d("QQQWW", "offer")
-            controller.sendAnswer(offer, sender, target)
+            controller.handleOffer(offer, opponent)
             return
         }
         if (answer != null) {

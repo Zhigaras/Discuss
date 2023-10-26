@@ -58,7 +58,7 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         ref.updateChildren(mapOf(item to "waiting"))
     }
     
-    override suspend fun removeListItem(itemId: String, vararg children: String) {
+    override fun removeListItem(itemId: String, vararg children: String) {
         val ref = makeReference(*children)
         ref.updateChildren(mapOf(itemId to null))
     }

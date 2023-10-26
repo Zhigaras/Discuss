@@ -86,7 +86,7 @@ class WebRtcClient(
             addTrack(localVideoTrack)
             addTrack(localAudioTrack)
         }
-        peerConnection!!.addStream(localStream)
+        peerConnection?.addStream(localStream)
     }
     
     private fun getVideoCapturer(): CameraVideoCapturer {

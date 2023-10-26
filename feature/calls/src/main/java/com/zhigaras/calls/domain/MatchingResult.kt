@@ -1,6 +1,6 @@
 package com.zhigaras.calls.domain
 
-import com.zhigaras.calls.domain.model.DisputeParty
+import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.calls.ui.CallUiState
 
 interface MatchingResult {
@@ -11,30 +11,19 @@ interface MatchingResult {
         communication: CallCommunication.Post,
     )
     
-    class OpponentFound(
-        private val userId: String,
-        private val opponentId: String,
-        private val subjectId: String,
-        private val opponentOpinion: DisputeParty
-    ) : MatchingResult {
+    class OpponentFound(private val user: ReadyToCallUser) : MatchingResult {
         
         override suspend fun handle(
             callsController: CallsController,
             matchingInteractor: MatchingInteractor,
             communication: CallCommunication.Post
         ) {
-            callsController.setOpponentId(opponentId)
-            matchingInteractor.removeUserFromWaitList(subjectId, opponentId, opponentOpinion)
-            // TODO: move removing user away from here
-            callsController.sendOffer(opponentId, userId)
+            callsController.setOpponent(user)
+            callsController.sendInitialOffer()
         }
     }
     
-    class NoMatch(
-        private val userId: String,
-        private val subjectId: String,
-        private val userOpinion: DisputeParty
-    ) : MatchingResult {
+    class NoMatch(private val user: ReadyToCallUser) : MatchingResult {
         
         override suspend fun handle(
             callsController: CallsController,
@@ -42,7 +31,7 @@ interface MatchingResult {
             communication: CallCommunication.Post
         ) {
             communication.postUi(CallUiState.WaitingForOpponent())
-            matchingInteractor.addUserToWaitList(subjectId, userId, userOpinion)
+            matchingInteractor.addUserToWaitList(user)
         }
     }
 }

@@ -25,7 +25,7 @@ interface CloudService {
     
     fun addItemToList(item: String, vararg children: String)
     
-    suspend fun removeListItem(itemId: String, vararg children: String)
+    fun removeListItem(itemId: String, vararg children: String)
     
     companion object {
         const val USERS_PATH = "Users"

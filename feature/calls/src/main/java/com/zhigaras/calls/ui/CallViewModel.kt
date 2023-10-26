@@ -8,6 +8,7 @@ import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.domain.model.DisputeParty
+import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
@@ -32,6 +33,7 @@ class CallViewModel(
     
     fun lookForOpponent(subjectId: String, opinion: DisputeParty) {
         viewModelScope.launch {
+            initCalls.initUser(ReadyToCallUser(provideUserId.provide(), subjectId, opinion))
             communication.postUi(CallUiState.LookingForOpponent())
             matchingInteractor
                 .checkMatching(subjectId, provideUserId.provide(), opinion)
