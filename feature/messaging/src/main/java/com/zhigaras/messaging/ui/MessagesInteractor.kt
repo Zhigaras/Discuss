@@ -33,7 +33,5 @@ interface MessagesInteractor {
                 communication.postBackground(MessagesUiState.MessageReceived(messages.toList()))
             }
         }
-        
-        // TODO: unregister observer
     }
 }

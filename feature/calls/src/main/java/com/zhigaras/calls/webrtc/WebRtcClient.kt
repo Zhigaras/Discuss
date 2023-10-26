@@ -133,6 +133,7 @@ class WebRtcClient(
     
     fun closeCurrentConnection(observer: Observer<PeerConnectionState>) {
         peerConnection?.close()
+        dataChannel?.unregisterObserver()
         dataChannel?.close()
         peerConnectionObserver.removeObserver(observer)
     }
@@ -142,6 +143,7 @@ class WebRtcClient(
         videoCapturer.stopCapture()
         videoCapturer.dispose()
         peerConnection?.close()
+        dataChannel?.unregisterObserver()
         dataChannel?.close()
         peerConnectionObserver.closeConnection()
         peerConnectionObserver.removeObserver(observer)

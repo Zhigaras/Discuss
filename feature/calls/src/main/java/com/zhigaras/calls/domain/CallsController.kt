@@ -53,8 +53,8 @@ interface CallsController {
     fun sendInterruptionToOpponent()
     
     class Base(
-        application: Context,
         dispatchers: Dispatchers,
+        private val application: Context,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
         private val messagingCommunication: DataChannelCommunication.Mutable, //??
@@ -81,6 +81,20 @@ interface CallsController {
         }
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
+        }
+        private val connectionReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
+                    val networkState = intent.getStringExtra("state")
+                    val connState = webRtcClient.provideConnectionState()
+                    if (
+                        networkState == "online" &&
+                        (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
+                    ) {
+                        sendRestartOffer()
+                    }
+                }
+            }
         }
         
         inner class ConnectionStateHandler {
@@ -130,27 +144,12 @@ interface CallsController {
         
         init {
             webRtcClient.initNewConnection(observer)
-            val connectionReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent?) {
-                    if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
-                        val networkState = intent.getStringExtra("state")
-                        val connState = webRtcClient.provideConnectionState()
-                        if (
-                            networkState == "online" &&
-                            (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
-                        ) {
-                            sendRestartOffer()
-                        }
-                    }
-                }
-            }
             ContextCompat.registerReceiver(
                 application,
                 connectionReceiver,
                 IntentFilter(IntentAction.ACTION_NETWORK_STATE),
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
-            // TODO: unregister this
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
@@ -263,6 +262,7 @@ interface CallsController {
             remoteView = null
             localView = null
             scope.cancel()
+            application.unregisterReceiver(connectionReceiver)
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
