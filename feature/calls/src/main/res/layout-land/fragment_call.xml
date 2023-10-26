@@ -47,24 +47,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/stop_button"
+        android:id="@+id/escape_button"
         style="@style/EscapeConversationButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/next_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/quarter_guide_line"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/next_button"
         style="@style/NextOpponentButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/messages_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/quarter_guide_line"
-        app:layout_constraintTop_toBottomOf="@+id/stop_button" />
+        app:layout_constraintTop_toBottomOf="@+id/escape_button" />
 
     <TextView
         android:id="@+id/test_text"

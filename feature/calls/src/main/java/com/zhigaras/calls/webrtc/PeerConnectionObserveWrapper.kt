@@ -3,6 +3,7 @@ package com.zhigaras.calls.webrtc
 import androidx.lifecycle.Observer
 import com.zhigaras.core.Dispatchers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
@@ -12,7 +13,7 @@ import org.webrtc.PeerConnection.IceConnectionState
 import org.webrtc.PeerConnection.IceGatheringState
 import org.webrtc.PeerConnection.SignalingState
 
-class MyPeerConnectionObserver(
+class PeerConnectionObserveWrapper(
     dispatchers: Dispatchers,
     private val communication: PeerConnectionCommunication.Mutable
 ) : PeerConnectionCommunication.ObserveForever {
@@ -27,6 +28,8 @@ class MyPeerConnectionObserver(
     }
     
     fun provideObserver() = observer
+    
+    fun closeConnection() = scope.cancel()
     
     private val observer = object : PeerConnection.Observer {
         override fun onSignalingChange(state: SignalingState) {
@@ -53,11 +56,7 @@ class MyPeerConnectionObserver(
         
         override fun onIceCandidatesRemoved(iceCandidates: Array<out IceCandidate>?) {
             scope.launch {
-                communication.postUi(
-                    PeerConnectionState.IceCandidatesRemoved(
-                        iceCandidates
-                    )
-                )
+                communication.postUi(PeerConnectionState.IceCandidatesRemoved(iceCandidates))
             }
         }
         

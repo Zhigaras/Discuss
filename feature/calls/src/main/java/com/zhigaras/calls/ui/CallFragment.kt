@@ -18,7 +18,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        viewModel.init(binding.localView, binding.remoteView) // TODO: fix
+        viewModel.init(binding.localView, binding.remoteView)
         val args = arguments
         if (args != null && savedInstanceState == null) {
             val disputePosition = args.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return
@@ -28,6 +28,18 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
         
         viewModel.observe(this) {
             it.update(binding)
+        }
+        
+        binding.escapeButton.setOnClickListener {
+            viewModel.closeConnection()
+        }
+        binding.nextButton.setOnClickListener {
+            if (args != null && savedInstanceState == null) {
+                val disputePosition =
+                    args.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return@setOnClickListener
+                val opinion = DisputeParty.valueOf(disputePosition)
+                viewModel.nextOpponent("1", opinion)
+            }
         }
     }
 }

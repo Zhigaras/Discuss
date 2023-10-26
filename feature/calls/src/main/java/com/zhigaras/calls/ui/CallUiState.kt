@@ -6,14 +6,14 @@ import org.webrtc.PeerConnection.PeerConnectionState
 
 interface CallUiState : UiState<FragmentCallBinding> {
     
-    object LookingForOpponent : CallUiState {
+    class LookingForOpponent : CallUiState {
         
         override fun update(binding: FragmentCallBinding) {
             binding.testText.text = this::class.java.name
         }
     }
     
-    object WaitingForOpponent : CallUiState {
+    class WaitingForOpponent : CallUiState {
         
         override fun update(binding: FragmentCallBinding) {
             binding.testText.text = this::class.java.name
@@ -28,7 +28,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
     }
 }
 
-object New : CallUiState.Connection() {
+class New : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.NEW
     override fun update(binding: FragmentCallBinding) {
@@ -36,7 +36,7 @@ object New : CallUiState.Connection() {
     }
 }
 
-object Connecting : CallUiState.Connection() {
+class Connecting : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CONNECTING
     override fun update(binding: FragmentCallBinding) {
@@ -44,7 +44,7 @@ object Connecting : CallUiState.Connection() {
     }
 }
 
-object Connected : CallUiState.Connection() {
+class Connected : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CONNECTED
     
@@ -53,7 +53,7 @@ object Connected : CallUiState.Connection() {
     }
 }
 
-object Disconnected : CallUiState.Connection() {
+class Disconnected : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.DISCONNECTED
     
@@ -62,7 +62,7 @@ object Disconnected : CallUiState.Connection() {
     }
 }
 
-object Failed : CallUiState.Connection() {
+class Failed : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.FAILED
     override fun update(binding: FragmentCallBinding) {
@@ -70,9 +70,16 @@ object Failed : CallUiState.Connection() {
     }
 }
 
-object Closed : CallUiState.Connection() {
+class Closed : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CLOSED
+    override fun update(binding: FragmentCallBinding) {
+        binding.testText.text = this::class.java.name
+    }
+}
+
+class InterruptedByOpponent : CallUiState {
+    
     override fun update(binding: FragmentCallBinding) {
         binding.testText.text = this::class.java.name
     }

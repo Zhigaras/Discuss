@@ -2,17 +2,18 @@ package com.zhigaras.calls.data
 
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.model.ConnectionData
-import com.zhigaras.cloudeservice.CloudService
+import com.zhigaras.calls.domain.model.ReadyToCallUser
+import com.zhigaras.cloudservice.CloudService
 
 class CallsCloudServiceImpl(
     private val cloudService: CloudService
 ) : CallsCloudService {
     
-    override fun sendToCloud(data: ConnectionData) {
+    override fun sendToCloud(data: ConnectionData, opponentId: String) {
         cloudService.postMultipleLevels(
             data,
             CloudService.USERS_PATH,
-            data.target,
+            opponentId,
             CloudService.CONNECTION_EVENT_PATH
         )
     }
@@ -38,5 +39,23 @@ class CallsCloudServiceImpl(
             CloudService.CONNECTION_EVENT_PATH,
             "iceCandidate"
         )
+    }
+    
+    override fun removeInterruptionFlag(userId: String) {
+        cloudService.postMultipleLevels(
+            false,
+            CloudService.USERS_PATH,
+            userId,
+            CloudService.CONNECTION_EVENT_PATH,
+            "interruptedByOpponent"
+        )
+    }
+    
+    override fun removeUserFromWaitList(
+        opponent: ReadyToCallUser
+    ) = opponent.removeSelfFromWaitList(cloudService)
+    
+    override fun removeCallback(callback: CloudService.Callback<*>) {
+        cloudService.removeListener(callback)
     }
 }

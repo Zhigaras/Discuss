@@ -1,8 +1,8 @@
 package com.zhigaras.home.di
 
-import com.zhigaras.cloudeservice.CloudService
-import com.zhigaras.cloudeservice.CloudServiceImpl
-import com.zhigaras.cloudeservice.ProvideDatabase
+import com.zhigaras.cloudservice.CloudService
+import com.zhigaras.cloudservice.CloudServiceImpl
+import com.zhigaras.cloudservice.ProvideDatabase
 import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.home.presentation.HomeViewModel
@@ -15,15 +15,15 @@ fun homeModule() = module {
     
     viewModelOf(::HomeViewModel)
     
-    single { HomeCommunication.Base() } binds arrayOf(
+    factory { HomeCommunication.Base() } binds arrayOf(
         HomeCommunication.Mutable::class,
         HomeCommunication.Observe::class,
         HomeCommunication.Post::class
     )
     
-    single { CloudServiceImpl(get()) } bind CloudService::class
+    factory { CloudServiceImpl(get()) } bind CloudService::class
     
-    single { ProvideDatabase.Base() } bind ProvideDatabase::class
+    factory { ProvideDatabase.Base() } bind ProvideDatabase::class
     
-    single { SaveUserToCloud.Base(get()) } bind SaveUserToCloud::class
+    factory { SaveUserToCloud.Base(get()) } bind SaveUserToCloud::class
 }
