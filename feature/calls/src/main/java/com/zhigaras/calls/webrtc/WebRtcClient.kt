@@ -152,15 +152,11 @@ class WebRtcClient(
     }
     
     fun closeConnectionTotally() {
-        try {
-            localVideoTrack.dispose()
-            videoCapturer.stopCapture()
-            videoCapturer.dispose()
-            peerConnection?.close()
-            dataChannel?.close()
-            peerConnectionObserver.closeConnection()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        localVideoTrack.dispose()
+        videoCapturer.stopCapture()
+        videoCapturer.dispose()
+        peerConnection?.close()
+        dataChannel?.close()
+        peerConnectionObserver.closeConnection()
     }
 }

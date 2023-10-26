@@ -58,6 +58,7 @@ interface CallsController {
         private val messagingCommunication: DataChannelCommunication.Mutable, //??
         private val webRtcClient: WebRtcClient //??
     ) : CallsController, InitCalls, Messaging {
+        private var isConnected = false
         private var makingOffer = false
         private var isHandlingAnswer = false
         private var remoteView: SurfaceViewRenderer? = null //??
@@ -76,11 +77,14 @@ interface CallsController {
                 peerConnectionCallback.invoke(newState)
                 when (newState) {
                     PeerConnectionState.CONNECTED -> {
+                        isConnected = true
                         callsCloudService.removeConnectionData(user.id)
                         callsCloudService.removeUserFromWaitList(opponent)
                     }
                     
-                    else -> Unit
+                    else -> {
+                        isConnected = false
+                    }
                 }
             }
             
@@ -166,8 +170,9 @@ interface CallsController {
         }
         
         override fun sendInterruptionToOpponent() {
-            callsCloudService
-                .sendToCloud(ConnectionData(user, interruptedByOpponent = true), opponent.id)
+            if (isConnected)
+                callsCloudService
+                    .sendToCloud(ConnectionData(user, interruptedByOpponent = true), opponent.id)
         }
         
         fun sendRestartOffer() {
