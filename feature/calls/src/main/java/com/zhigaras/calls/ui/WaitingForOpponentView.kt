@@ -2,13 +2,14 @@ package com.zhigaras.calls.ui
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.appcompat.widget.AppCompatTextView
 import com.zhigaras.webrtc.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class WaitingForOpponentView @JvmOverloads constructor(
@@ -24,7 +25,6 @@ class WaitingForOpponentView @JvmOverloads constructor(
     
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d("AAASS", "attached")
         scope = CoroutineScope(Dispatchers.Main)
     }
     
@@ -47,8 +47,7 @@ class WaitingForOpponentView @JvmOverloads constructor(
         if (inProgress) return
         inProgress = true
         scope.launch {
-            while (inProgress) {
-                Log.d("AAASS", counter.toString())
+            while (isActive) {
                 text = buildString {
                     append(reason)
                     repeat(counter) { append('.') }
@@ -61,12 +60,12 @@ class WaitingForOpponentView @JvmOverloads constructor(
     
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.d("AAASS", "detached")
         scope.cancel()
     }
     
     fun stop() {
         visibility = GONE
+        scope.coroutineContext.cancelChildren()
         inProgress = false
     }
 }
