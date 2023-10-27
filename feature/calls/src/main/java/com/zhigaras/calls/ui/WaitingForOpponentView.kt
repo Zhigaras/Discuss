@@ -18,15 +18,10 @@ class WaitingForOpponentView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
     
-    private lateinit var scope: CoroutineScope
+    private val scope = CoroutineScope(Dispatchers.Main)
     private var counter = 1
     private var inProgress = false
     private var reason = ""
-    
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        scope = CoroutineScope(Dispatchers.Main)
-    }
     
     fun startSearch() {
         visibility = VISIBLE
