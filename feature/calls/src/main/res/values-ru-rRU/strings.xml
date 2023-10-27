@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="the_conversation_is_interrupted">Разговор прерван собеседником. Пожалуйста нажмите кнопку \"Следующий\" или \"Назад\".</string>
+</resources>

@@ -41,7 +41,7 @@ fun callModule() = listOf(messagesModule(), module {
     )
     
     single {
-        CallsController.Base(androidApplication(), get(), get(), get(), get(), get())
+        CallsController.Base(get(), androidApplication(), get(), get(), get(), get())
     } binds arrayOf(
         CallsController::class,
         InitCalls::class,

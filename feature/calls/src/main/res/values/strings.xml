@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="the_conversation_is_interrupted">The conversation is interrupted by opponent. Please press \"Next\" or \"Escape\" button.</string>
+</resources>
