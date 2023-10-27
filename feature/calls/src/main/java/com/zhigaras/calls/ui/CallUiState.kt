@@ -12,6 +12,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         override fun update(binding: FragmentCallBinding) {
             binding.interruptedView.root.visibility = View.GONE
             binding.testText.text = this::class.java.name
+            binding.waitingView.startSearch()
         }
     }
     
@@ -20,6 +21,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         override fun update(binding: FragmentCallBinding) {
             binding.interruptedView.root.visibility = View.GONE
             binding.testText.text = this::class.java.name
+            binding.waitingView.startWaiting()
         }
     }
     
@@ -46,6 +48,7 @@ class Connecting : CallUiState.Connection() {
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
         binding.testText.text = this::class.java.name
+        binding.waitingView.startConnecting()
     }
 }
 
@@ -56,6 +59,7 @@ class Connected : CallUiState.Connection() {
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
         binding.testText.text = this::class.java.name
+        binding.waitingView.stop()
     }
 }
 

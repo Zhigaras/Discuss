@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="the_conversation_is_interrupted">The conversation is interrupted by opponent. Please press \"Next\" or \"Escape\" button.</string>
+    <string name="search">Search</string>
+    <string name="waiting">Waiting for opponent</string>
+    <string name="connecting">Connecting</string>
 </resources>
