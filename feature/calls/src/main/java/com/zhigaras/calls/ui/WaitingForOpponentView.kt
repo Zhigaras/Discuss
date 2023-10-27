@@ -51,6 +51,7 @@ class WaitingForOpponentView @JvmOverloads constructor(
                 text = buildString {
                     append(reason)
                     repeat(counter) { append('.') }
+                    repeat(3 - counter) { append(' ') }
                 }
                 delay(300)
                 if (++counter == 4) counter = 0
