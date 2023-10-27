@@ -32,6 +32,8 @@
     <include
         android:id="@+id/interrupted_view"
         layout="@layout/interrupted_by_opponent_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/center_vertical_guide_line"
@@ -41,9 +43,12 @@
     <com.zhigaras.calls.ui.WaitingForOpponentView
         android:id="@+id/waiting_view"
         style="@style/waiting_view_text_style"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/escape_button"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/center_vertical_guide_line"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline

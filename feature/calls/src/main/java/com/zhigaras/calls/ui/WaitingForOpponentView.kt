@@ -1,6 +1,8 @@
 package com.zhigaras.calls.ui
 
 import android.content.Context
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.zhigaras.webrtc.R
@@ -23,24 +25,29 @@ class WaitingForOpponentView @JvmOverloads constructor(
     private var inProgress = false
     private var reason = ""
     
+    init {
+        onResume()
+    }
+    
     fun startSearch() {
-        visibility = VISIBLE
         reason = context.getString(R.string.search)
         startProgress()
     }
     
     fun startWaiting() {
-        visibility = VISIBLE
         reason = context.getString(R.string.waiting)
+        startProgress()
     }
     
     fun startConnecting() {
         reason = context.getString(R.string.connecting)
+        startProgress()
     }
     
     private fun startProgress() {
-        if (inProgress) return
         inProgress = true
+        visibility = VISIBLE
+        scope.coroutineContext.cancelChildren()
         scope.launch {
             while (isActive) {
                 text = buildString {
@@ -54,14 +61,47 @@ class WaitingForOpponentView @JvmOverloads constructor(
         }
     }
     
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        scope.cancel()
+    override fun onSaveInstanceState(): Parcelable {
+        val bundle = Bundle().also {
+            it.putParcelable(STATE_KEY, super.onSaveInstanceState())
+            it.putBoolean(PROGRESS_KEY, inProgress)
+            it.putString(REASON_KEY, reason)
+        }
+        return bundle
+    }
+    
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is Bundle) {
+            inProgress = state.getBoolean(PROGRESS_KEY, false)
+            reason = state.getString(REASON_KEY, "")
+            super.onRestoreInstanceState(state.getParcelable(STATE_KEY))
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+    
+    fun onPause() {
+        scope.coroutineContext.cancelChildren()
+    }
+    
+    fun onResume() {
+        if (inProgress) startProgress()
     }
     
     fun stop() {
         visibility = GONE
         scope.coroutineContext.cancelChildren()
         inProgress = false
+    }
+    
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        scope.cancel()
+    }
+    
+    companion object {
+        private const val PROGRESS_KEY = "inProgress"
+        private const val REASON_KEY = "reason"
+        private const val STATE_KEY = "state"
     }
 }

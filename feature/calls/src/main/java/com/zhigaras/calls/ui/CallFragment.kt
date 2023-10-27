@@ -42,4 +42,14 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
             }
         }
     }
+    
+    override fun onPause() {
+        super.onPause()
+        binding.waitingView.onPause()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        binding.waitingView.onResume()
+    }
 }
