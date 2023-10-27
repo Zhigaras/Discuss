@@ -88,16 +88,6 @@
         app:layout_constraintStart_toEndOf="@id/quarter_guide_line"
         app:layout_constraintTop_toBottomOf="@+id/escape_button" />
 
-    <TextView
-        android:id="@+id/test_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toStartOf="@+id/center_vertical_guide_line"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <include
         android:id="@+id/messages_layout"
         layout="@layout/message_layout"

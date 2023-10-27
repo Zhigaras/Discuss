@@ -11,7 +11,6 @@ interface CallUiState : UiState<FragmentCallBinding> {
         
         override fun update(binding: FragmentCallBinding) {
             binding.interruptedView.root.visibility = View.GONE
-            binding.testText.text = this::class.java.name
             binding.waitingView.startSearch()
         }
     }
@@ -20,7 +19,6 @@ interface CallUiState : UiState<FragmentCallBinding> {
         
         override fun update(binding: FragmentCallBinding) {
             binding.interruptedView.root.visibility = View.GONE
-            binding.testText.text = this::class.java.name
             binding.waitingView.startWaiting()
         }
     }
@@ -38,7 +36,6 @@ class New : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.NEW
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
-        binding.testText.text = this::class.java.name
     }
 }
 
@@ -47,7 +44,6 @@ class Connecting : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.CONNECTING
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
-        binding.testText.text = this::class.java.name
         binding.waitingView.startConnecting()
     }
 }
@@ -58,7 +54,6 @@ class Connected : CallUiState.Connection() {
     
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
-        binding.testText.text = this::class.java.name
         binding.waitingView.stop()
     }
 }
@@ -69,7 +64,6 @@ class Disconnected : CallUiState.Connection() {
     
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
-        binding.testText.text = this::class.java.name
     }
 }
 
@@ -78,7 +72,6 @@ class Failed : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.FAILED
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
-        binding.testText.text = this::class.java.name
     }
 }
 
@@ -87,7 +80,6 @@ class Closed : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.CLOSED
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.root.visibility = View.GONE
-        binding.testText.text = this::class.java.name
     }
 }
 

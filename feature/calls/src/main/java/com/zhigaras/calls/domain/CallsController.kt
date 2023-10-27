@@ -32,13 +32,11 @@ import org.webrtc.SurfaceViewRenderer
 
 interface CallsController {
     
-    fun sendInitialOffer()
+    fun sendInitialOffer(user: ReadyToCallUser)
     
     fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser)
     
     fun handleAnswer(answer: SessionDescription)
-    
-    fun setOpponent(opponent: ReadyToCallUser)
     
     fun handleIceCandidate(iceCandidate: MyIceCandidate)
     
@@ -71,7 +69,7 @@ interface CallsController {
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
-                setOpponent(data.opponent)
+                opponent = data.opponent
                 data.handle(this@Base)
             }
             
@@ -189,7 +187,8 @@ interface CallsController {
             })
         }
         
-        override fun sendInitialOffer() {
+        override fun sendInitialOffer(user: ReadyToCallUser) {
+            opponent = user
             sendOffer(MediaConstraints().also {
                 it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
             })
@@ -236,10 +235,6 @@ interface CallsController {
                 webRtcClient.setRemoteDescription(answer)
                 isHandlingAnswer = false
             }
-        }
-        
-        override fun setOpponent(opponent: ReadyToCallUser) {
-            this.opponent = opponent
         }
         
         override fun createNewConnection() {
