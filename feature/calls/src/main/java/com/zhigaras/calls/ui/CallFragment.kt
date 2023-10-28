@@ -34,12 +34,22 @@ class CallFragment : BaseFragment<FragmentCallBinding>() {
             viewModel.closeConnection()
         }
         binding.nextButton.setOnClickListener {
-            if (args != null && savedInstanceState == null) {
+            if (args != null) {
                 val disputePosition =
                     args.getString(CallRoutes.DISPUTE_POSITION_KEY) ?: return@setOnClickListener
                 val opinion = DisputeParty.valueOf(disputePosition)
                 viewModel.nextOpponent("1", opinion)
             }
         }
+    }
+    
+    override fun onPause() {
+        super.onPause()
+        binding.waitingView.onPause()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        binding.waitingView.onResume()
     }
 }

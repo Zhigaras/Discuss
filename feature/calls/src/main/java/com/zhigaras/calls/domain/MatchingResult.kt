@@ -18,8 +18,8 @@ interface MatchingResult {
             matchingInteractor: MatchingInteractor,
             communication: CallCommunication.Post
         ) {
-            callsController.setOpponent(user)
-            callsController.sendInitialOffer()
+            callsController.removeUserFromWaitList(user)
+            callsController.sendInitialOffer(user)
         }
     }
     

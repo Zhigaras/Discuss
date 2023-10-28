@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="waiting_view_text_style">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="remote_view_overlay_style">
+        <item name="android:background">@color/light_gray</item>
+    </style>
+</resources>

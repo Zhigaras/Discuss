@@ -16,6 +16,7 @@ import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.IntentAction
+import com.zhigaras.core.InternetConnectionState
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -32,13 +33,11 @@ import org.webrtc.SurfaceViewRenderer
 
 interface CallsController {
     
-    fun sendInitialOffer()
+    fun sendInitialOffer(user: ReadyToCallUser)
     
     fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser)
     
     fun handleAnswer(answer: SessionDescription)
-    
-    fun setOpponent(opponent: ReadyToCallUser)
     
     fun handleIceCandidate(iceCandidate: MyIceCandidate)
     
@@ -51,6 +50,8 @@ interface CallsController {
     fun onConnectionInterruptedByOpponent()
     
     fun sendInterruptionToOpponent()
+    
+    fun removeUserFromWaitList(user: ReadyToCallUser)
     
     class Base(
         dispatchers: Dispatchers,
@@ -71,7 +72,7 @@ interface CallsController {
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
-                setOpponent(data.opponent)
+                opponent = data.opponent
                 data.handle(this@Base)
             }
             
@@ -85,13 +86,20 @@ interface CallsController {
         private val connectionReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
-                    val networkState = intent.getStringExtra("state")
+                    val networkState = InternetConnectionState.valueOf(
+                        intent.getStringExtra("state")
+                            ?: InternetConnectionState.UNKNOWN.name
+                    )
                     val connState = webRtcClient.provideConnectionState()
-                    if (
-                        networkState == "online" &&
-                        (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
-                    ) {
-                        sendRestartOffer()
+                    if (networkState == InternetConnectionState.ONLINE) {
+                        if (connState == PeerConnectionState.DISCONNECTED ||
+                            connState == PeerConnectionState.FAILED
+                        ) {
+                            peerConnectionCallback.postTryingToReconnect()
+                            sendRestartOffer()
+                        }
+                    } else {
+                        peerConnectionCallback.postCheckConnection()
                     }
                 }
             }
@@ -105,7 +113,6 @@ interface CallsController {
                     PeerConnectionState.CONNECTED -> {
                         isConnected = true
                         callsCloudService.removeConnectionData(user.id)
-                        callsCloudService.removeUserFromWaitList(opponent)
                     }
                     
                     else -> {
@@ -182,6 +189,10 @@ interface CallsController {
                     .sendToCloud(ConnectionData(user, interruptedByOpponent = true), opponent.id)
         }
         
+        override fun removeUserFromWaitList(user: ReadyToCallUser) {
+            callsCloudService.removeUserFromWaitList(user)
+        }
+        
         fun sendRestartOffer() {
             sendOffer(MediaConstraints().apply {
                 mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
@@ -189,7 +200,8 @@ interface CallsController {
             })
         }
         
-        override fun sendInitialOffer() {
+        override fun sendInitialOffer(user: ReadyToCallUser) {
+            opponent = user
             sendOffer(MediaConstraints().also {
                 it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
             })
@@ -209,7 +221,7 @@ interface CallsController {
         
         override fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser) {
             if (makingOffer) return
-            //setOpponent()??
+            this.opponent = opponent
             scope.launch {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
@@ -238,10 +250,6 @@ interface CallsController {
             }
         }
         
-        override fun setOpponent(opponent: ReadyToCallUser) {
-            this.opponent = opponent
-        }
-        
         override fun createNewConnection() {
             webRtcClient.initNewConnection(observer)
             webRtcClient.addStreamTo(localView ?: return)
@@ -256,6 +264,7 @@ interface CallsController {
         }
         
         override fun closeConnectionTotally() {
+            isConnected = false
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             remoteMediaStream = null
