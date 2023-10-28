@@ -1,6 +1,7 @@
 package com.zhigaras.calls.webrtc
 
 import com.zhigaras.calls.domain.CallCommunication
+import com.zhigaras.calls.ui.CheckConnection
 import com.zhigaras.calls.ui.Closed
 import com.zhigaras.calls.ui.Connected
 import com.zhigaras.calls.ui.Connecting
@@ -8,6 +9,7 @@ import com.zhigaras.calls.ui.Disconnected
 import com.zhigaras.calls.ui.Failed
 import com.zhigaras.calls.ui.InterruptedByOpponent
 import com.zhigaras.calls.ui.New
+import com.zhigaras.calls.ui.TryingToReconnect
 import org.webrtc.PeerConnection.PeerConnectionState
 
 class PeerConnectionCallback(
@@ -27,4 +29,8 @@ class PeerConnectionCallback(
     }
     
     fun postInterrupted() = communication.postBackground(InterruptedByOpponent())
+    
+    fun postCheckConnection() = communication.postBackground(CheckConnection())
+    
+    fun postTryingToReconnect() = communication.postBackground(TryingToReconnect())
 }

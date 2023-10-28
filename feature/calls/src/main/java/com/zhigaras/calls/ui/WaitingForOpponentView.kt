@@ -44,6 +44,11 @@ class WaitingForOpponentView @JvmOverloads constructor(
         startProgress()
     }
     
+    fun startReconnect() {
+        reason = context.getString(R.string.trying_to_reconnect)
+        startProgress()
+    }
+    
     private fun startProgress() {
         inProgress = true
         visibility = VISIBLE

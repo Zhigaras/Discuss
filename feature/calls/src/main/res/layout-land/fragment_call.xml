@@ -29,11 +29,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
+    <TextView
         android:id="@+id/interrupted_view"
-        layout="@layout/interrupted_by_opponent_view"
+        style="@style/waiting_view_text_style"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:gravity="center"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/center_vertical_guide_line"

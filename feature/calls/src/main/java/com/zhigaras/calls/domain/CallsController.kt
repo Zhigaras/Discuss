@@ -16,6 +16,7 @@ import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.IntentAction
+import com.zhigaras.core.InternetConnectionState
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -83,13 +84,20 @@ interface CallsController {
         private val connectionReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
-                    val networkState = intent.getStringExtra("state")
+                    val networkState = InternetConnectionState.valueOf(
+                        intent.getStringExtra("state")
+                            ?: InternetConnectionState.UNKNOWN.name
+                    )
                     val connState = webRtcClient.provideConnectionState()
-                    if (
-                        networkState == "online" &&
-                        (connState == PeerConnectionState.DISCONNECTED || connState == PeerConnectionState.FAILED)
-                    ) {
-                        sendRestartOffer()
+                    if (networkState == InternetConnectionState.ONLINE) {
+                        if (connState == PeerConnectionState.DISCONNECTED ||
+                            connState == PeerConnectionState.FAILED
+                        ) {
+                            peerConnectionCallback.postTryingToReconnect()
+                            sendRestartOffer()
+                        }
+                    } else {
+                        peerConnectionCallback.postCheckConnection()
                     }
                 }
             }

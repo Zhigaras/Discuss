@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="the_conversation_is_interrupted">Разговор прерван собеседником. Пожалуйста нажмите кнопку \"Следующий\" или \"Назад\".</string>
+    <string name="interrupted_by_opponent">Разговор прерван собеседником. Пожалуйста нажмите кнопку \"Следующий\" или \"Назад\".</string>
     <string name="search">Ищем собеседника</string>
     <string name="waiting">Ожидаем собеседника</string>
     <string name="connecting">Соединение</string>
+    <string name="disconnected">Соединение прервано</string>
+    <string name="trying_to_reconnect">Пробуем переподключиться</string>
+    <string name="check_connection">Проверьте подклчение к интернету</string>
+    <string name="connection_failed">Не удалось установить соеднение</string>
 </resources>

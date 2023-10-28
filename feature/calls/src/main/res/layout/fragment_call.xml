@@ -13,11 +13,12 @@
         app:layout_constraintBottom_toTopOf="@id/escape_button"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
+    <TextView
         android:id="@+id/interrupted_view"
-        layout="@layout/interrupted_by_opponent_view"
+        style="@style/waiting_view_text_style"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:gravity="center"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/escape_button"
         app:layout_constraintTop_toTopOf="parent" />
