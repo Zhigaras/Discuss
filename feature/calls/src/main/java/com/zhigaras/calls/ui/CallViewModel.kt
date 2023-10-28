@@ -25,10 +25,13 @@ class CallViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
     
+    init {
+        initCalls.subscribeToConnectionEvents(provideUserId.provide())
+    }
+    
     fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
         initCalls.initLocalView(localView)
         initCalls.initRemoteView(remoteView)
-        initCalls.subscribeToConnectionEvents(provideUserId.provide())
     }
     
     fun lookForOpponent(subjectId: String, opinion: DisputeParty) {

@@ -251,6 +251,7 @@ interface CallsController {
         }
         
         override fun closeConnectionTotally() {
+            isConnected = false
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             remoteMediaStream = null
