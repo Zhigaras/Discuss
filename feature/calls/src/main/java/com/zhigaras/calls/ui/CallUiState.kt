@@ -11,6 +11,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
     class LookingForOpponent : CallUiState {
         
         override fun update(binding: FragmentCallBinding) {
+            binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.interruptedView.visibility = View.GONE
             binding.waitingView.startSearch()
         }
@@ -19,6 +20,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
     class WaitingForOpponent : CallUiState {
         
         override fun update(binding: FragmentCallBinding) {
+            binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.interruptedView.visibility = View.GONE
             binding.waitingView.startWaiting()
         }
@@ -35,9 +37,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
 class New : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.NEW
-    override fun update(binding: FragmentCallBinding) {
-        binding.interruptedView.visibility = View.GONE
-    }
+    override fun update(binding: FragmentCallBinding) = Unit
 }
 
 class Connecting : CallUiState.Connection() {
@@ -45,6 +45,7 @@ class Connecting : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.CONNECTING
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.visibility = View.GONE
+        binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.waitingView.startConnecting()
     }
 }
@@ -55,6 +56,7 @@ class Connected : CallUiState.Connection() {
     
     override fun update(binding: FragmentCallBinding) {
         binding.interruptedView.visibility = View.GONE
+        binding.remoteViewOverlay.visibility = View.GONE
         binding.waitingView.stop()
     }
 }
@@ -64,6 +66,7 @@ class Disconnected : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.DISCONNECTED
     
     override fun update(binding: FragmentCallBinding) {
+        binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.interruptedView.visibility = View.VISIBLE
         binding.interruptedView.setText(R.string.disconnected)
     }
@@ -73,6 +76,7 @@ class Failed : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.FAILED
     override fun update(binding: FragmentCallBinding) {
+        binding.remoteViewOverlay.visibility = View.VISIBLE
 //        binding.interruptedView.visibility = View.VISIBLE
 //        binding.interruptedView.setText(R.string.connection_failed)
     }
@@ -82,6 +86,7 @@ class Closed : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CLOSED
     override fun update(binding: FragmentCallBinding) {
+        binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.interruptedView.visibility = View.GONE
     }
 }
@@ -89,6 +94,7 @@ class Closed : CallUiState.Connection() {
 class InterruptedByOpponent : CallUiState {
     
     override fun update(binding: FragmentCallBinding) {
+        binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.interruptedView.visibility = View.VISIBLE
         binding.interruptedView.setText(R.string.interrupted_by_opponent)
     }
@@ -97,6 +103,7 @@ class InterruptedByOpponent : CallUiState {
 class CheckConnection : CallUiState {
     
     override fun update(binding: FragmentCallBinding) {
+        binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.interruptedView.visibility = View.VISIBLE
         binding.interruptedView.setText(R.string.check_connection)
     }
@@ -105,8 +112,8 @@ class CheckConnection : CallUiState {
 class TryingToReconnect : CallUiState {
     
     override fun update(binding: FragmentCallBinding) {
+        binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.interruptedView.visibility = View.GONE
         binding.waitingView.startReconnect()
-        
     }
 }

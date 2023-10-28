@@ -6,4 +6,8 @@
         <item name="android:textSize">30sp</item>
         <item name="android:textColor">@color/light_gray</item>
     </style>
+
+    <style name="remote_view_overlay_style">
+        <item name="android:background">@color/black</item>
+    </style>
 </resources>
