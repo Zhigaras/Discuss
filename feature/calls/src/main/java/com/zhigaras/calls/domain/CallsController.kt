@@ -51,6 +51,8 @@ interface CallsController {
     
     fun sendInterruptionToOpponent()
     
+    fun removeUserFromWaitList(user: ReadyToCallUser)
+    
     class Base(
         dispatchers: Dispatchers,
         private val application: Context,
@@ -111,7 +113,6 @@ interface CallsController {
                     PeerConnectionState.CONNECTED -> {
                         isConnected = true
                         callsCloudService.removeConnectionData(user.id)
-                        callsCloudService.removeUserFromWaitList(opponent)
                     }
                     
                     else -> {
@@ -188,6 +189,10 @@ interface CallsController {
                     .sendToCloud(ConnectionData(user, interruptedByOpponent = true), opponent.id)
         }
         
+        override fun removeUserFromWaitList(user: ReadyToCallUser) {
+            callsCloudService.removeUserFromWaitList(user)
+        }
+        
         fun sendRestartOffer() {
             sendOffer(MediaConstraints().apply {
                 mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
@@ -216,7 +221,7 @@ interface CallsController {
         
         override fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser) {
             if (makingOffer) return
-            //setOpponent()??
+            this.opponent = opponent
             scope.launch {
                 val mediaConstraints = MediaConstraints().also {
                     it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))

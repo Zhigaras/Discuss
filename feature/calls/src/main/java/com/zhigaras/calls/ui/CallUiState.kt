@@ -1,6 +1,7 @@
 package com.zhigaras.calls.ui
 
 import android.view.View
+import androidx.annotation.CallSuper
 import com.zhigaras.core.UiState
 import com.zhigaras.webrtc.R
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
@@ -12,7 +13,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         
         override fun update(binding: FragmentCallBinding) {
             binding.remoteViewOverlay.visibility = View.VISIBLE
-            binding.interruptedView.visibility = View.GONE
+            binding.connectionStateView.hide()
             binding.waitingView.startSearch()
         }
     }
@@ -21,30 +22,63 @@ interface CallUiState : UiState<FragmentCallBinding> {
         
         override fun update(binding: FragmentCallBinding) {
             binding.remoteViewOverlay.visibility = View.VISIBLE
-            binding.interruptedView.visibility = View.GONE
+            binding.connectionStateView.hide()
             binding.waitingView.startWaiting()
+        }
+    }
+    
+    class InterruptedByOpponent : CallUiState {
+        
+        override fun update(binding: FragmentCallBinding) {
+            binding.remoteViewOverlay.visibility = View.VISIBLE
+            binding.connectionStateView.show(R.string.interrupted_by_opponent)
+        }
+    }
+    
+    class CheckConnection : CallUiState {
+        
+        override fun update(binding: FragmentCallBinding) {
+            binding.remoteViewOverlay.visibility = View.VISIBLE
+            binding.connectionStateView.show(R.string.check_connection)
+        }
+    }
+    
+    class TryingToReconnect : CallUiState {
+        
+        override fun update(binding: FragmentCallBinding) {
+            binding.remoteViewOverlay.visibility = View.VISIBLE
+            binding.waitingView.startReconnect()
         }
     }
     
     abstract class Connection : CallUiState {
         
         protected abstract val connectionState: PeerConnectionState
+        protected abstract val messageId: Int
         
         fun match(state: PeerConnectionState) = connectionState == state
+        
+        @CallSuper
+        override fun update(binding: FragmentCallBinding) {
+            binding.connectionStateView.show(messageId)
+        }
     }
 }
 
 class New : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.NEW
-    override fun update(binding: FragmentCallBinding) = Unit
+    override val messageId = R.string.new_connection
+    
 }
 
 class Connecting : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CONNECTING
+    override val messageId = R.string.connecting
+    
     override fun update(binding: FragmentCallBinding) {
-        binding.interruptedView.visibility = View.GONE
+        super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.waitingView.startConnecting()
     }
@@ -53,10 +87,12 @@ class Connecting : CallUiState.Connection() {
 class Connected : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CONNECTED
+    override val messageId = R.string.connected
     
     override fun update(binding: FragmentCallBinding) {
-        binding.interruptedView.visibility = View.GONE
+        super.update(binding)
         binding.remoteViewOverlay.visibility = View.GONE
+        binding.connectionStateView.hide()
         binding.waitingView.stop()
     }
 }
@@ -64,56 +100,32 @@ class Connected : CallUiState.Connection() {
 class Disconnected : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.DISCONNECTED
+    override val messageId = R.string.disconnected
     
     override fun update(binding: FragmentCallBinding) {
+        super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
-        binding.interruptedView.visibility = View.VISIBLE
-        binding.interruptedView.setText(R.string.disconnected)
     }
 }
 
 class Failed : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.FAILED
+    override val messageId = R.string.connection_failed
+    
     override fun update(binding: FragmentCallBinding) {
+        super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
-//        binding.interruptedView.visibility = View.VISIBLE
-//        binding.interruptedView.setText(R.string.connection_failed)
     }
 }
 
 class Closed : CallUiState.Connection() {
     
     override val connectionState = PeerConnectionState.CLOSED
-    override fun update(binding: FragmentCallBinding) {
-        binding.remoteViewOverlay.visibility = View.VISIBLE
-        binding.interruptedView.visibility = View.GONE
-    }
-}
-
-class InterruptedByOpponent : CallUiState {
+    override val messageId = R.string.connection_closed
     
     override fun update(binding: FragmentCallBinding) {
+        super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
-        binding.interruptedView.visibility = View.VISIBLE
-        binding.interruptedView.setText(R.string.interrupted_by_opponent)
-    }
-}
-
-class CheckConnection : CallUiState {
-    
-    override fun update(binding: FragmentCallBinding) {
-        binding.remoteViewOverlay.visibility = View.VISIBLE
-        binding.interruptedView.visibility = View.VISIBLE
-        binding.interruptedView.setText(R.string.check_connection)
-    }
-}
-
-class TryingToReconnect : CallUiState {
-    
-    override fun update(binding: FragmentCallBinding) {
-        binding.remoteViewOverlay.visibility = View.VISIBLE
-        binding.interruptedView.visibility = View.GONE
-        binding.waitingView.startReconnect()
     }
 }
