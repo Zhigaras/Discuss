@@ -59,6 +59,29 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         ref.addValueEventListener(listener)
     }
     
+    override fun <T : Any> subscribeToListMultipleLevels(
+        callback: CloudService.Callback<List<T>>,
+        clazz: Class<T>,
+        vararg children: String
+    ) {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<T>()
+                for (child in snapshot.children) {
+                    child.getValue(clazz)?.let { list.add(it) }
+                }
+                callback.provide(list)
+            }
+            
+            override fun onCancelled(error: DatabaseError) {
+                callback.error(error.message)
+            }
+        }
+        val ref = makeReference(*children)
+        listeners[callback] = ref to listener
+        ref.addValueEventListener(listener)
+    }
+    
     override fun addItemToList(item: String, vararg children: String) {
         val ref = makeReference(*children)
         ref.updateChildren(mapOf(item to "waiting"))

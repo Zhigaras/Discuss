@@ -29,8 +29,11 @@ class CompositeAdapter(
         payloads: MutableList<Any>
     ) {
         val item = getItem(position)
-        delegates[item.itemType()]?.bindViewHolder(item, holder, payloads.last() as Payload)
+        val delegate = delegates[item.itemType()]
             ?: throw IllegalStateException("Can`t bind ViewHolder for position $position")
+        if (payloads.isNotEmpty())
+            delegate.bindViewHolder(item, holder, payloads.last() as Payload)
+        else delegate.bindViewHolder(item, holder)
     }
     
     class Builder {
