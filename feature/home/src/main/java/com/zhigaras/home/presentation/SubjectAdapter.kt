@@ -4,26 +4,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zhigaras.adapterdelegate.DelegateAdapter
-import com.zhigaras.adapterdelegate.Payload
+import com.zhigaras.adapterdelegate.DelegateViewHolder
 import com.zhigaras.home.databinding.SubjectItemBinding
 import com.zhigaras.home.domain.model.HomeSubject
 
-class SubjectAdapter : DelegateAdapter<HomeSubject, SubjectAdapter.SubjectViewHolder> {
+class SubjectAdapter : DelegateAdapter<HomeSubject, SubjectAdapter.SubjectViewHolder>() {
     
     inner class SubjectViewHolder(
         private val binding: SubjectItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    ) : DelegateViewHolder<HomeSubject>(binding) {
         
-        fun bind(item: HomeSubject) {
+        override fun bind(item: HomeSubject) {
             binding.subjectDescription.text = item.nameRu
-        }
-        
-        fun bind(payload: Payload) {
-            when (payload) {
-                is TitleChanged -> binding.subjectDescription.text = payload.newTitle
-                is SupportListSizeChanged -> binding.onlineTextView.text =
-                    payload.newListSize.toString()
-            }
+            binding.onlineTextView.text = item.supportList.size.toString()
         }
     }
     
@@ -35,17 +28,5 @@ class SubjectAdapter : DelegateAdapter<HomeSubject, SubjectAdapter.SubjectViewHo
                 LayoutInflater.from(parent.context), parent, false
             )
         )
-    }
-    
-    override fun bindViewHolder(
-        item: HomeSubject,
-        viewHolder: SubjectViewHolder,
-        payload: Payload
-    ) {
-        viewHolder.bind(payload)
-    }
-    
-    override fun bindViewHolder(item: HomeSubject, viewHolder: SubjectViewHolder) {
-        viewHolder.bind(item)
     }
 }

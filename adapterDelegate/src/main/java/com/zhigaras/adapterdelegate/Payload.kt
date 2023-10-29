@@ -1,6 +1,12 @@
 package com.zhigaras.adapterdelegate
 
-interface Payload {
+import androidx.viewbinding.ViewBinding
+
+interface Payload<in VB : ViewBinding> {
     
-    class None : Payload
+    fun bindPayload(binding: VB)
+    
+    class None : Payload<ViewBinding> {
+        override fun bindPayload(binding: ViewBinding) = Unit
+    }
 }

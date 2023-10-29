@@ -27,7 +27,7 @@ class HomeSubject(
         return true
     }
     
-    override fun payload(other: ListItem): Payload {
+    override fun payload(other: ListItem): Payload<*> {
         if (other !is HomeSubject) return Payload.None()
         return when {
             nameRu != other.nameRu -> return TitleChanged(other.nameRu)

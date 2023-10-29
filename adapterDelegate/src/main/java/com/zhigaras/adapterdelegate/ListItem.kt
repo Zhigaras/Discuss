@@ -8,5 +8,5 @@ interface ListItem {
     
     fun areContentTheSame(other: ListItem): Boolean
     
-    fun payload(other: ListItem): Payload = Payload.None()
+    fun payload(other: ListItem): Payload<*> = Payload.None()
 }
