@@ -10,4 +10,8 @@ internal class DelegateDiffUtilCallback : DiffUtil.ItemCallback<ListItem>() {
     override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
         return newItem.areContentTheSame(oldItem)
     }
+    
+    override fun getChangePayload(oldItem: ListItem, newItem: ListItem): Payload {
+        return oldItem.payload(newItem)
+    }
 }

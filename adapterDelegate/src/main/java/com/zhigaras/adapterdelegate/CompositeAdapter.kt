@@ -23,6 +23,16 @@ class CompositeAdapter(
             ?: throw IllegalStateException("Can`t bind ViewHolder for position $position")
     }
     
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        val item = getItem(position)
+        delegates[item.itemType()]?.bindViewHolder(item, holder, payloads.last() as Payload)
+            ?: throw IllegalStateException("Can`t bind ViewHolder for position $position")
+    }
+    
     class Builder {
         
         private val delegates =

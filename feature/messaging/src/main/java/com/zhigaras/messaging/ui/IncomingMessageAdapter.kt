@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zhigaras.adapterdelegate.DelegateAdapter
+import com.zhigaras.adapterdelegate.Payload
 import com.zhigaras.messaging.databinding.IncomingMessageItemBinding
 import com.zhigaras.messaging.domain.model.Message
 import com.zhigaras.messaging.domain.model.MessageType
@@ -19,8 +20,16 @@ class IncomingMessageAdapter :
         )
     }
     
-    override fun bindViewHolder(model: Message.Incoming, viewHolder: IncomingMessageViewHolder) {
-        viewHolder.bind(model)
+    override fun bindViewHolder(item: Message.Incoming, viewHolder: IncomingMessageViewHolder) {
+        viewHolder.bind(item)
+    }
+    
+    override fun bindViewHolder(
+        item: Message.Incoming,
+        viewHolder: IncomingMessageViewHolder,
+        payload: Payload
+    ) {
+        viewHolder.bind(item)
     }
     
     inner class IncomingMessageViewHolder(

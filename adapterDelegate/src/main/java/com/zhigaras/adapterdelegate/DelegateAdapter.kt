@@ -7,5 +7,6 @@ interface DelegateAdapter<M : ListItem, in VH : RecyclerView.ViewHolder> {
     
     fun viewType(): Int
     fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder
-    fun bindViewHolder(model: M, viewHolder: VH)
+    fun bindViewHolder(item: M, viewHolder: VH)
+    fun bindViewHolder(item: M, viewHolder: VH, payload: Payload)
 }

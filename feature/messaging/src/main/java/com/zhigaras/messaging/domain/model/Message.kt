@@ -10,12 +10,12 @@ abstract class Message : ListItem {
     
     override fun itemType() = type.ordinal
     
-    override fun areItemTheSame(other: Any): Boolean {
+    override fun areItemTheSame(other: ListItem): Boolean {
         if (other !is Message) return false
         return this.uid == other.uid
     }
     
-    override fun areContentTheSame(other: Any): Boolean {
+    override fun areContentTheSame(other: ListItem): Boolean {
         if (other !is Message) return false
         return this.text == other.text
     }
