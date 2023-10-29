@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/support_button"
             style="@style/SupportButton"
             android:layout_width="0dp"
@@ -30,8 +30,7 @@
             app:layout_constraintEnd_toStartOf="@+id/against_button"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subject_description"
-            tools:layout_editor_absoluteY="60dp" />
+            app:layout_constraintTop_toBottomOf="@id/subject_description" />
 
         <androidx.cardview.widget.CardView
             style="@style/OnlineTable"
@@ -68,7 +67,7 @@
 
         </androidx.cardview.widget.CardView>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/against_button"
             style="@style/AgainstButton"
             android:layout_width="0dp"
