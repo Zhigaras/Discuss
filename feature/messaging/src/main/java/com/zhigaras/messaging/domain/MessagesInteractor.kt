@@ -1,9 +1,8 @@
-package com.zhigaras.messaging.ui
+package com.zhigaras.messaging.domain
 
 import androidx.lifecycle.LifecycleOwner
-import com.zhigaras.messaging.domain.MessagesUiStateCommunication
-import com.zhigaras.messaging.domain.Messaging
 import com.zhigaras.messaging.domain.model.Message
+import com.zhigaras.messaging.ui.MessagesUiState
 import java.util.Collections
 
 interface MessagesInteractor {

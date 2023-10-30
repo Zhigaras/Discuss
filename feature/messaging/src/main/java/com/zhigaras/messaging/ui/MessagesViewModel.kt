@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.messaging.databinding.MessageLayoutBinding
+import com.zhigaras.messaging.domain.MessagesInteractor
 import com.zhigaras.messaging.domain.MessagesUiStateCommunication
 
 class MessagesViewModel(

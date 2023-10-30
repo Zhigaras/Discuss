@@ -2,7 +2,7 @@ package com.zhigaras.messaging.di
 
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.MessagesUiStateCommunication
-import com.zhigaras.messaging.ui.MessagesInteractor
+import com.zhigaras.messaging.domain.MessagesInteractor
 import com.zhigaras.messaging.ui.MessagesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
