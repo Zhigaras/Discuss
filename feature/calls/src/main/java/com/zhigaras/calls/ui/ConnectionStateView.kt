@@ -11,9 +11,9 @@ class ConnectionStateView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
     
-    fun show(@StringRes messageId: Int) {
+    fun show(@StringRes messageId: Int, vararg msg: String) {
         visibility = VISIBLE
-        setText(messageId)
+        text = context.getString(messageId, msg)
     }
     
     fun hide() {

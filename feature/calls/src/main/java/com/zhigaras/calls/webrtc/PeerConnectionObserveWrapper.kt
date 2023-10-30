@@ -18,7 +18,7 @@ class PeerConnectionObserveWrapper(
     private val communication: PeerConnectionCommunication.Mutable
 ) : PeerConnectionCommunication.ObserveForever {
     
-    private val scope = CoroutineScope(dispatchers.main()) // TODO: close this scope
+    private val scope = CoroutineScope(dispatchers.main())
     override fun observeForever(observer: Observer<PeerConnectionState>) {
         communication.observeForever(observer)
     }

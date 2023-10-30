@@ -34,4 +34,15 @@ interface MatchingResult {
             matchingInteractor.addUserToWaitList(user)
         }
     }
+    
+    class Error(private val message: String) : MatchingResult {
+        
+        override suspend fun handle(
+            callsController: CallsController,
+            matchingInteractor: MatchingInteractor,
+            communication: CallCommunication.Post
+        ) {
+            communication.postUi(CallUiState.Error(message))
+        }
+    }
 }

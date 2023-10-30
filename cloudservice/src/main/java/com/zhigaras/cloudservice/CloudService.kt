@@ -9,11 +9,9 @@ interface CloudService {
         fun error(message: String)
     }
     
-    fun postWithId(path: String, id: String, obj: Any)
+    suspend fun postWithIdGenerating(obj: Any?, vararg children: String): String
     
-    suspend fun postWithIdGenerating(path: String, obj: Any): String
-    
-    suspend fun <T : Any> getDataSnapshot(path: String, child: String, clazz: Class<T>): T
+    suspend fun <T : Any> getDataSnapshot(clazz: Class<T>, vararg children: String): T
     
     fun postMultipleLevels(obj: Any?, vararg children: String)
     

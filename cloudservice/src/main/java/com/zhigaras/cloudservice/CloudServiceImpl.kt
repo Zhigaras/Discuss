@@ -5,6 +5,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     
@@ -13,25 +16,24 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     private val listeners =
         hashMapOf<CloudService.Callback<*>, Pair<DatabaseReference, ValueEventListener>>()
     
-    override fun postWithId(path: String, id: String, obj: Any) {
-        reference.child(path).child(id).setValue(obj)
-    }
-    
-    override suspend fun postWithIdGenerating(path: String, obj: Any): String {
-        val result = reference.child(path).push()
+    override suspend fun postWithIdGenerating(obj: Any?, vararg children: String): String {
+        val result = makeReference(*children).push()
         result.setValue(obj).await()
         return result.key!!
     }
     
     override suspend fun <T : Any> getDataSnapshot(
-        path: String,
-        child: String,
-        clazz: Class<T>
-    ): T {
-        return reference.child(path).child(child).get().addOnSuccessListener {
+        clazz: Class<T>,
+        vararg children: String
+    ): T = suspendCoroutine { cont ->
+        makeReference(*children).get().addOnSuccessListener { snapshot ->
+            snapshot.getValue(clazz)?.let { cont.resume(it) }
+                ?: cont.resumeWithException(IllegalStateException("Problem with deserialization"))
+        }.addOnFailureListener {
+            cont.resumeWithException(IllegalStateException("Problem with data"))
         }.addOnCanceledListener {
-            throw IllegalStateException("problem with data") // TODO: replace it
-        }.await().getValue(clazz)!!
+            cont.resumeWithException(IllegalStateException("Canceled"))
+        }
     }
     
     override fun postMultipleLevels(obj: Any?, vararg children: String) {

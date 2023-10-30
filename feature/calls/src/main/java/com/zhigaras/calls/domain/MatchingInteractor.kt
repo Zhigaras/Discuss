@@ -17,18 +17,22 @@ interface MatchingInteractor {
             user.addSelfToWaitList(cloudService)
         
         override suspend fun checkMatching(user: ReadyToCallUser): MatchingResult {
-            val subject = cloudService.getDataSnapshot(
-                SUBJECTS_PATH,
-                user.subjectId.toString(),
-                Subject::class.java
-            )
-            return if (subject.hasOpponent(user.disputeParty!!)) {
-                val opponentId = subject.getOpponentId(user.disputeParty)
-                MatchingResult.OpponentFound(
-                    ReadyToCallUser(opponentId, user.subjectId, user.disputeParty.opposite())
+            return try {
+                val subject = cloudService.getDataSnapshot(
+                    Subject::class.java,
+                    SUBJECTS_PATH,
+                    user.subjectId.toString()
                 )
-            } else {
-                MatchingResult.NoMatch(user)
+                if (subject.hasOpponent(user.disputeParty!!)) {
+                    val opponentId = subject.getOpponentId(user.disputeParty)
+                    MatchingResult.OpponentFound(
+                        ReadyToCallUser(opponentId, user.subjectId, user.disputeParty.opposite())
+                    )
+                } else {
+                    MatchingResult.NoMatch(user)
+                }
+            } catch (e: Exception) {
+                MatchingResult.Error(e.message ?: "Unknown error")
             }
         }
     }
