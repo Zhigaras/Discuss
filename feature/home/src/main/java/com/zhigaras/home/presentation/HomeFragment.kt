@@ -18,17 +18,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         
         val adapter = CompositeAdapter.Builder()
-            .addAdapter(SubjectAdapter())
+            .addAdapter(
+                SubjectAdapter { subId, opinion -> viewModel.navigateToCall(subId, opinion) }
+            )
             .build()
         binding.subjectsRv.adapter = adapter
         viewModel.observe(this) {
             it.update(binding)
         }
-
-//        binding.enterButton.setOnClickListener {
-//            val opinion = if (binding.opinionChipGroup.checkedChipId == R.id.against_chip) "AGAINST"
-//            else "SUPPORT"
-//            viewModel.navigateToCall(bundleOf(CallRoutes.DISPUTE_POSITION_KEY to opinion))
-//        }
     }
 }

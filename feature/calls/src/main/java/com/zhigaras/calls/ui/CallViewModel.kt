@@ -1,16 +1,15 @@
 package com.zhigaras.calls.ui
 
 import androidx.lifecycle.viewModelScope
-import com.zhigaras.core.ProvideUserId
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.InitCalls
 import com.zhigaras.calls.domain.MatchingInteractor
-import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
+import com.zhigaras.core.ProvideUserId
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import kotlinx.coroutines.launch
 import org.webrtc.SurfaceViewRenderer
@@ -19,9 +18,9 @@ class CallViewModel(
     private val initCalls: InitCalls,
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
-    private val provideUserId: ProvideUserId,
     private val routes: CallRoutes,
     override val communication: CallCommunication.Mutable,
+    provideUserId: ProvideUserId,
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
     
@@ -34,21 +33,20 @@ class CallViewModel(
         initCalls.initRemoteView(remoteView)
     }
     
-    fun lookForOpponent(subjectId: String, opinion: DisputeParty) {
+    fun lookForOpponent(user: ReadyToCallUser) {
         viewModelScope.launch {
-            initCalls.initUser(ReadyToCallUser(provideUserId.provide(), subjectId, opinion))
+            initCalls.initUser(user)
             communication.postUi(CallUiState.LookingForOpponent())
-            matchingInteractor
-                .checkMatching(subjectId, provideUserId.provide(), opinion)
+            matchingInteractor.checkMatching(user)
                 .handle(callsController, matchingInteractor, communication)
         }
     }
     
-    fun nextOpponent(subjectId: String, opinion: DisputeParty) {
+    fun nextOpponent(user: ReadyToCallUser) {
         callsController.sendInterruptionToOpponent()
         callsController.closeCurrentConnection()
         callsController.createNewConnection()
-        lookForOpponent(subjectId, opinion)
+        lookForOpponent(user)
     }
     
     fun closeConnection() {

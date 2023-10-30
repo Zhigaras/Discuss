@@ -5,7 +5,6 @@ import com.zhigaras.core.GoBack
 interface CallRoutes : GoBack {
     
     companion object {
-        const val SUBJECT_ID_KEY = "subjectIdKey"
-        const val DISPUTE_POSITION_KEY = "disputePositionKey"
+        const val READY_TO_CALL_USER_KEY = "readyToCallUser"
     }
 }
