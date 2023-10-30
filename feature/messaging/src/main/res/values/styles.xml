@@ -20,6 +20,6 @@
     </style>
 
     <style name="LandscapeMessageArea">
-        <item name="android:background">@color/light_gray</item>
+        <item name="android:background">@color/grey3</item>
     </style>
 </resources>

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_gray">#7C7C7C</color>
-    <color name="dark_gray">#292828</color>
+    <color name="grey1">#E8E7E7</color>
+    <color name="grey2">#BFBFBF</color>
+    <color name="grey3">#7C7C7C</color>
+    <color name="grey4">#5C5A5A</color>
+    <color name="grey5">#292828</color>
     <color name="black">#000000</color>
     <color name="light_green">#4DC553</color>
     <color name="dark_green">#175A1B</color>

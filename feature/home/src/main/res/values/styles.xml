@@ -2,7 +2,7 @@
 <resources>
 
     <style name="SubjectCard">
-        <item name="android:backgroundTint">@color/dark_white</item>
+        <item name="android:backgroundTint">@color/grey1</item>
     </style>
 
     <style name="SubjectText">

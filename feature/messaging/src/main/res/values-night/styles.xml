@@ -5,7 +5,7 @@
         <item name="android:textSize">@dimen/msg_text_size</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/incoming_msg_bg</item>
-        <item name="android:backgroundTint">@color/light_gray</item>
+        <item name="android:backgroundTint">@color/grey3</item>
     </style>
 
     <style name="OutgoingMessageStyle">
@@ -20,7 +20,7 @@
     </style>
 
     <style name="LandscapeMessageArea">
-        <item name="android:background">@color/dark_gray</item>
+        <item name="android:background">@color/grey5</item>
     </style>
 
 </resources>
