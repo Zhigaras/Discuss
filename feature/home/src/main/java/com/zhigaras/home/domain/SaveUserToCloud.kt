@@ -4,14 +4,13 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.cloudservice.CloudService.Companion.USERS_PATH
 import com.zhigaras.home.domain.model.User
 
-interface SaveUserToCloud { // TODO: move to auth module??
+interface SaveUserToCloud {
     
     suspend fun save(userId: String, user: User)
     
     class Base(private val cloudService: CloudService) : SaveUserToCloud {
         
         override suspend fun save(userId: String, user: User) =
-            cloudService.postWithId(USERS_PATH, userId, user)
-        // TODO: replace with postMultipleLevels()
+            cloudService.postMultipleLevels(user, USERS_PATH, userId)
     }
 }

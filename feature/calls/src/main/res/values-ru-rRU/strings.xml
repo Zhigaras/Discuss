@@ -11,4 +11,5 @@
     <string name="check_connection">Проверьте подклчение к интернету</string>
     <string name="trying_to_reconnect">Пробуем переподключиться</string>
     <string name="connection_failed">Не удалось установить соеднение</string>
+    <string name="connection_error">Что-то пошло не так: %1%s. Попробуйте войти снова.</string>
 </resources>

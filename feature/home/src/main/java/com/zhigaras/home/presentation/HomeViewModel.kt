@@ -17,8 +17,8 @@ import com.zhigaras.home.domain.model.HomeSubject
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
     private val provideUserId: ProvideUserId,
+    private val homeCloudService: HomeCloudService,
     override val communication: HomeCommunication.Mutable,
-    homeCloudService: HomeCloudService,
     dispatchers: Dispatchers
 ) : BaseViewModel<FragmentHomeBinding, HomeUiState>(dispatchers) {
     
@@ -39,5 +39,10 @@ class HomeViewModel(
     fun navigateToCall(subjectId: Int, disputeParty: DisputeParty) {
         val user = ReadyToCallUser(provideUserId.provide(), subjectId, disputeParty)
         navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+    }
+    
+    override fun onCleared() {
+        homeCloudService.removeCallback(callback)
+        super.onCleared()
     }
 }

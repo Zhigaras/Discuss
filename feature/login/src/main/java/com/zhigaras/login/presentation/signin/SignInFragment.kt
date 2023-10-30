@@ -47,7 +47,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
             viewModel.startGoogleSignIn(signInWithGoogleLauncher, client)
         }
         
-        viewModel.observe(this) {// TODO: move to baseFragment
+        viewModel.observe(this) {
             it.update(binding)
         }
     }

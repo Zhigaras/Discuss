@@ -51,6 +51,14 @@ interface CallUiState : UiState<FragmentCallBinding> {
         }
     }
     
+    class Error(private val message: String) : CallUiState {
+        
+        override fun update(binding: FragmentCallBinding) {
+            binding.remoteViewOverlay.visibility = View.VISIBLE
+            binding.connectionStateView.show(R.string.connection_error, message)
+        }
+    }
+    
     abstract class Connection : CallUiState {
         
         protected abstract val connectionState: PeerConnectionState

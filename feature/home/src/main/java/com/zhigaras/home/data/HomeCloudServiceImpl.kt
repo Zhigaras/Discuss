@@ -10,4 +10,8 @@ class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudSe
     override fun subscribeToSubjects(callback: CloudService.Callback<List<HomeSubject>>) {
         cloudService.subscribeToListMultipleLevels(callback, HomeSubject::class.java, SUBJECTS_PATH)
     }
+    
+    override fun removeCallback(callback: CloudService.Callback<List<HomeSubject>>) {
+        cloudService.removeListener(callback)
+    }
 }
