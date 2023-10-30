@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="against">Против</string>
-    <string name="support">Поддерживаю</string>
+    <string name="support">За</string>
     <string name="online">Онлайн</string>
 </resources>
