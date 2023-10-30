@@ -16,7 +16,8 @@ class SubjectAdapter : DelegateAdapter<HomeSubject, SubjectAdapter.SubjectViewHo
         
         override fun bind(item: HomeSubject) {
             binding.subjectDescription.text = item.nameRu
-            binding.onlineTextView.text = item.supportList.size.toString()
+            binding.supportCount.text = item.supportList.size.toString()
+            binding.againstCount.text = item.againstList.size.toString()
         }
     }
     

@@ -13,12 +13,12 @@ class TitleChanged(private val newTitle: String) : HomePayload {
 
 class SupportListSizeChanged(private val newListSize: Int) : HomePayload {
     override fun bindPayload(binding: SubjectItemBinding) {
-        binding.onlineTextView.text = newListSize.toString()
+        binding.supportCount.text = newListSize.toString()
     }
 }
 
 class AgainstListSizeChanged(private val newListSize: Int) : HomePayload {
     override fun bindPayload(binding: SubjectItemBinding) {
-    
+        binding.againstCount.text = newListSize.toString()
     }
 }
