@@ -11,9 +11,7 @@ interface MessagesInteractor {
     
     fun observe(owner: LifecycleOwner, communication: MessagesUiStateCommunication.Post)
     
-    class Base(
-        private val messaging: Messaging,
-    ) : MessagesInteractor {
+    class Base(private val messaging: Messaging) : MessagesInteractor {
         
         private val messages = Collections.synchronizedList(mutableListOf<Message>())
         
