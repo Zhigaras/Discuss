@@ -3,9 +3,10 @@ package com.zhigaras.adapterdelegate
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 
 class CompositeAdapter(
-    private val delegates: Map<Int, DelegateAdapter<ListItem, RecyclerView.ViewHolder>>
+    private val delegates: Map<Int, DelegateAdapter<ListItem, DelegateViewHolder<ListItem>>>
 ) : ListAdapter<ListItem, RecyclerView.ViewHolder>(DelegateDiffUtilCallback()) {
     
     override fun getItemViewType(position: Int): Int {
@@ -19,18 +20,34 @@ class CompositeAdapter(
     
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        delegates[item.itemType()]?.bindViewHolder(item, holder)
+        delegates[item.itemType()]?.bindViewHolder(item, holder as DelegateViewHolder<ListItem>)
             ?: throw IllegalStateException("Can`t bind ViewHolder for position $position")
+    }
+    
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        val item = getItem(position)
+        val delegate = delegates[item.itemType()]
+            ?: throw IllegalStateException("Can`t bind ViewHolder for position $position")
+        if (payloads.isNotEmpty())
+            delegate.bindViewHolder(
+                holder as DelegateViewHolder<ListItem>,
+                payloads.last() as Payload<ViewBinding>
+            )
+        else delegate.bindViewHolder(item, holder as DelegateViewHolder<ListItem>)
     }
     
     class Builder {
         
         private val delegates =
-            mutableMapOf<Int, DelegateAdapter<ListItem, RecyclerView.ViewHolder>>()
+            mutableMapOf<Int, DelegateAdapter<ListItem, DelegateViewHolder<ListItem>>>()
         
         fun addAdapter(adapter: DelegateAdapter<out ListItem, *>): Builder {
             delegates[adapter.viewType()] =
-                adapter as DelegateAdapter<ListItem, RecyclerView.ViewHolder>
+                adapter as DelegateAdapter<ListItem, DelegateViewHolder<ListItem>>
             return this
         }
         

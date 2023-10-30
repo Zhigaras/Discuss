@@ -3,10 +3,26 @@
 
     <style name="waiting_view_text_style">
         <item name="android:textSize">30sp</item>
-        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textColor">@color/grey5</item>
     </style>
 
     <style name="remote_view_overlay_style">
-        <item name="android:background">@color/light_gray</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="NextOpponentButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:padding">@dimen/call_screen_buttons_vertical_padding</item>
+        <item name="android:backgroundTint">@color/light_green</item>
+        <item name="android:textSize">@dimen/call_screen_buttons_text_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:text">@string/next</item>
+    </style>
+
+    <style name="EscapeConversationButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:padding">@dimen/call_screen_buttons_vertical_padding</item>
+        <item name="android:backgroundTint">@color/light_red</item>
+        <item name="android:textSize">@dimen/call_screen_buttons_text_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:text">@string/back</item>
     </style>
 </resources>

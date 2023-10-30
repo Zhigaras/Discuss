@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":cloudservice"))
     implementation(project(":feature:calls"))
+    implementation(project(":adapterDelegate"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

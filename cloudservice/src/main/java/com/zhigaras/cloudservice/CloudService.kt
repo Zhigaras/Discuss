@@ -23,6 +23,12 @@ interface CloudService {
         vararg children: String
     )
     
+    fun <T : Any> subscribeToListMultipleLevels(
+        callback: Callback<List<T>>,
+        clazz: Class<T>,
+        vararg children: String
+    )
+    
     fun addItemToList(item: String, vararg children: String)
     
     fun removeListItem(itemId: String, vararg children: String)
