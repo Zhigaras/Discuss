@@ -1,7 +1,7 @@
 package com.zhigaras.calls.ui
 
 import androidx.lifecycle.viewModelScope
-import com.zhigaras.auth.ProvideUserId
+import com.zhigaras.core.ProvideUserId
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.CallsController

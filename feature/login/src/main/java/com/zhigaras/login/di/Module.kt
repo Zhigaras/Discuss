@@ -3,7 +3,8 @@ package com.zhigaras.login.di
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
 import com.zhigaras.auth.OneTapSignIn
-import com.zhigaras.auth.ProvideUserId
+import com.zhigaras.core.ProvideUserId
+import com.zhigaras.auth.ProvideUserIdImpl
 import com.zhigaras.login.data.ResetPasswordRepositoryImpl
 import com.zhigaras.login.data.SignInRepositoryImpl
 import com.zhigaras.login.data.SignUpRepositoryImpl
@@ -60,7 +61,7 @@ fun loginModule() = module {
     
     factory { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
     
-    factory { ProvideUserId.Base() } bind ProvideUserId::class
+    factory { ProvideUserIdImpl() } bind ProvideUserId::class
     
     factory { UserMapper() }
     
