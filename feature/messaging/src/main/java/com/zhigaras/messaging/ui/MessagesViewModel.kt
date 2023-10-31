@@ -13,6 +13,13 @@ class MessagesViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<MessagesUiState>(dispatchers) {
     
+//    override val scope: Scope = getKoin().createScope("messages", named("callViewModel"))
+
+//    init {
+//        Log.d("QQQQQ id", scope.getScopeId())
+//        Log.d("QQQQQ get scope Id", getKoin().getScope("messages").getScopeId())
+//    }
+    
     fun sendMessage(text: String) {
         messagesInteractor.sendMessage(text).let { communication.postBackground(it) }
     }

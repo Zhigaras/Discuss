@@ -14,9 +14,11 @@ import com.zhigaras.calls.webrtc.PeerConnectionCommunication
 import com.zhigaras.calls.webrtc.PeerConnectionObserveWrapper
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.messaging.di.messagesModule
+import com.zhigaras.messaging.domain.MessagesInteractor
 import com.zhigaras.messaging.domain.Messaging
 import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
@@ -32,20 +34,33 @@ import org.webrtc.PeerConnectionFactory
 
 fun callModule() = listOf(messagesModule(), module {
     
-    viewModelOf(::CallViewModel)
+//    viewModelOf(::CallViewModel)
+    
+    scope(named("messages")) {
+        scoped {
+            CallsController.Base(get(), androidApplication(), get(), get(), get(), get())
+        } binds arrayOf(
+            CallsController::class,
+            InitCalls::class,
+            Messaging::class
+        )
+    }
+    
+    viewModel {
+        val initCalls = getKoin().getScope("messages").get<InitCalls>()
+        val callsController = getKoin().getScope("messages").get<CallsController>()
+        CallViewModel(initCalls, callsController, get(), get(), get(), get(), get())
+    }
+    
+    factory {
+        val messaging = getKoin().getScope("messages").get<Messaging>()
+        MessagesInteractor.Base(messaging)
+    } bind MessagesInteractor::class
     
     single { CallCommunication.Base() } binds arrayOf(
         CallCommunication.Mutable::class,
         CallCommunication.Observe::class,
         CallCommunication.Post::class
-    )
-    
-    single {
-        CallsController.Base(get(), androidApplication(), get(), get(), get(), get())
-    } binds arrayOf(
-        CallsController::class,
-        InitCalls::class,
-        Messaging::class
     )
     
     factory { MatchingInteractor.Base(get()) } bind MatchingInteractor::class

@@ -11,6 +11,9 @@ import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinScopeComponent
+import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import org.webrtc.SurfaceViewRenderer
 
 class CallViewModel(
@@ -21,7 +24,10 @@ class CallViewModel(
     override val communication: CallCommunication.Mutable,
     provideUserId: ProvideUserId,
     dispatchers: Dispatchers
-) : BaseViewModel<CallUiState>(dispatchers) {
+) : BaseViewModel<CallUiState>(dispatchers), KoinScopeComponent {
+    
+    override val scope: Scope = getKoin().createScope(SCOPE_ID, named("callViewModel"))
+    
     
     init {
         initCalls.subscribeToConnectionEvents(provideUserId.provide())
@@ -52,5 +58,9 @@ class CallViewModel(
         callsController.sendInterruptionToOpponent()
         callsController.closeConnectionTotally()
         routes.goBack()
+    }
+    
+    companion object {
+        const val SCOPE_ID = "callViewModelScope"
     }
 }
