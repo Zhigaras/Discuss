@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.os.BundleCompat
+import com.zhigaras.calls.di.CALL_FRAGMENT_SCOPE
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseFragment
@@ -17,11 +18,13 @@ import org.koin.core.scope.Scope
 class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent {
     
     private val viewModel by viewModel<CallViewModel>()
-    override val scope: Scope = getKoin().createScope("messages", named("messages"))
+    override val scope: Scope =
+        getKoin().createScope(CALL_FRAGMENT_SCOPE, named(CALL_FRAGMENT_SCOPE))
     
     override fun onDestroy() {
         super.onDestroy()
         scope.close()
+        getKoin().deleteScope(CALL_FRAGMENT_SCOPE)
     }
     
     override fun initBinding(inflater: LayoutInflater) = FragmentCallBinding.inflate(inflater)

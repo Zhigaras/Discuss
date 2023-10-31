@@ -53,8 +53,4 @@ class CallViewModel(
         callsController.closeConnectionTotally()
         routes.goBack()
     }
-    
-    companion object {
-        const val SCOPE_ID = "callViewModelScope"
-    }
 }

@@ -22,5 +22,4 @@ fun messagesModule() = module {
         DataChannelCommunication.Post::class,
         DataChannelCommunication.Mutable::class
     )
-    
 }
