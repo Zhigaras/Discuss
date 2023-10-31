@@ -1,7 +1,6 @@
 package com.zhigaras.calls.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.os.BundleCompat
@@ -10,18 +9,19 @@ import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import org.koin.android.ext.android.getKoin
+import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.component.getScopeId
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 
-class CallFragment : BaseFragment<FragmentCallBinding>() {
+class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent {
     
     private val viewModel by viewModel<CallViewModel>()
-    private val scope: Scope = getKoin().createScope("messages", named("messages"))
-    init {
-        Log.d("QQQQQ", scope.id)
-        Log.d("QQQQQ", getKoin().getScope("messages").getScopeId())
+    override val scope: Scope = getKoin().createScope("messages", named("messages"))
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.close()
     }
     
     override fun initBinding(inflater: LayoutInflater) = FragmentCallBinding.inflate(inflater)
