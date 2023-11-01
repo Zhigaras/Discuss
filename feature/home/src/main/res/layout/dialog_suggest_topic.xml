@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.zhigaras.home.presentation.TopicSuggestInput
+    <com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             android:background="@drawable/suggest_input_bg"
             android:inputType="textMultiLine" />
 
-    </com.zhigaras.home.presentation.TopicSuggestInput>
+    </com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/close_dialog_button"

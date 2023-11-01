@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation
+package com.zhigaras.home.presentation.home
 
 import androidx.core.os.bundleOf
 import com.zhigaras.calls.domain.CallRoutes

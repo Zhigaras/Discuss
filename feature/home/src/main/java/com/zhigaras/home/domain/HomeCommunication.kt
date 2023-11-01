@@ -1,7 +1,7 @@
 package com.zhigaras.home.domain
 
 import com.zhigaras.core.Communication
-import com.zhigaras.home.presentation.HomeUiState
+import com.zhigaras.home.presentation.home.HomeUiState
 
 interface HomeCommunication {
     

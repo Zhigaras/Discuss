@@ -2,7 +2,7 @@ package com.zhigaras.home.domain
 
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.home.domain.model.HomeTopic
-import com.zhigaras.home.presentation.HomeUiState
+import com.zhigaras.home.presentation.home.HomeUiState
 
 interface HomeCloudService {
     

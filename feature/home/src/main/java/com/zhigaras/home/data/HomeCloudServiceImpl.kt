@@ -4,7 +4,7 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.cloudservice.CloudService.Companion.TOPICS_PATH
 import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.domain.model.HomeTopic
-import com.zhigaras.home.presentation.HomeUiState
+import com.zhigaras.home.presentation.home.HomeUiState
 
 class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudService {
     

@@ -2,9 +2,9 @@ package com.zhigaras.home.domain.model
 
 import com.zhigaras.adapterdelegate.ListItem
 import com.zhigaras.adapterdelegate.Payload
-import com.zhigaras.home.presentation.AgainstListSizeChanged
-import com.zhigaras.home.presentation.SupportListSizeChanged
-import com.zhigaras.home.presentation.TitleChanged
+import com.zhigaras.home.presentation.home.AgainstListSizeChanged
+import com.zhigaras.home.presentation.home.SupportListSizeChanged
+import com.zhigaras.home.presentation.home.TitleChanged
 
 class HomeTopic(
     val id: Int = 0,

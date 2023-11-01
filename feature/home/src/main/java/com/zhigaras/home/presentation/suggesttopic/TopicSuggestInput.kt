@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation
+package com.zhigaras.home.presentation.suggesttopic
 
 import android.content.Context
 import android.util.AttributeSet
