@@ -15,5 +15,14 @@ class SuggestTopicBottomSheetDialog : BaseDialog<DialogSuggestTopicBinding>() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        binding.sendSuggestionButton.setOnClickListener {
+            if (binding.topicInputLayout.isValid())
+                viewModel.sendSuggestion(binding.topicInputLayout.text())
+        }
+        
+        viewModel.observe(this) {
+            it.update(binding)
+        }
     }
 }

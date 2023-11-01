@@ -7,6 +7,7 @@
     android:padding="16dp">
 
     <com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput
+        android:id="@+id/topic_input_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
     </com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/close_dialog_button"
+        android:id="@+id/send_suggestion_button"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

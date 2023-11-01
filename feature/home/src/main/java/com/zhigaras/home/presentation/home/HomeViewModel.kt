@@ -21,15 +21,15 @@ class HomeViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers) {
     
-    private val callback = object : CloudService.Callback<List<HomeTopic>> {
-        override fun provide(data: List<HomeTopic>) {
-            communication.postBackground(HomeUiState.NewTopicList(data))
+    private val callback = object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
+            override fun provide(data: List<HomeTopic>) {
+                communication.postBackground(HomeUiState.NewTopicList(data))
+            }
+            
+            override fun error(message: String) {
+                communication.postBackground(HomeUiState.Error(message))
+            }
         }
-        
-        override fun error(message: String) {
-            communication.postBackground(HomeUiState.Error(message))
-        }
-    }
     
     init {
         homeInteractor.subscribeToTopics(callback)
