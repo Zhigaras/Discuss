@@ -33,7 +33,7 @@ import org.webrtc.SurfaceViewRenderer
 
 interface CallsController {
     
-    fun sendInitialOffer(user: ReadyToCallUser)
+    fun sendInitialOffer(opponent: ReadyToCallUser)
     
     fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser)
     
@@ -72,7 +72,7 @@ interface CallsController {
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
-                opponent = data.opponent
+//                opponent = data.opponent
                 data.handle(this@Base)
             }
             
@@ -200,8 +200,8 @@ interface CallsController {
             })
         }
         
-        override fun sendInitialOffer(user: ReadyToCallUser) {
-            opponent = user
+        override fun sendInitialOffer(opponent: ReadyToCallUser) {
+            this.opponent = opponent
             sendOffer(MediaConstraints().also {
                 it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
             })
@@ -236,7 +236,7 @@ interface CallsController {
         }
         
         override fun handleIceCandidate(iceCandidate: MyIceCandidate) {
-            if (isHandlingAnswer) return // TODO: Probably loosing iceCandidates
+//            if (isHandlingAnswer) return // TODO: Probably loosing iceCandidates
             scope.launch {
                 webRtcClient.addIceCandidate(iceCandidate)
             }
@@ -257,6 +257,7 @@ interface CallsController {
         
         override fun closeCurrentConnection() {
             isConnected = false
+            callsCloudService.removeOpponent(user.id)
             webRtcClient.closeCurrentConnection(observer)
             remoteMediaStream = null
             opponent = ReadyToCallUser()
@@ -265,6 +266,7 @@ interface CallsController {
         
         override fun closeConnectionTotally() {
             isConnected = false
+            callsCloudService.removeOpponent(user.id)
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             remoteMediaStream = null

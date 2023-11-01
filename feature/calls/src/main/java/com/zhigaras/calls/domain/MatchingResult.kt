@@ -11,15 +11,15 @@ interface MatchingResult {
         communication: CallCommunication.Post,
     )
     
-    class OpponentFound(private val user: ReadyToCallUser) : MatchingResult {
+    class OpponentFound(private val opponent: ReadyToCallUser) : MatchingResult {
         
         override suspend fun handle(
             callsController: CallsController,
             matchingInteractor: MatchingInteractor,
             communication: CallCommunication.Post
         ) {
-            callsController.removeUserFromWaitList(user)
-            callsController.sendInitialOffer(user)
+            callsController.removeUserFromWaitList(opponent)
+            callsController.sendInitialOffer(opponent)
         }
     }
     
