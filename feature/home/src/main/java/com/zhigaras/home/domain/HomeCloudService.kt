@@ -10,9 +10,9 @@ interface HomeCloudService {
     
     fun removeCallback(callback: CloudService.Callback<List<HomeSubject>>)
     
-    suspend fun sendSubjectOffer(subject: String) : HomeUiState
+    suspend fun sendTopicSuggest(topic: String): HomeUiState
     
     companion object {
-        const val SUBJECT_OFFER_PATH = "SubjectOffer"
+        const val SUBJECT_SUGGEST_PATH = "SubjectSuggest"
     }
 }

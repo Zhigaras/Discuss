@@ -3,4 +3,7 @@
     <string name="against">Against</string>
     <string name="support">Support</string>
     <string name="online">Online</string>
+    <string name="topic_suggest_error_message">%1%s characters max.</string>
+    <string name="suggest_a_topic">Suggest a topic</string>
+    <string name="choose_a_topic">Choose a topic</string>
 </resources>

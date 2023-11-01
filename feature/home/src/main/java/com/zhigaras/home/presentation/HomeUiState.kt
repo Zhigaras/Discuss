@@ -23,14 +23,14 @@ interface HomeUiState : UiState<FragmentHomeBinding> {
         }
     }
     
-    class SubjectOfferSuccessfullySent : HomeUiState {
+    class SuggestSuccessfullySent : HomeUiState {
         
         override fun update(binding: FragmentHomeBinding) {
             TODO("Not yet implemented")
         }
     }
     
-    class SubjectOfferSendingFailed(private val msg: String?) : HomeUiState {
+    class SuggestSendingFailed(private val msg: String?) : HomeUiState {
     
         override fun update(binding: FragmentHomeBinding) {
             TODO("Not yet implemented")

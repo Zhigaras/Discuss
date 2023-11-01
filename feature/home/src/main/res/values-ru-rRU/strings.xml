@@ -3,4 +3,7 @@
     <string name="against">Против</string>
     <string name="support">За</string>
     <string name="online">Онлайн</string>
+    <string name="topic_suggest_error_message">Максимум %1%s символов.</string>
+    <string name="suggest_a_topic">Предложить тему</string>
+    <string name="choose_a_topic">Выберите тему</string>
 </resources>

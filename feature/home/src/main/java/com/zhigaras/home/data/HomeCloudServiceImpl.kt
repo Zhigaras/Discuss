@@ -16,12 +16,12 @@ class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudSe
         cloudService.removeListener(callback)
     }
     
-    override suspend fun sendSubjectOffer(subject: String): HomeUiState {
+    override suspend fun sendTopicSuggest(topic: String): HomeUiState {
         return kotlin.runCatching {
-            cloudService.postWithIdGenerating(subject, HomeCloudService.SUBJECT_OFFER_PATH)
+            cloudService.postWithIdGenerating(topic, HomeCloudService.SUBJECT_SUGGEST_PATH)
         }.fold(
-            onSuccess = { HomeUiState.SubjectOfferSuccessfullySent() },
-            onFailure = { HomeUiState.SubjectOfferSendingFailed(it.message) }
+            onSuccess = { HomeUiState.SuggestSuccessfullySent() },
+            onFailure = { HomeUiState.SuggestSendingFailed(it.message) }
         )
     }
 }
