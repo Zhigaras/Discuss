@@ -11,8 +11,11 @@ class SuggestTopicViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<SuggestTopicUiState>(dispatchers) {
     
-    fun sendSuggestion(topic: String) = scopeLaunch(
-        onBackground = { suggestTopic.sendTopicSuggest(topic.trim()) },
-        onUi = { communication.postUi(it) }
-    )
+    fun sendSuggestion(topic: String) {
+        communication.postUi(SuggestTopicUiState.Progress())
+        scopeLaunch(
+            onBackground = { suggestTopic.sendTopicSuggest(topic.trim()) },
+            onUi = { communication.postUi(it) }
+        )
+    }
 }

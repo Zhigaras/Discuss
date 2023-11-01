@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import com.zhigaras.core.BaseDialog
 import com.zhigaras.home.databinding.DialogSuggestTopicBinding
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SuggestTopicBottomSheetDialog : BaseDialog<DialogSuggestTopicBinding>() {
     
-    private val viewModel: SuggestTopicViewModel by activityViewModel()
+    private val viewModel: SuggestTopicViewModel by viewModel()
     
     override fun initBinding(inflater: LayoutInflater) = DialogSuggestTopicBinding.inflate(inflater)
     
@@ -17,12 +17,24 @@ class SuggestTopicBottomSheetDialog : BaseDialog<DialogSuggestTopicBinding>() {
         super.onViewCreated(view, savedInstanceState)
         
         binding.sendSuggestionButton.setOnClickListener {
-            if (binding.topicInputLayout.isValid())
-                viewModel.sendSuggestion(binding.topicInputLayout.text())
+            trySend()
         }
         
         viewModel.observe(this) {
             it.update(binding)
         }
+        
+        binding.successView.dismissButton.setOnClickListener {
+            dismiss()
+        }
+        
+        binding.failedView.retryButton.setOnClickListener {
+            trySend()
+        }
+    }
+    
+    private fun trySend() {
+        if (binding.topicInputLayout.isValid())
+            viewModel.sendSuggestion(binding.topicInputLayout.text())
     }
 }

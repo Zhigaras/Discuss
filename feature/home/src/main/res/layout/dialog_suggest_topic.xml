@@ -1,32 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput
-        android:id="@+id/topic_input_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <LinearLayout
+        android:id="@+id/initial_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/suggest_topic_hint"
-        app:errorEnabled="true">
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput
+            android:id="@+id/topic_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/suggest_input_bg"
-            android:inputType="textMultiLine" />
+            android:hint="@string/suggest_topic_hint"
+            app:errorEnabled="true">
 
-    </com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/suggest_input_bg"
+                android:inputType="textMultiLine" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/send_suggestion_button"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/send" />
+        </com.zhigaras.home.presentation.suggesttopic.TopicSuggestInput>
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/send_suggestion_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/success_view"
+        layout="@layout/success_suggest_send_layout"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/failed_view"
+        layout="@layout/suggest_send_failed_layout"
+        android:visibility="gone" />
+
+</FrameLayout>
