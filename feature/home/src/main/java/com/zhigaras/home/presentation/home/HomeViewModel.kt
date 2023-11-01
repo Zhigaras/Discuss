@@ -8,15 +8,15 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.domain.HomeCommunication
+import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.home.domain.model.HomeTopic
 
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
     private val provideUserId: ProvideUserId,
-    private val homeCloudService: HomeCloudService,
+    private val homeInteractor: HomeInteractor,
     override val communication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers) {
@@ -32,7 +32,7 @@ class HomeViewModel(
     }
     
     init {
-        homeCloudService.subscribeToTopics(callback)
+        homeInteractor.subscribeToTopics(callback)
     }
     
     fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
@@ -41,7 +41,7 @@ class HomeViewModel(
     }
     
     override fun onCleared() {
-        homeCloudService.removeCallback(callback)
+        homeInteractor.removeCallback(callback)
         super.onCleared()
     }
 }

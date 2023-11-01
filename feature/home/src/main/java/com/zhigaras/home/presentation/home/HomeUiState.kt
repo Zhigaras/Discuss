@@ -22,18 +22,4 @@ interface HomeUiState : UiState<FragmentHomeBinding> {
             Toast.makeText(root.context, message, Toast.LENGTH_SHORT).show()
         }
     }
-    
-    class SuggestSuccessfullySent : HomeUiState {
-        
-        override fun update(binding: FragmentHomeBinding) {
-            TODO("Not yet implemented")
-        }
-    }
-    
-    class SuggestSendingFailed(private val msg: String?) : HomeUiState {
-        
-        override fun update(binding: FragmentHomeBinding) {
-            TODO("Not yet implemented")
-        }
-    }
 }
