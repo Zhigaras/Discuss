@@ -19,10 +19,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         
         val adapter = CompositeAdapter.Builder()
             .addAdapter(
-                SubjectAdapter { subId, opinion -> viewModel.navigateToCall(subId, opinion) }
+                TopicAdapter { subId, opinion -> viewModel.navigateToCall(subId, opinion) }
             )
             .build()
-        binding.subjectsRv.adapter = adapter
+        binding.topicsRv.adapter = adapter
         viewModel.observe(this) {
             it.update(binding)
         }

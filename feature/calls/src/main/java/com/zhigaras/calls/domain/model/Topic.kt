@@ -1,6 +1,6 @@
 package com.zhigaras.calls.domain.model
 
-class Subject(
+class Topic(
     val id: Int = 0,
     val nameRu: String = "",
     val supportList: Map<String, String> = emptyMap(),

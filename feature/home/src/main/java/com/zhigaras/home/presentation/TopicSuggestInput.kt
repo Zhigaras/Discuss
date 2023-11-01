@@ -14,16 +14,16 @@ class TopicSuggestInput @JvmOverloads constructor(
     override val errorMessageId = R.string.topic_suggest_error_message
     
     override fun innerIsValid(): Boolean {
-        return text().length < SUBJECT_MAX_LENGTH
+        return text().length < TOPIC_MAX_LENGTH
     }
     
     override fun isValid(): Boolean {
         val isValid = innerIsValid()
-        error = if (isValid) "" else context.getString(errorMessageId, SUBJECT_MAX_LENGTH)
+        error = if (isValid) "" else context.getString(errorMessageId, TOPIC_MAX_LENGTH)
         return isValid
     }
     
     companion object {
-        private const val SUBJECT_MAX_LENGTH = 100
+        private const val TOPIC_MAX_LENGTH = 100
     }
 }

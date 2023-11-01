@@ -11,7 +11,7 @@ import com.zhigaras.core.ProvideUserId
 import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.NavigateToCall
-import com.zhigaras.home.domain.model.HomeSubject
+import com.zhigaras.home.domain.model.HomeTopic
 
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
@@ -21,9 +21,9 @@ class HomeViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers) {
     
-    private val callback = object : CloudService.Callback<List<HomeSubject>> {
-        override fun provide(data: List<HomeSubject>) {
-            communication.postBackground(HomeUiState.NewSubjectList(data))
+    private val callback = object : CloudService.Callback<List<HomeTopic>> {
+        override fun provide(data: List<HomeTopic>) {
+            communication.postBackground(HomeUiState.NewTopicList(data))
         }
         
         override fun error(message: String) {
@@ -32,11 +32,11 @@ class HomeViewModel(
     }
     
     init {
-        homeCloudService.subscribeToSubjects(callback)
+        homeCloudService.subscribeToTopics(callback)
     }
     
-    fun navigateToCall(subjectId: Int, disputeParty: DisputeParty) {
-        val user = ReadyToCallUser(provideUserId.provide(), subjectId, disputeParty)
+    fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
+        val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
         navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
     }
     

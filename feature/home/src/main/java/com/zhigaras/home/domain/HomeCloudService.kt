@@ -1,18 +1,18 @@
 package com.zhigaras.home.domain
 
 import com.zhigaras.cloudservice.CloudService
-import com.zhigaras.home.domain.model.HomeSubject
+import com.zhigaras.home.domain.model.HomeTopic
 import com.zhigaras.home.presentation.HomeUiState
 
 interface HomeCloudService {
     
-    fun subscribeToSubjects(callback: CloudService.Callback<List<HomeSubject>>)
+    fun subscribeToTopics(callback: CloudService.Callback<List<HomeTopic>>)
     
-    fun removeCallback(callback: CloudService.Callback<List<HomeSubject>>)
+    fun removeCallback(callback: CloudService.Callback<List<HomeTopic>>)
     
     suspend fun sendTopicSuggest(topic: String): HomeUiState
     
     companion object {
-        const val SUBJECT_SUGGEST_PATH = "SubjectSuggest"
+        const val TOPIC_SUGGEST_PATH = "TopicSuggest"
     }
 }
