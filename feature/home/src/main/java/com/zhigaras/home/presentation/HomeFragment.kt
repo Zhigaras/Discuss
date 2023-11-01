@@ -18,13 +18,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         
         val adapter = CompositeAdapter.Builder()
-            .addAdapter(
-                TopicAdapter { subId, opinion -> viewModel.navigateToCall(subId, opinion) }
-            )
+            .addAdapter(TopicAdapter { subId, opinion -> viewModel.navigateToCall(subId, opinion) })
             .build()
         binding.topicsRv.adapter = adapter
         viewModel.observe(this) {
             it.update(binding)
+        }
+        
+        binding.suggestTopicButton.setOnClickListener {
+            SuggestTopicBottomSheetDialog().show(parentFragmentManager, null)
         }
     }
 }

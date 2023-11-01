@@ -6,4 +6,6 @@
     <string name="topic_suggest_error_message">%1%s characters max.</string>
     <string name="suggest_a_topic">Suggest a topic</string>
     <string name="choose_a_topic">Choose a topic</string>
+    <string name="suggest_topic_hint">What do you want to dispute about</string>
+    <string name="send">Send</string>
 </resources>

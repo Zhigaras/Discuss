@@ -6,4 +6,6 @@
     <string name="topic_suggest_error_message">Максимум %1%s символов.</string>
     <string name="suggest_a_topic">Предложить тему</string>
     <string name="choose_a_topic">Выберите тему</string>
+    <string name="suggest_topic_hint">О чем хотите поспорить?</string>
+    <string name="send">Отправить</string>
 </resources>
