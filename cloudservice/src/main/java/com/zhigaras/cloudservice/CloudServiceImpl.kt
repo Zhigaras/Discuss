@@ -4,7 +4,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -17,9 +16,17 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         hashMapOf<CloudService.Callback<*>, Pair<DatabaseReference, ValueEventListener>>()
     
     override suspend fun postWithIdGenerating(obj: Any?, vararg children: String): String {
-        val result = makeReference(*children).push()
-        result.setValue(obj).await()
-        return result.key!!
+        return suspendCoroutine {cont ->
+            val result = makeReference(*children).push()
+            result.setValue(obj).addOnSuccessListener {
+                result.key?.let { cont.resume(it) }
+                    ?: cont.resumeWithException(NullPointerException("The key is null"))
+            }.addOnFailureListener {
+                cont.resumeWithException(IllegalStateException("Sending failed"))
+            }.addOnCanceledListener {
+                cont.resumeWithException(IllegalStateException("Sending canceled"))
+            }
+        }
     }
     
     override suspend fun <T : Any> getDataSnapshot(
