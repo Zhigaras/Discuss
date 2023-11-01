@@ -19,6 +19,7 @@ interface ResetPasswordUiState : UiState<DialogResetPasswordBinding> {
     object Progress : ResetPasswordUiState {
         
         override fun update(binding: DialogResetPasswordBinding) {
+            binding.resetPasswordButton.visibility = View.GONE
             binding.progressBar.visibility = View.VISIBLE
         }
     }

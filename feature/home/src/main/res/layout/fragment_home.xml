@@ -21,4 +21,10 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/topic_item" />
 
+    <Button
+        android:id="@+id/suggest_topic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/suggest_a_topic" />
+
 </LinearLayout>
