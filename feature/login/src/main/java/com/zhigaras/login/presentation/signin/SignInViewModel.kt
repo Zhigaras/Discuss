@@ -8,7 +8,6 @@ import com.zhigaras.auth.OneTapSignInClient
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.domain.SaveUserToCloud
-import com.zhigaras.login.databinding.FragmentSignInBinding
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
 import com.zhigaras.login.domain.signin.SignInCommunication
@@ -21,7 +20,7 @@ class SignInViewModel(
     private val navigateToHome: NavigateToHome,
     override val communication: SignInCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentSignInBinding, SignInUiState>(dispatchers),
+) : BaseViewModel<SignInUiState>(dispatchers),
     NavigateToSignUp {
     
     

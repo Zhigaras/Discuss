@@ -8,7 +8,6 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.home.databinding.FragmentHomeBinding
 import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.NavigateToCall
@@ -20,7 +19,7 @@ class HomeViewModel(
     private val homeCloudService: HomeCloudService,
     override val communication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentHomeBinding, HomeUiState>(dispatchers) {
+) : BaseViewModel<HomeUiState>(dispatchers) {
     
     private val callback = object : CloudService.Callback<List<HomeSubject>> {
         override fun provide(data: List<HomeSubject>) {

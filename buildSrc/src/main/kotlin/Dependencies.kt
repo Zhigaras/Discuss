@@ -22,7 +22,7 @@ object Dependencies {
     
     object Versions {
         
-        const val koin = "3.4.3"
+        const val koin = "3.5.0"
         const val appcompat = "1.6.1"
         const val coreKtx = "1.10.1"
         const val firebaseBom = "32.2.2"

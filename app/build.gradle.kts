@@ -53,6 +53,8 @@ dependencies {
     implementation(Dependencies.crashlytics)
     implementation(Dependencies.analytics)
     
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
+    
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidJUnit)
     androidTestImplementation(Dependencies.espresso)

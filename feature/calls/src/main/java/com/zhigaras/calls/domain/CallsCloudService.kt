@@ -12,6 +12,8 @@ interface CallsCloudService {
     
     fun removeConnectionData(userId: String)
     
+    fun removeOpponent(userId: String)
+    
     fun removeInterruptionFlag(userId: String)
     
     fun removeUserFromWaitList(opponent: ReadyToCallUser)

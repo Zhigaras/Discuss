@@ -10,7 +10,6 @@ import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import kotlinx.coroutines.launch
 import org.webrtc.SurfaceViewRenderer
 
@@ -22,7 +21,7 @@ class CallViewModel(
     override val communication: CallCommunication.Mutable,
     provideUserId: ProvideUserId,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
+) : BaseViewModel<CallUiState>(dispatchers) {
     
     init {
         initCalls.subscribeToConnectionEvents(provideUserId.provide())
