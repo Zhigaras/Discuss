@@ -5,6 +5,8 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.zhigaras.core.AuthTextWatcher
+import com.zhigaras.core.InputValidation
 import com.zhigaras.login.R
 
 class PasswordLayout @JvmOverloads constructor(

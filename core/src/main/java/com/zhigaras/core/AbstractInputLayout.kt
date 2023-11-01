@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation.input
+package com.zhigaras.core
 
 import android.content.Context
 import android.os.Bundle

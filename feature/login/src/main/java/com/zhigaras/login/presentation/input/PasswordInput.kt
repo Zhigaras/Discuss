@@ -2,6 +2,7 @@ package com.zhigaras.login.presentation.input
 
 import android.content.Context
 import android.util.AttributeSet
+import com.zhigaras.core.AbstractInputLayout
 import com.zhigaras.login.R
 
 class PasswordInput @JvmOverloads constructor(

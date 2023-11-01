@@ -37,6 +37,7 @@ android {
 dependencies {
     
     implementation(Dependencies.lificycle)
+    implementation(Dependencies.material)
     
     implementation(Dependencies.koinAndroid)
     
