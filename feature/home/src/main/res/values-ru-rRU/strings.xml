@@ -11,5 +11,5 @@
     <string name="close">Закрыть</string>
     <string name="retry">Повторить</string>
     <string name="suggest_successfully_sent">Спасибо за ваше предложение. Мы рассмотрим его в ближайшее время.</string>
-    <string name="suggest_sending_failed">Не удалось отправить. Проверьте интернет соединение и попробуйте снова.</string>
+    <string name="suggest_sending_failed">Не удалось отправить. Проверьте соединение и попробуйте снова.</string>
 </resources>

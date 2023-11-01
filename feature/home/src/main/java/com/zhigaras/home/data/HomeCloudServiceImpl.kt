@@ -4,6 +4,10 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.cloudservice.CloudService.Companion.TOPICS_PATH
 import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.domain.model.HomeTopic
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudService {
     
@@ -16,6 +20,17 @@ class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudSe
     }
     
     override suspend fun sendTopicSuggest(topic: String): String {
-        return cloudService.postWithIdGenerating(topic, HomeCloudService.TOPIC_SUGGEST_PATH)
+        var result: String? = null
+        withTimeout(SEND_SUGGEST_TIMEOUT) {
+            CoroutineScope(Dispatchers.IO).launch {
+                result =
+                    cloudService.postWithIdGenerating(topic, HomeCloudService.TOPIC_SUGGEST_PATH)
+            }.join()
+        }
+        return result!!
+    }
+    
+    companion object {
+        private const val SEND_SUGGEST_TIMEOUT = 5000L
     }
 }

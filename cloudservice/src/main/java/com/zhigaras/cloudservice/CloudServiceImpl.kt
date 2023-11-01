@@ -16,15 +16,10 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         hashMapOf<CloudService.Callback<*>, Pair<DatabaseReference, ValueEventListener>>()
     
     override suspend fun postWithIdGenerating(obj: Any?, vararg children: String): String {
-        return suspendCoroutine {cont ->
-            val result = makeReference(*children).push()
-            result.setValue(obj).addOnSuccessListener {
-                result.key?.let { cont.resume(it) }
-                    ?: cont.resumeWithException(NullPointerException("The key is null"))
-            }.addOnFailureListener {
-                cont.resumeWithException(IllegalStateException("Sending failed"))
-            }.addOnCanceledListener {
-                cont.resumeWithException(IllegalStateException("Sending canceled"))
+        return suspendCoroutine { cont ->
+            makeReference(*children).push().setValue(obj) { error, ref ->
+                error?.let { cont.resumeWithException(IllegalStateException(error.message)) }
+                    ?: cont.resume(ref.key!!)
             }
         }
     }
@@ -93,7 +88,7 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     
     override fun addItemToList(item: String, vararg children: String) {
         val ref = makeReference(*children)
-        ref.updateChildren(mapOf(item to "waiting"))
+        ref.updateChildren(mapOf(item to "waiting")) // TODO: replace "waiting" away from here
     }
     
     override fun removeListItem(itemId: String, vararg children: String) {

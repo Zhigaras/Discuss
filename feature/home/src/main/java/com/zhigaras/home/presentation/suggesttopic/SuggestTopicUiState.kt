@@ -9,6 +9,7 @@ interface SuggestTopicUiState : UiState<DialogSuggestTopicBinding> {
     class Progress : SuggestTopicUiState {
         
         override fun update(binding: DialogSuggestTopicBinding) {
+            binding.initialView.visibility = View.VISIBLE
             binding.failedView.root.visibility = View.GONE
             binding.successView.root.visibility = View.GONE
             binding.sendSuggestionButton.visibility = View.GONE
@@ -31,7 +32,7 @@ interface SuggestTopicUiState : UiState<DialogSuggestTopicBinding> {
         override fun update(binding: DialogSuggestTopicBinding) {
             binding.failedView.root.visibility = View.VISIBLE
             binding.successView.root.visibility = View.GONE
-            binding.sendSuggestionButton.visibility = View.GONE
+            binding.initialView.visibility = View.GONE
             binding.progressBar.visibility = View.GONE
         }
     }
