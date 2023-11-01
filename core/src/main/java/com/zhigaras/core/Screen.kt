@@ -45,4 +45,10 @@ interface Screen {
                 .commit()
         }
     }
+    
+    object PopBackStack : Screen {
+        override fun show(fragmentManager: FragmentManager, containerId: Int) {
+            fragmentManager.popBackStack()
+        }
+    }
 }

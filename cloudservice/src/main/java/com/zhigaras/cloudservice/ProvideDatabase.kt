@@ -1,4 +1,4 @@
-package com.zhigaras.cloudeservice
+package com.zhigaras.cloudservice
 
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -10,10 +10,6 @@ interface ProvideDatabase {
     
     class Base : ProvideDatabase {
 
-        init {
-            Firebase.database(DATABASE_URL).setPersistenceEnabled(false)
-        }
-        
         override fun database(): DatabaseReference {
             return Firebase.database(DATABASE_URL).reference
         }

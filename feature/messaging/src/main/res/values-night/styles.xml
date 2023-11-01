@@ -4,13 +4,15 @@
     <style name="IncomingMessageStyle">
         <item name="android:textSize">@dimen/msg_text_size</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/incoming_msg_bg_dark</item>
+        <item name="android:background">@drawable/incoming_msg_bg</item>
+        <item name="android:backgroundTint">@color/grey3</item>
     </style>
 
     <style name="OutgoingMessageStyle">
         <item name="android:textSize">@dimen/msg_text_size</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/outgoing_msg_bg_dark</item>
+        <item name="android:background">@drawable/outgoing_msg_bg</item>
+        <item name="android:backgroundTint">@color/dark_green</item>
     </style>
 
     <style name="PortraitMessageArea">
@@ -18,22 +20,7 @@
     </style>
 
     <style name="LandscapeMessageArea">
-        <item name="android:background">@color/dark_gray</item>
+        <item name="android:background">@color/grey5</item>
     </style>
 
-    <style name="NextOpponentButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:backgroundTint">@color/dark_green</item>
-        <item name="android:padding">@dimen/call_screen_buttons_vertical_padding</item>
-        <item name="android:textSize">@dimen/call_screen_buttons_text_size</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:text">@string/next</item>
-    </style>
-
-    <style name="EscapeConversationButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:padding">@dimen/call_screen_buttons_vertical_padding</item>
-        <item name="android:backgroundTint">@color/dark_red</item>
-        <item name="android:textSize">@dimen/call_screen_buttons_text_size</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:text">@string/back</item>
-    </style>
 </resources>

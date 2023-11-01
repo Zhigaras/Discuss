@@ -1,6 +1,7 @@
 package com.zhigaras.calls.webrtc
 
 import com.zhigaras.calls.domain.CallCommunication
+import com.zhigaras.calls.ui.CallUiState
 import com.zhigaras.calls.ui.Closed
 import com.zhigaras.calls.ui.Connected
 import com.zhigaras.calls.ui.Connecting
@@ -14,7 +15,8 @@ class PeerConnectionCallback(
 ) : (PeerConnectionState) -> Unit {
     
     inner class Factory {
-        private val states = listOf(New, Connecting, Connected, Disconnected, Failed, Closed)
+        private val states =
+            listOf(New(), Connecting(), Connected(), Disconnected(), Failed(), Closed())
         
         fun state(newState: PeerConnectionState) = states.find { it.match(newState) }!!
     }
@@ -23,4 +25,10 @@ class PeerConnectionCallback(
         val state = Factory().state(newState)
         communication.postBackground(state)
     }
+    
+    fun postInterrupted() = communication.postBackground(CallUiState.InterruptedByOpponent())
+    
+    fun postCheckConnection() = communication.postBackground(CallUiState.CheckConnection())
+    
+    fun postTryingToReconnect() = communication.postBackground(CallUiState.TryingToReconnect())
 }

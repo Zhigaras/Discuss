@@ -18,34 +18,29 @@ import org.webrtc.VideoTrack
 import java.nio.ByteBuffer
 
 class WebRtcClient(
-    iceServers: IceServersList,
-    private val peerConnectionObserver: MyPeerConnectionObserver,
+    private val iceServers: IceServersList,
+    private val peerConnectionObserver: PeerConnectionObserveWrapper,
     private val eglBaseContext: EglBase.Context,
     private val peerConnectionFactory: MyPeerConnectionFactory,
     private val enumerator: Camera2Enumerator,
-) : PeerConnectionCommunication.ObserveForever {
-    private val peerConnection: PeerConnection? = peerConnectionFactory.createPeerConnection(
-        iceServers.provide(),
-        peerConnectionObserver.provideObserver()
-    )
+) {
+    private var peerConnection: PeerConnection? = null
     private val localVideoSource = peerConnectionFactory.createVideoSource(false)
     private val localAudioSource = peerConnectionFactory.createAudioSource(MediaConstraints())
-    private lateinit var videoCapturer: CameraVideoCapturer
     private val pendingIceMutex = Mutex()
     private val pendingIceCandidates = mutableListOf<IceCandidate>()
-    private val dataChannel = peerConnection!!.createDataChannel(
-        "messaging",
-        DataChannel.Init()
-    ) // TODO: fix no null assertion
+    private var dataChannel: DataChannel? = null
+    private lateinit var videoCapturer: CameraVideoCapturer
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
     
-    override fun observeForever(observer: Observer<PeerConnectionState>) {
+    fun initNewConnection(observer: Observer<PeerConnectionState>) {
+        peerConnection = peerConnectionFactory.createPeerConnection(
+            iceServers.provide(),
+            peerConnectionObserver.provideObserver()
+        )
+        dataChannel = peerConnection?.createDataChannel("messaging", DataChannel.Init())
         peerConnectionObserver.observeForever(observer)
-    }
-    
-    override fun removeObserver(observer: Observer<PeerConnectionState>) {
-        peerConnectionObserver.removeObserver(observer)
     }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
@@ -66,6 +61,10 @@ class WebRtcClient(
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
         videoCapturer.initialize(helper, view.context, localVideoSource.capturerObserver)
         videoCapturer.startCapture(480, 360, 30)
+        addStreamTo(view)
+    }
+    
+    fun addStreamTo(view: SurfaceViewRenderer) {
         localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
             .apply { addSink(view) }
         localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
@@ -73,7 +72,7 @@ class WebRtcClient(
             addTrack(localVideoTrack)
             addTrack(localAudioTrack)
         }
-        peerConnection!!.addStream(localStream)
+        peerConnection?.addStream(localStream)
     }
     
     private fun getVideoCapturer(): CameraVideoCapturer {
@@ -91,23 +90,22 @@ class WebRtcClient(
     }
     
     suspend fun createOffer(mediaConstraints: MediaConstraints): SessionDescription {
-        if (peerConnection == null) throw NullPointerException()
-        return suspendCreateSessionDescription { peerConnection.createOffer(it, mediaConstraints) }
+        return suspendCreateSessionDescription { peerConnection?.createOffer(it, mediaConstraints) }
     }
     
     suspend fun createAnswer(mediaConstraints: MediaConstraints): SessionDescription {
-        if (peerConnection == null) throw NullPointerException()
-        return suspendCreateSessionDescription { peerConnection.createAnswer(it, mediaConstraints) }
+        return suspendCreateSessionDescription {
+            peerConnection?.createAnswer(it, mediaConstraints)
+        }
     }
     
     suspend fun setRemoteDescription(sessionDescription: SessionDescription) {
-        if (peerConnection == null) throw NullPointerException()
         return suspendSdpObserver {
-            peerConnection.setRemoteDescription(it, sessionDescription)
+            peerConnection?.setRemoteDescription(it, sessionDescription)
         }.also {
             pendingIceMutex.withLock {
                 pendingIceCandidates.forEach { iceCandidate ->
-                    peerConnection.addRtcIceCandidate(iceCandidate)
+                    peerConnection?.addRtcIceCandidate(iceCandidate)
                 }
                 pendingIceCandidates.clear()
             }
@@ -115,8 +113,7 @@ class WebRtcClient(
     }
     
     suspend fun setLocalDescription(sessionDescription: SessionDescription) {
-        if (peerConnection == null) throw NullPointerException()
-        return suspendSdpObserver { peerConnection.setLocalDescription(it, sessionDescription) }
+        return suspendSdpObserver { peerConnection?.setLocalDescription(it, sessionDescription) }
     }
     
     suspend fun addIceCandidate(iceCandidate: IceCandidate) {
@@ -126,26 +123,31 @@ class WebRtcClient(
             }
             return
         }
-        peerConnection.addRtcIceCandidate(iceCandidate)
+        peerConnection?.addRtcIceCandidate(iceCandidate)
     }
     
     fun sendMessage(text: String) {
         val buffer = ByteBuffer.wrap(text.toByteArray())
-        dataChannel.send(DataChannel.Buffer(buffer, false))
+        dataChannel?.send(DataChannel.Buffer(buffer, false))
     }
     
-    fun switchCamera() {
-        videoCapturer.switchCamera(null)
+    fun closeCurrentConnection(observer: Observer<PeerConnectionState>) {
+        pendingIceCandidates.clear()
+        peerConnection?.close()
+        dataChannel?.unregisterObserver()
+        dataChannel?.close()
+        peerConnectionObserver.removeObserver(observer)
     }
     
-    fun closeConnection() {
-        try {
-            localVideoTrack.dispose()
-            videoCapturer.stopCapture()
-            videoCapturer.dispose()
-            peerConnection!!.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
+        pendingIceCandidates.clear()
+        localVideoTrack.dispose()
+        videoCapturer.stopCapture()
+        videoCapturer.dispose()
+        peerConnection?.close()
+        dataChannel?.unregisterObserver()
+        dataChannel?.close()
+        peerConnectionObserver.closeConnection()
+        peerConnectionObserver.removeObserver(observer)
     }
 }

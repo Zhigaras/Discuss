@@ -1,5 +1,6 @@
 package com.zhigaras.discuss
 
+import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.NavigationCommunication
 import com.zhigaras.home.domain.NavigateToCall
@@ -20,13 +21,14 @@ fun mainModule() = module {
         NavigationCommunication.Post::class
     )
     
-    single { AvailableRouts.Base(get()) } binds arrayOf(
+    factory { AvailableRouts.Base(get()) } binds arrayOf(
         NavigateToSignIn::class,
         NavigateToSignUp::class,
         NavigateToHome::class,
-        NavigateToCall::class
+        NavigateToCall::class,
+        CallRoutes::class
     )
     
-    single { Dispatchers.Base() } bind Dispatchers::class
+    factory { Dispatchers.Base() } bind Dispatchers::class
     
 }

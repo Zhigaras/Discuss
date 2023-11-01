@@ -3,7 +3,8 @@ package com.zhigaras.login.di
 import com.zhigaras.auth.Auth
 import com.zhigaras.auth.AuthRepository
 import com.zhigaras.auth.OneTapSignIn
-import com.zhigaras.auth.ProvideUserId
+import com.zhigaras.core.ProvideUserId
+import com.zhigaras.auth.ProvideUserIdImpl
 import com.zhigaras.login.data.ResetPasswordRepositoryImpl
 import com.zhigaras.login.data.SignInRepositoryImpl
 import com.zhigaras.login.data.SignUpRepositoryImpl
@@ -30,40 +31,39 @@ fun loginModule() = module {
     viewModelOf(::SignUpViewModel)
     viewModelOf(::ResetPasswordViewModel)
     
-    // TODO: change singles to factories
+    factory { AuthRepository() } bind Auth::class
     
-    single { AuthRepository() } bind Auth::class
-    
-    single { SignInCommunication.Base() } binds arrayOf(
+    factory { SignInCommunication.Base() } binds arrayOf(
         SignInCommunication.Mutable::class,
         SignInCommunication.Observe::class,
         SignInCommunication.Post::class
     )
     
-    single { SignUpCommunication.Base() } binds arrayOf(
+    factory { SignUpCommunication.Base() } binds arrayOf(
         SignUpCommunication.Mutable::class,
         SignUpCommunication.Observe::class,
         SignUpCommunication.Post::class
     )
     
-    single { ResetPasswordCommunication.Base() } binds arrayOf(
+    factory { ResetPasswordCommunication.Base() } binds arrayOf(
         ResetPasswordCommunication.Mutable::class,
         ResetPasswordCommunication.Observe::class,
         ResetPasswordCommunication.Post::class
     )
     
-    single { OneTapSignIn.Base(get()) } bind OneTapSignIn::class
+    factory { OneTapSignIn.Base(get()) } bind OneTapSignIn::class
     
-    single { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
+    factory { SignUpRepositoryImpl(get()) } bind SignUpRepository::class
     
-    single { SignInRepositoryImpl(get(), get()) } bind SignInRepository::class
+    factory { SignInRepositoryImpl(get(), get()) } bind SignInRepository::class
     
-    single { ResetPasswordRepositoryImpl(get()) } bind ResetPasswordRepository::class
+    factory { ResetPasswordRepositoryImpl(get()) } bind ResetPasswordRepository::class
     
-    single { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
+    factory { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
     
-    factory { ProvideUserId.Base() } bind ProvideUserId::class
+    factory { ProvideUserIdImpl() } bind ProvideUserId::class
     
     factory { UserMapper() }
+    
     factory { ShowId() }
 }
