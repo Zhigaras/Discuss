@@ -27,7 +27,7 @@ fun homeModule() = listOf(suggestTopicModule(), module {
         HomeCommunication.Post::class
     )
     
-    factory { HomeInteractor.Base(get()) } binds arrayOf(
+    factory { HomeInteractor.Base(get(), get()) } binds arrayOf(
         HomeInteractor::class,
         SuggestTopic::class
     )

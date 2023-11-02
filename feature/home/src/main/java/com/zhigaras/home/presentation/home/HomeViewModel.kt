@@ -1,6 +1,8 @@
 package com.zhigaras.home.presentation.home
 
 import androidx.core.os.bundleOf
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.calls.domain.model.ReadyToCallUser
@@ -21,7 +23,8 @@ class HomeViewModel(
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers) {
     
-    private val callback = object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
+    private val callback =
+        object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
             override fun provide(data: List<HomeTopic>) {
                 communication.postBackground(HomeUiState.NewTopicList(data))
             }
@@ -38,6 +41,11 @@ class HomeViewModel(
     fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
         val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
         navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+    }
+    
+    override fun observe(owner: LifecycleOwner, observer: Observer<HomeUiState>) {
+        super.observe(owner, observer)
+        homeInteractor.observeNetwork(owner, communication)
     }
     
     override fun onCleared() {
