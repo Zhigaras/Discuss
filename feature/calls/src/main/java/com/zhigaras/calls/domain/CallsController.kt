@@ -1,6 +1,5 @@
 package com.zhigaras.calls.domain
 
-import android.net.ConnectivityManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -11,6 +10,8 @@ import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
+import com.zhigaras.core.NetworkHandler
+import com.zhigaras.core.NetworkState
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +50,7 @@ interface CallsController {
     
     class Base(
         dispatchers: Dispatchers,
-        private val connManager: ConnectivityManager,
+        private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
         private val messagingCommunication: DataChannelCommunication.Mutable, //??
@@ -77,18 +78,21 @@ interface CallsController {
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
-        private val networkStateCallback = NetworkStateCallback(
-            onLost = { peerConnectionCallback.postCheckConnection() },
-            onAvailable = {
-                val connState = webRtcClient.provideConnectionState()
-                if (connState == PeerConnectionState.DISCONNECTED ||
-                    connState == PeerConnectionState.FAILED
-                ) {
-                    peerConnectionCallback.postTryingToReconnect()
-                    sendRestartOffer()
+        private val networkStateObserver = Observer<NetworkState> {
+            when (it) {
+                is NetworkState.Available -> {
+                    val connState = webRtcClient.provideConnectionState()
+                    if (connState == PeerConnectionState.DISCONNECTED ||
+                        connState == PeerConnectionState.FAILED
+                    ) {
+                        peerConnectionCallback.postTryingToReconnect()
+                        sendRestartOffer()
+                    }
                 }
+                
+                is NetworkState.Lost -> peerConnectionCallback.postCheckConnection()
             }
-        )
+        }
         
         inner class ConnectionStateHandler {
             
@@ -136,7 +140,7 @@ interface CallsController {
         
         init {
             webRtcClient.initNewConnection(observer)
-            connManager.registerDefaultNetworkCallback(networkStateCallback)
+            networkHandler.observeForever(networkStateObserver)
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
@@ -173,7 +177,7 @@ interface CallsController {
             callsCloudService.removeUserFromWaitList(user)
         }
         
-        fun sendRestartOffer() {
+        private fun sendRestartOffer() {
             sendOffer(MediaConstraints().apply {
                 mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
                 mandatory.add(MediaConstraints.KeyValuePair("IceRestart", "true"))
@@ -253,7 +257,7 @@ interface CallsController {
             remoteView = null
             localView = null
             scope.cancel()
-            connManager.unregisterNetworkCallback(networkStateCallback)
+            networkHandler.removeObserver(networkStateObserver)
         }
         
         override fun subscribeToConnectionEvents(userId: String) {

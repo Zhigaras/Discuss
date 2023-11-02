@@ -1,7 +1,5 @@
 package com.zhigaras.calls.di
 
-import android.content.Context
-import android.net.ConnectivityManager
 import com.zhigaras.calls.data.CallsCloudServiceImpl
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallsCloudService
@@ -56,10 +54,6 @@ fun callModule() = listOf(messagesModule(), module {
         val callsController = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallsController>()
         val communication = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallCommunication.Mutable>()
         CallViewModel(initCalls, callsController, get(), get(), communication, get(), get())
-    }
-    
-    factory {
-        androidApplication().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
     
     factory {
