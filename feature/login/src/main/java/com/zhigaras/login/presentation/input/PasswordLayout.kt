@@ -5,6 +5,8 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.zhigaras.core.BaseTextWatcher
+import com.zhigaras.core.InputValidation
 import com.zhigaras.login.R
 
 class PasswordLayout @JvmOverloads constructor(
@@ -25,7 +27,7 @@ class PasswordLayout @JvmOverloads constructor(
             findViewById(R.id.input_password),
             findViewById(R.id.confirm_password)
         )
-        addTextWatcher(AuthTextWatcher { errorView.text = "" })
+        addTextWatcher(BaseTextWatcher { errorView.text = "" })
     }
     
     override fun isValid(): Boolean {

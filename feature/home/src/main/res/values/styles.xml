@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="SubjectCard">
+    <style name="TopicCard">
         <item name="android:backgroundTint">@color/grey1</item>
     </style>
 
-    <style name="SubjectText">
+    <style name="TopicText">
         <item name="android:background">@drawable/rounded_bg</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:textColor">@color/black</item>
@@ -13,7 +13,7 @@
     </style>
 
     <style name="SupportButton">
-        <item name="shapeAppearanceOverlay">@style/SubjectButtonsShape</item>
+        <item name="shapeAppearanceOverlay">@style/TopicButtonsShape</item>
         <item name="android:backgroundTint">@color/light_green</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
@@ -21,8 +21,8 @@
         <item name="android:text">@string/support</item>
     </style>
 
-    <style name="SubjectButtonsShape">
-        <item name="cornerSize">@dimen/subject_card_inner_corner_radius</item>
+    <style name="TopicButtonsShape">
+        <item name="cornerSize">@dimen/topic_card_inner_corner_radius</item>
     </style>
 
     <style name="AgainstButton" parent="SupportButton">

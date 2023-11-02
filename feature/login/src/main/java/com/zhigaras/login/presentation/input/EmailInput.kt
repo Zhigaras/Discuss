@@ -3,6 +3,7 @@ package com.zhigaras.login.presentation.input
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Patterns
+import com.zhigaras.core.AbstractInputLayout
 import com.zhigaras.login.R
 
 class EmailInput @JvmOverloads constructor(

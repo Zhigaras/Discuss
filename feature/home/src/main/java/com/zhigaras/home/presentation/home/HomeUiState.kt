@@ -1,17 +1,17 @@
-package com.zhigaras.home.presentation
+package com.zhigaras.home.presentation.home
 
 import android.widget.Toast
 import com.zhigaras.adapterdelegate.CompositeAdapter
 import com.zhigaras.core.UiState
 import com.zhigaras.home.databinding.FragmentHomeBinding
-import com.zhigaras.home.domain.model.HomeSubject
+import com.zhigaras.home.domain.model.HomeTopic
 
 interface HomeUiState : UiState<FragmentHomeBinding> {
     
-    class NewSubjectList(private val list: List<HomeSubject>) : HomeUiState {
+    class NewTopicList(private val list: List<HomeTopic>) : HomeUiState {
         
         override fun update(binding: FragmentHomeBinding) {
-            (binding.subjectsRv.adapter as CompositeAdapter).submitList(list)
+            (binding.topicsRv.adapter as CompositeAdapter).submitList(list)
         }
     }
     

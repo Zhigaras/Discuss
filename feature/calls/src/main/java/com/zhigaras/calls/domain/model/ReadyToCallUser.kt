@@ -7,15 +7,15 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class ReadyToCallUser(
     val id: String = "",
-    val subjectId: Int = 0,
+    val topicId: Int = 0,
     val disputeParty: DisputeParty? = null
 ) : Parcelable {
     
     fun removeSelfFromWaitList(cloudService: CloudService) {
         cloudService.removeListItem(
             id,
-            CloudService.SUBJECTS_PATH,
-            subjectId.toString(),
+            CloudService.TOPICS_PATH,
+            topicId.toString(),
             disputeParty!!.path
         )
     }
@@ -23,8 +23,8 @@ class ReadyToCallUser(
     fun addSelfToWaitList(cloudService: CloudService) {
         cloudService.addItemToList(
             id,
-            CloudService.SUBJECTS_PATH,
-            subjectId.toString(),
+            CloudService.TOPICS_PATH,
+            topicId.toString(),
             disputeParty!!.path
         )
     }

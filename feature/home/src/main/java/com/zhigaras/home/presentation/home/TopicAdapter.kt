@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation
+package com.zhigaras.home.presentation.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,19 +6,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhigaras.adapterdelegate.DelegateAdapter
 import com.zhigaras.adapterdelegate.DelegateViewHolder
 import com.zhigaras.calls.domain.model.DisputeParty
-import com.zhigaras.home.databinding.SubjectItemBinding
-import com.zhigaras.home.domain.model.HomeSubject
+import com.zhigaras.home.databinding.TopicItemBinding
+import com.zhigaras.home.domain.model.HomeTopic
 
-class SubjectAdapter(
+class TopicAdapter(
     private val onClick: (Int, DisputeParty) -> Unit
-) : DelegateAdapter<HomeSubject, SubjectAdapter.SubjectViewHolder>() {
+) : DelegateAdapter<HomeTopic, TopicAdapter.TopicViewHolder>() {
     
-    inner class SubjectViewHolder(
-        private val binding: SubjectItemBinding
-    ) : DelegateViewHolder<HomeSubject>(binding) {
+    inner class TopicViewHolder(
+        private val binding: TopicItemBinding
+    ) : DelegateViewHolder<HomeTopic>(binding) {
         
-        override fun bind(item: HomeSubject) {
-            binding.subjectDescription.text = item.nameRu
+        override fun bind(item: HomeTopic) {
+            binding.topicDescription.text = item.nameRu
             binding.supportCount.text = item.supportList.size.toString()
             binding.againstCount.text = item.againstList.size.toString()
             binding.supportButton.setOnClickListener {
@@ -33,8 +33,8 @@ class SubjectAdapter(
     override fun viewType() = 0
     
     override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return SubjectViewHolder(
-            SubjectItemBinding.inflate(
+        return TopicViewHolder(
+            TopicItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )

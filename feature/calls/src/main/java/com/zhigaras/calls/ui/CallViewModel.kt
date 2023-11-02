@@ -32,7 +32,7 @@ class CallViewModel(
         initCalls.initRemoteView(remoteView)
     }
     
-    fun lookForOpponent(user: ReadyToCallUser) {
+    fun lookForOpponent(user: ReadyToCallUser) { // TODO: replace with scopeLaunch()
         viewModelScope.launch {
             initCalls.initUser(user)
             communication.postUi(CallUiState.LookingForOpponent())

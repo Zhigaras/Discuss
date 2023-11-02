@@ -1,9 +1,9 @@
 package com.zhigaras.calls.domain
 
 import com.zhigaras.calls.domain.model.ReadyToCallUser
-import com.zhigaras.calls.domain.model.Subject
+import com.zhigaras.calls.domain.model.Topic
 import com.zhigaras.cloudservice.CloudService
-import com.zhigaras.cloudservice.CloudService.Companion.SUBJECTS_PATH
+import com.zhigaras.cloudservice.CloudService.Companion.TOPICS_PATH
 
 interface MatchingInteractor {
     
@@ -18,15 +18,15 @@ interface MatchingInteractor {
         
         override suspend fun checkMatching(user: ReadyToCallUser): MatchingResult {
             return try {
-                val subject = cloudService.getDataSnapshot(
-                    Subject::class.java,
-                    SUBJECTS_PATH,
-                    user.subjectId.toString()
+                val topic = cloudService.getDataSnapshot(
+                    Topic::class.java,
+                    TOPICS_PATH,
+                    user.topicId.toString()
                 )
-                if (subject.hasOpponent(user.disputeParty!!)) {
-                    val opponentId = subject.getOpponentId(user.disputeParty)
+                if (topic.hasOpponent(user.disputeParty!!)) {
+                    val opponentId = topic.getOpponentId(user.disputeParty)
                     MatchingResult.OpponentFound(
-                        ReadyToCallUser(opponentId, user.subjectId, user.disputeParty.opposite())
+                        ReadyToCallUser(opponentId, user.topicId, user.disputeParty.opposite())
                     )
                 } else {
                     MatchingResult.NoMatch(user)

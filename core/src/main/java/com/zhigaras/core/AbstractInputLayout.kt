@@ -1,4 +1,4 @@
-package com.zhigaras.login.presentation.input
+package com.zhigaras.core
 
 import android.content.Context
 import android.os.Bundle
@@ -16,7 +16,7 @@ abstract class AbstractInputLayout @JvmOverloads constructor(
 ) : TextInputLayout(context, attrs, defStyleAttr), InputValidation {
     
     protected abstract val errorMessageId: Int
-    private val textWatcher: TextWatcher = AuthTextWatcher { error = "" }
+    private val textWatcher: TextWatcher = BaseTextWatcher { error = "" }
     
     protected abstract fun innerIsValid(): Boolean
     
