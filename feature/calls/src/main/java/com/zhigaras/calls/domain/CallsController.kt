@@ -1,8 +1,6 @@
 package com.zhigaras.calls.domain
 
-import android.content.Context
-import android.content.IntentFilter
-import androidx.core.content.ContextCompat
+import android.net.ConnectivityManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -13,7 +11,6 @@ import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.core.IntentAction
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +49,7 @@ interface CallsController {
     
     class Base(
         dispatchers: Dispatchers,
-        private val application: Context,
+        private val connManager: ConnectivityManager,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
         private val messagingCommunication: DataChannelCommunication.Mutable, //??
@@ -80,9 +77,18 @@ interface CallsController {
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
-        private val connectionReceiver = ConnectionStateReceiver(
-            peerConnectionCallback, webRtcClient
-        ) { sendRestartOffer() }
+        private val networkStateCallback = NetworkStateCallback(
+            onLost = { peerConnectionCallback.postCheckConnection() },
+            onAvailable = {
+                val connState = webRtcClient.provideConnectionState()
+                if (connState == PeerConnectionState.DISCONNECTED ||
+                    connState == PeerConnectionState.FAILED
+                ) {
+                    peerConnectionCallback.postTryingToReconnect()
+                    sendRestartOffer()
+                }
+            }
+        )
         
         inner class ConnectionStateHandler {
             
@@ -130,12 +136,7 @@ interface CallsController {
         
         init {
             webRtcClient.initNewConnection(observer)
-            ContextCompat.registerReceiver(
-                application,
-                connectionReceiver,
-                IntentFilter(IntentAction.ACTION_NETWORK_STATE),
-                ContextCompat.RECEIVER_NOT_EXPORTED
-            )
+            connManager.registerDefaultNetworkCallback(networkStateCallback)
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
@@ -252,7 +253,7 @@ interface CallsController {
             remoteView = null
             localView = null
             scope.cancel()
-            application.unregisterReceiver(connectionReceiver)
+            connManager.unregisterNetworkCallback(networkStateCallback)
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
