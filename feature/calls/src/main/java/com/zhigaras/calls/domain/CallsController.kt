@@ -1,8 +1,6 @@
 package com.zhigaras.calls.domain
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -16,7 +14,6 @@ import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.IntentAction
-import com.zhigaras.core.InternetConnectionState
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -83,27 +80,9 @@ interface CallsController {
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
-        private val connectionReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
-                    val networkState = InternetConnectionState.valueOf(
-                        intent.getStringExtra("state")
-                            ?: InternetConnectionState.UNKNOWN.name
-                    )
-                    val connState = webRtcClient.provideConnectionState()
-                    if (networkState == InternetConnectionState.ONLINE) {
-                        if (connState == PeerConnectionState.DISCONNECTED ||
-                            connState == PeerConnectionState.FAILED
-                        ) {
-                            peerConnectionCallback.postTryingToReconnect()
-                            sendRestartOffer()
-                        }
-                    } else {
-                        peerConnectionCallback.postCheckConnection()
-                    }
-                }
-            }
-        }
+        private val connectionReceiver = ConnectionStateReceiver(
+            peerConnectionCallback, webRtcClient
+        ) { sendRestartOffer() }
         
         inner class ConnectionStateHandler {
             
