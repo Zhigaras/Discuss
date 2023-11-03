@@ -1,8 +1,9 @@
-package com.zhigaras.discuss
+package com.zhigaras.discuss.presentation
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
+import com.zhigaras.discuss.R
 
 class ConnectionStateView @JvmOverloads constructor(
     context: Context,
@@ -19,5 +20,6 @@ class ConnectionStateView @JvmOverloads constructor(
     fun hideConnectionLost() {
         setBackgroundColor(context.getColor(com.zhigaras.messaging.R.color.light_green))
         setText(R.string.connection_restored)
+        visibility = GONE
     }
 }

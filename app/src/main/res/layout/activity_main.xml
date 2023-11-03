@@ -4,7 +4,12 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
-    <com.zhigaras.discuss.ConnectionStateView
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.zhigaras.discuss.presentation.ConnectionStateView
         android:id="@+id/connection_state_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,10 +17,5 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:visibility="gone" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </FrameLayout>

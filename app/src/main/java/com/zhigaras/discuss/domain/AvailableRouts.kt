@@ -1,4 +1,4 @@
-package com.zhigaras.discuss
+package com.zhigaras.discuss.domain
 
 import android.os.Bundle
 import com.zhigaras.calls.domain.CallRoutes

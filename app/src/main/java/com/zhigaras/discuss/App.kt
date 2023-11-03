@@ -6,6 +6,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.zhigaras.calls.di.callModule
 import com.zhigaras.calls.di.webRtcModule
+import com.zhigaras.discuss.di.mainModule
 import com.zhigaras.home.di.homeModule
 import com.zhigaras.login.di.loginModule
 import org.koin.android.ext.koin.androidContext

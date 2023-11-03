@@ -45,7 +45,7 @@ class HomeViewModel(
     
     override fun observe(owner: LifecycleOwner, observer: Observer<HomeUiState>) {
         super.observe(owner, observer)
-        homeInteractor.observeNetwork(owner, communication)
+//        homeInteractor.observeNetwork(owner, communication)
     }
     
     override fun onCleared() {

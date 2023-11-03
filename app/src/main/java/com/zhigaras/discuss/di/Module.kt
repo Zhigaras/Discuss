@@ -1,4 +1,4 @@
-package com.zhigaras.discuss
+package com.zhigaras.discuss.di
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -7,6 +7,11 @@ import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.NavigationCommunication
 import com.zhigaras.core.NetworkCommunication
 import com.zhigaras.core.NetworkHandler
+import com.zhigaras.discuss.domain.AvailableRouts
+import com.zhigaras.discuss.domain.MainInteractor
+import com.zhigaras.discuss.domain.MainUiStateCommunication
+import com.zhigaras.discuss.presentation.MainViewModel
+import com.zhigaras.discuss.domain.NavigateToSignIn
 import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
@@ -38,6 +43,14 @@ fun mainModule() = module {
         NetworkCommunication.ObserveForever::class,
         NetworkCommunication.Post::class
     )
+    
+    factory { MainUiStateCommunication.Base() } binds arrayOf(
+        MainUiStateCommunication.Mutable::class,
+        MainUiStateCommunication.Observe::class,
+        MainUiStateCommunication.Post::class
+    )
+    
+    factory { MainInteractor.Base(get()) } bind MainInteractor::class
     
     factory { AvailableRouts.Base(get()) } binds arrayOf(
         NavigateToSignIn::class,
