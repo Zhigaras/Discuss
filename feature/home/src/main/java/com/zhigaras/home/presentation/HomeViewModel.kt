@@ -19,18 +19,18 @@ class HomeViewModel(
     private val navigateToCall: NavigateToCall,
     private val provideUserId: ProvideUserId,
     private val homeInteractor: HomeInteractor,
-    override val communication: HomeCommunication.Mutable,
+    override val uiCommunication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers) {
     
     private val callback =
         object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
             override fun provide(data: List<HomeTopic>) {
-                communication.postBackground(HomeUiState.NewTopicList(data))
+                uiCommunication.postBackground(HomeUiState.NewTopicList(data))
             }
             
             override fun error(message: String) {
-                communication.postBackground(HomeUiState.Error(message))
+                uiCommunication.postBackground(HomeUiState.Error(message))
             }
         }
     

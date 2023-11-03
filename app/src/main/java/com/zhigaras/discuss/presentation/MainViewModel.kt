@@ -18,7 +18,7 @@ class MainViewModel(
     private val isUserAuthorized: IsUserAuthorized,
     private val navigateToSignIn: NavigateToSignIn,
     private val navigateToHome: NavigateToHome,
-    override val communication: MainUiStateCommunication.Mutable,
+    override val uiCommunication: MainUiStateCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<MainUiState>(dispatchers) {
     
@@ -27,7 +27,7 @@ class MainViewModel(
     }
     
     fun observeNetworkState(owner: LifecycleOwner, observer: Observer<MainUiState>) {
-        communication.observe(owner, observer)
+        uiCommunication.observe(owner, observer)
     }
     
     fun init(isFirstRun: Boolean, owner: LifecycleOwner) {
@@ -35,6 +35,6 @@ class MainViewModel(
             if (isUserAuthorized.isAuthorized()) navigateToHome.navigateToHome()
             else navigateToSignIn.navigateToSignIn()
         }
-        mainInteractor.observeNetwork(owner, communication)
+        mainInteractor.observeNetwork(owner, uiCommunication)
     }
 }
