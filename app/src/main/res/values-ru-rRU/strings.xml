@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connection_lost">Соединение потеряно</string>
+    <string name="connection_restored">Соединение восстановлено</string>
+</resources>
