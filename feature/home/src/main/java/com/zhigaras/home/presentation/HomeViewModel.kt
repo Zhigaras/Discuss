@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation.home
+package com.zhigaras.home.presentation
 
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleOwner

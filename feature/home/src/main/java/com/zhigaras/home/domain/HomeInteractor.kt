@@ -5,7 +5,7 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.NetworkHandler
 import com.zhigaras.core.NetworkState
 import com.zhigaras.home.domain.model.HomeTopic
-import com.zhigaras.home.presentation.home.HomeNetworkUiState
+import com.zhigaras.home.presentation.HomeNetworkUiState
 import com.zhigaras.home.presentation.suggesttopic.SuggestTopicUiState
 
 interface HomeInteractor {

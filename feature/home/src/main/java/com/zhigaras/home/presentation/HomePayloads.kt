@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation.home
+package com.zhigaras.home.presentation
 
 import com.zhigaras.adapterdelegate.Payload
 import com.zhigaras.home.databinding.TopicItemBinding
