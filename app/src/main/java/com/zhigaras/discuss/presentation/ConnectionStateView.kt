@@ -1,9 +1,14 @@
 package com.zhigaras.discuss.presentation
 
 import android.content.Context
+import android.graphics.drawable.TransitionDrawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.zhigaras.discuss.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ConnectionStateView @JvmOverloads constructor(
     context: Context,
@@ -11,15 +16,22 @@ class ConnectionStateView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
     
+    private lateinit var backgroundAnimation: TransitionDrawable
+    
     fun showConnectionLost() {
+        setBackgroundResource(R.drawable.connection_lost_bg)
         visibility = VISIBLE
-        setBackgroundColor(context.getColor(com.zhigaras.messaging.R.color.dark_red))
         setText(R.string.connection_lost)
     }
     
     fun hideConnectionLost() {
-        setBackgroundColor(context.getColor(com.zhigaras.messaging.R.color.light_green))
+        setBackgroundResource(R.drawable.connection_state_bg)
         setText(R.string.connection_restored)
-        visibility = GONE
+        backgroundAnimation = background as TransitionDrawable
+        backgroundAnimation.startTransition(300)
+        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+            delay(1500)
+            visibility = GONE
+        }
     }
 }
