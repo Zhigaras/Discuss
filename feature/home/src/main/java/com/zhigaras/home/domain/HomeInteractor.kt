@@ -16,6 +16,8 @@ interface HomeInteractor {
     
     fun observeNetwork(owner: LifecycleOwner, communication: HomeCommunication.Post)
     
+    fun isOnline(): Boolean
+    
     class Base(
         private val homeCloudService: HomeCloudService,
         private val networkHandler: NetworkHandler
@@ -55,6 +57,11 @@ interface HomeInteractor {
                 onSuccess = { SuggestTopicUiState.SuggestSuccessfullySent() },
                 onFailure = { SuggestTopicUiState.SuggestSendingFailed(it.message) }
             )
+        }
+        
+        override fun isOnline(): Boolean {
+            val currentState = networkHandler.current()
+            return currentState is NetworkState.Available || currentState is NetworkState.Loosing
         }
     }
 }

@@ -41,7 +41,8 @@ fun mainModule() = module {
         NetworkCommunication.Mutable::class,
         NetworkCommunication.Observe::class,
         NetworkCommunication.ObserveForever::class,
-        NetworkCommunication.Post::class
+        NetworkCommunication.Post::class,
+        NetworkCommunication.CurrentState::class
     )
     
     factory { MainUiStateCommunication.Base() } binds arrayOf(

@@ -5,7 +5,8 @@ import android.net.Network
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
-interface NetworkHandler : NetworkCommunication.Observe, NetworkCommunication.ObserveForever {
+interface NetworkHandler : NetworkCommunication.Observe, NetworkCommunication.ObserveForever,
+    NetworkCommunication.CurrentState {
     
     class Base(
         connManager: ConnectivityManager,
@@ -45,5 +46,7 @@ interface NetworkHandler : NetworkCommunication.Observe, NetworkCommunication.Ob
         override fun removeObserver(observer: Observer<NetworkState>) {
             communication.removeObserver(observer)
         }
+        
+        override fun current(): NetworkState? = communication.current()
     }
 }

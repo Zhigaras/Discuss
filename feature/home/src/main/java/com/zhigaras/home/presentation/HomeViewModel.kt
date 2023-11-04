@@ -30,7 +30,7 @@ class HomeViewModel(
             }
             
             override fun error(message: String) {
-                uiCommunication.postBackground(HomeUiState.Error(message))
+                uiCommunication.postBackground(HomeUiState.DataError(message))
             }
         }
     
@@ -39,8 +39,13 @@ class HomeViewModel(
     }
     
     fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
-        val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
-        navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+        if (homeInteractor.isOnline()) {
+            val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
+            navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+        } else {
+            uiCommunication.postBackground(HomeUiState.CantGoToCall())
+        }
+        
     }
     
     override fun observe(owner: LifecycleOwner, observer: Observer<HomeUiState>) {
