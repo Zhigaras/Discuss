@@ -1,8 +1,6 @@
 package com.zhigaras.home.presentation
 
 import androidx.core.os.bundleOf
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.calls.domain.model.ReadyToCallUser
@@ -46,11 +44,6 @@ class HomeViewModel(
             uiCommunication.postBackground(HomeUiState.CantGoToCall())
         }
         
-    }
-    
-    override fun observe(owner: LifecycleOwner, observer: Observer<HomeUiState>) {
-        super.observe(owner, observer)
-//        homeInteractor.observeNetwork(owner, communication)
     }
     
     override fun onCleared() {

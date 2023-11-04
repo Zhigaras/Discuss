@@ -1,9 +1,7 @@
 package com.zhigaras.home.presentation
 
-import android.view.View
 import android.widget.Toast
 import com.zhigaras.adapterdelegate.CompositeAdapter
-import com.zhigaras.core.NetworkState
 import com.zhigaras.core.UiState
 import com.zhigaras.home.R
 import com.zhigaras.home.databinding.FragmentHomeBinding
@@ -31,45 +29,6 @@ interface HomeUiState : UiState<FragmentHomeBinding> {
         
         override val block: FragmentHomeBinding.() -> Unit = {
             Toast.makeText(root.context, R.string.connection_required, Toast.LENGTH_SHORT).show()
-        }
-    }
-}
-
-interface HomeNetworkUiState : HomeUiState {
-    fun matches(networkState: NetworkState): Boolean
-    
-    class Available : HomeNetworkUiState {
-        override fun matches(networkState: NetworkState) = networkState is NetworkState.Available
-        
-        override fun update(binding: FragmentHomeBinding) {
-            binding.networkStateView.visibility = View.GONE
-        }
-    }
-    
-    class Loosing : HomeNetworkUiState {
-        override fun matches(networkState: NetworkState) = networkState is NetworkState.Loosing
-        
-        override fun update(binding: FragmentHomeBinding) {
-        
-        }
-    }
-    
-    class Lost : HomeNetworkUiState {
-        override fun matches(networkState: NetworkState) = networkState is NetworkState.Lost
-        
-        override fun update(binding: FragmentHomeBinding) {
-            binding.networkStateView.visibility = View.VISIBLE
-            binding.networkStateView.text = "Lost connection"
-            
-        }
-    }
-    
-    class Unavailable : HomeNetworkUiState {
-        override fun matches(networkState: NetworkState) = networkState is NetworkState.Unavailable
-        
-        override fun update(binding: FragmentHomeBinding) {
-            binding.networkStateView.visibility = View.VISIBLE
-            binding.networkStateView.text = "Connection unavailable"
         }
     }
 }
