@@ -22,7 +22,7 @@ class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudSe
     override suspend fun sendTopicSuggest(topic: String): String {
         var result: String? = null
         withTimeout(SEND_SUGGEST_TIMEOUT) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.IO).launch {// TODO: close scope
                 result =
                     cloudService.postWithIdGenerating(topic, HomeCloudService.TOPIC_SUGGEST_PATH)
             }.join()

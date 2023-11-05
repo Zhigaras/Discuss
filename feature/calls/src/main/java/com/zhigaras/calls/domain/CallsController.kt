@@ -144,13 +144,15 @@ interface CallsController {
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
+            localView?.release()
             localView = view
             webRtcClient.initLocalSurfaceView(view)
         }
         
         override fun initRemoteView(view: SurfaceViewRenderer) {
-            webRtcClient.initRemoteSurfaceView(view)
+            remoteView?.release()
             remoteView = view
+            webRtcClient.initRemoteSurfaceView(view)
             remoteMediaStream?.let {
                 val track = it.videoTracks
                 track[0].addSink(remoteView)

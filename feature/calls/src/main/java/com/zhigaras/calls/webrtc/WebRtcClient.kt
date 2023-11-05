@@ -10,6 +10,7 @@ import org.webrtc.DataChannel
 import org.webrtc.EglBase
 import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
+import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
@@ -33,6 +34,7 @@ class WebRtcClient(
     private lateinit var videoCapturer: CameraVideoCapturer
     private lateinit var localVideoTrack: VideoTrack
     private lateinit var localAudioTrack: AudioTrack
+    private var localStream: MediaStream? = null
     
     fun initNewConnection(observer: Observer<PeerConnectionState>) {
         peerConnection = peerConnectionFactory.createPeerConnection(
@@ -65,10 +67,11 @@ class WebRtcClient(
     }
     
     fun addStreamTo(view: SurfaceViewRenderer) {
+        localStream?.dispose()
         localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
             .apply { addSink(view) }
         localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
-        val localStream = peerConnectionFactory.createLocalMediaStream().apply {
+        localStream = peerConnectionFactory.createLocalMediaStream().apply {
             addTrack(localVideoTrack)
             addTrack(localAudioTrack)
         }
@@ -144,7 +147,7 @@ class WebRtcClient(
         localVideoTrack.dispose()
         videoCapturer.stopCapture()
         videoCapturer.dispose()
-        peerConnection?.close()
+        peerConnection?.dispose()
         dataChannel?.unregisterObserver()
         dataChannel?.close()
         peerConnectionObserver.closeConnection()
