@@ -18,7 +18,7 @@ class CallViewModel(
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
     private val routes: CallRoutes,
-    override val communication: CallCommunication.Mutable,
+    override val uiCommunication: CallCommunication.Mutable,
     provideUserId: ProvideUserId,
     dispatchers: Dispatchers
 ) : BaseViewModel<CallUiState>(dispatchers) {
@@ -35,9 +35,9 @@ class CallViewModel(
     fun lookForOpponent(user: ReadyToCallUser) { // TODO: replace with scopeLaunch()
         viewModelScope.launch {
             initCalls.initUser(user)
-            communication.postUi(CallUiState.LookingForOpponent())
+            uiCommunication.postUi(CallUiState.LookingForOpponent())
             matchingInteractor.checkMatching(user)
-                .handle(callsController, matchingInteractor, communication)
+                .handle(callsController, matchingInteractor, uiCommunication)
         }
     }
     

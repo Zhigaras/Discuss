@@ -7,15 +7,15 @@ import com.zhigaras.home.domain.SuggestTopicCommunication
 
 class SuggestTopicViewModel(
     private val suggestTopic: SuggestTopic,
-    override val communication: SuggestTopicCommunication.Mutable,
+    override val uiCommunication: SuggestTopicCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<SuggestTopicUiState>(dispatchers) {
     
     fun sendSuggestion(topic: String) {
-        communication.postUi(SuggestTopicUiState.Progress())
+        uiCommunication.postUi(SuggestTopicUiState.Progress())
         scopeLaunch(
             onBackground = { suggestTopic.sendTopicSuggest(topic.trim()) },
-            onUi = { communication.postUi(it) }
+            onUi = { uiCommunication.postUi(it) }
         )
     }
 }

@@ -12,4 +12,5 @@
     <string name="retry">Retry</string>
     <string name="suggest_successfully_sent">Thank you for suggestion. We will review it soon.</string>
     <string name="suggest_sending_failed">Sending failed. Check your internet connection and try again.</string>
+    <string name="connection_required">An internet connection is required for this.</string>
 </resources>

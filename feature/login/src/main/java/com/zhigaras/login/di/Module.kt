@@ -15,7 +15,6 @@ import com.zhigaras.login.domain.signin.SignInCommunication
 import com.zhigaras.login.domain.signin.SignInRepository
 import com.zhigaras.login.domain.signup.SignUpCommunication
 import com.zhigaras.login.domain.signup.SignUpRepository
-import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.resetpassword.ResetPasswordViewModel
 import com.zhigaras.login.domain.resetpassword.ResetPasswordRepository
 import com.zhigaras.login.presentation.signin.SignInViewModel
@@ -62,8 +61,6 @@ fun loginModule() = module {
     factory { IsUserAuthorized.Base(get()) } bind IsUserAuthorized::class
     
     factory { ProvideUserIdImpl() } bind ProvideUserId::class
-    
-    factory { UserMapper() }
     
     factory { ShowId() }
 }

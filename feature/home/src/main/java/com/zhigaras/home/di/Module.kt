@@ -11,7 +11,7 @@ import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.home.domain.SuggestTopic
 import com.zhigaras.home.domain.SuggestTopicCommunication
-import com.zhigaras.home.presentation.home.HomeViewModel
+import com.zhigaras.home.presentation.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.binds
@@ -27,7 +27,7 @@ fun homeModule() = listOf(suggestTopicModule(), module {
         HomeCommunication.Post::class
     )
     
-    factory { HomeInteractor.Base(get()) } binds arrayOf(
+    factory { HomeInteractor.Base(get(), get()) } binds arrayOf(
         HomeInteractor::class,
         SuggestTopic::class
     )

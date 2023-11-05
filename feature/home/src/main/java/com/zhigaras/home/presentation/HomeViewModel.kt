@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation.home
+package com.zhigaras.home.presentation
 
 import androidx.core.os.bundleOf
 import com.zhigaras.calls.domain.CallRoutes
@@ -17,17 +17,18 @@ class HomeViewModel(
     private val navigateToCall: NavigateToCall,
     private val provideUserId: ProvideUserId,
     private val homeInteractor: HomeInteractor,
-    override val communication: HomeCommunication.Mutable,
+    override val uiCommunication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers) {
     
-    private val callback = object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
+    private val callback =
+        object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
             override fun provide(data: List<HomeTopic>) {
-                communication.postBackground(HomeUiState.NewTopicList(data))
+                uiCommunication.postBackground(HomeUiState.NewTopicList(data))
             }
             
             override fun error(message: String) {
-                communication.postBackground(HomeUiState.Error(message))
+                uiCommunication.postBackground(HomeUiState.DataError(message))
             }
         }
     
@@ -36,8 +37,13 @@ class HomeViewModel(
     }
     
     fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
-        val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
-        navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+        if (homeInteractor.isOnline()) {
+            val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
+            navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+        } else {
+            uiCommunication.postBackground(HomeUiState.CantGoToCall())
+        }
+        
     }
     
     override fun onCleared() {

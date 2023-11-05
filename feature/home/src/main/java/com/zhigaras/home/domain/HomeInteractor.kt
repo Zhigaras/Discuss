@@ -1,6 +1,8 @@
 package com.zhigaras.home.domain
 
 import com.zhigaras.cloudservice.CloudService
+import com.zhigaras.core.NetworkHandler
+import com.zhigaras.core.NetworkState
 import com.zhigaras.home.domain.model.HomeTopic
 import com.zhigaras.home.presentation.suggesttopic.SuggestTopicUiState
 
@@ -10,7 +12,12 @@ interface HomeInteractor {
     
     fun removeCallback(callback: CloudService.Callback<List<HomeTopic>>)
     
-    class Base(private val homeCloudService: HomeCloudService) : HomeInteractor, SuggestTopic {
+    fun isOnline(): Boolean
+    
+    class Base(
+        private val homeCloudService: HomeCloudService,
+        private val networkHandler: NetworkHandler
+    ) : HomeInteractor, SuggestTopic {
         
         override fun subscribeToTopics(callback: CloudService.Callback<List<HomeTopic>>) {
             homeCloudService.subscribeToTopics(callback)
@@ -27,6 +34,11 @@ interface HomeInteractor {
                 onSuccess = { SuggestTopicUiState.SuggestSuccessfullySent() },
                 onFailure = { SuggestTopicUiState.SuggestSendingFailed(it.message) }
             )
+        }
+        
+        override fun isOnline(): Boolean {
+            val currentState = networkHandler.current()
+            return currentState is NetworkState.Available || currentState is NetworkState.Loosing
         }
     }
 }

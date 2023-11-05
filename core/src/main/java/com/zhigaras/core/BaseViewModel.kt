@@ -11,10 +11,10 @@ abstract class BaseViewModel<T : UiState<*>>(
     private val dispatchers: Dispatchers,
 ) : ViewModel(), Communication.Observe<T> {
     
-    protected abstract val communication: Communication.Mutable<T>
+    protected abstract val uiCommunication: Communication.Mutable<T>
     
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
-        communication.observe(owner, observer)
+        uiCommunication.observe(owner, observer)
     }
     
     protected fun <E> scopeLaunch(

@@ -4,8 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     android:paddingHorizontal="16dp">
+
+    <TextView
+        android:id="@+id/network_state_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_red"
+        android:gravity="center"
+        android:text="offline"
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="match_parent"

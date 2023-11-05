@@ -1,10 +1,5 @@
 package com.zhigaras.calls.domain
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -15,8 +10,8 @@ import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.core.IntentAction
-import com.zhigaras.core.InternetConnectionState
+import com.zhigaras.core.NetworkHandler
+import com.zhigaras.core.NetworkState
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -55,7 +50,7 @@ interface CallsController {
     
     class Base(
         dispatchers: Dispatchers,
-        private val application: Context,
+        private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
         private val messagingCommunication: DataChannelCommunication.Mutable, //??
@@ -83,25 +78,19 @@ interface CallsController {
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
-        private val connectionReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
-                    val networkState = InternetConnectionState.valueOf(
-                        intent.getStringExtra("state")
-                            ?: InternetConnectionState.UNKNOWN.name
-                    )
+        private val networkStateObserver = Observer<NetworkState> {
+            when (it) {
+                is NetworkState.Available -> {
                     val connState = webRtcClient.provideConnectionState()
-                    if (networkState == InternetConnectionState.ONLINE) {
-                        if (connState == PeerConnectionState.DISCONNECTED ||
-                            connState == PeerConnectionState.FAILED
-                        ) {
-                            peerConnectionCallback.postTryingToReconnect()
-                            sendRestartOffer()
-                        }
-                    } else {
-                        peerConnectionCallback.postCheckConnection()
+                    if (connState == PeerConnectionState.DISCONNECTED ||
+                        connState == PeerConnectionState.FAILED
+                    ) {
+                        peerConnectionCallback.postTryingToReconnect()
+                        sendRestartOffer()
                     }
                 }
+                
+                is NetworkState.Lost -> peerConnectionCallback.postCheckConnection()
             }
         }
         
@@ -151,12 +140,7 @@ interface CallsController {
         
         init {
             webRtcClient.initNewConnection(observer)
-            ContextCompat.registerReceiver(
-                application,
-                connectionReceiver,
-                IntentFilter(IntentAction.ACTION_NETWORK_STATE),
-                ContextCompat.RECEIVER_NOT_EXPORTED
-            )
+            networkHandler.observeForever(networkStateObserver)
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
@@ -193,7 +177,7 @@ interface CallsController {
             callsCloudService.removeUserFromWaitList(user)
         }
         
-        fun sendRestartOffer() {
+        private fun sendRestartOffer() {
             sendOffer(MediaConstraints().apply {
                 mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
                 mandatory.add(MediaConstraints.KeyValuePair("IceRestart", "true"))
@@ -273,7 +257,7 @@ interface CallsController {
             remoteView = null
             localView = null
             scope.cancel()
-            application.unregisterReceiver(connectionReceiver)
+            networkHandler.removeObserver(networkStateObserver)
         }
         
         override fun subscribeToConnectionEvents(userId: String) {

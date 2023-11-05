@@ -1,4 +1,4 @@
-package com.zhigaras.home.presentation.home
+package com.zhigaras.home.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

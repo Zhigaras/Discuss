@@ -25,7 +25,12 @@ interface Communication {
         fun removeObserver(observer: Observer<T>)
     }
     
-    interface Mutable<T : Any> : Post<T>, Observe<T>, ObserveForever<T>
+    interface CurrentState<T : Any> {
+        
+        fun current(): T?
+    }
+    
+    interface Mutable<T : Any> : Post<T>, Observe<T>, ObserveForever<T>, CurrentState<T>
     
     abstract class Abstract<T : Any>(private val liveData: MutableLiveData<T> = MutableLiveData()) :
         Mutable<T> {
@@ -49,6 +54,8 @@ interface Communication {
         override fun removeObserver(observer: Observer<T>) {
             liveData.removeObserver(observer)
         }
+        
+        override fun current() = liveData.value
     }
     
     abstract class Single<T : Any> : Abstract<T>(SingleLiveEvent())

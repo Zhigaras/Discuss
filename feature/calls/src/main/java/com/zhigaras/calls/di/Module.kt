@@ -33,7 +33,7 @@ fun callModule() = listOf(messagesModule(), module {
     
     scope(named(CALL_FRAGMENT_SCOPE)) {
         scoped {
-            CallsController.Base(get(), androidApplication(), get(), get(), get(), get())
+            CallsController.Base(get(), get(), get(), get(), get(), get())
         } binds arrayOf(
             CallsController::class,
             InitCalls::class,
