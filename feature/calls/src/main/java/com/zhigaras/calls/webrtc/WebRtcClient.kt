@@ -32,9 +32,10 @@ class WebRtcClient(
     private val pendingIceCandidates = mutableListOf<IceCandidate>()
     private var dataChannel: DataChannel? = null
     private lateinit var videoCapturer: CameraVideoCapturer
-    private lateinit var localVideoTrack: VideoTrack
-    private lateinit var localAudioTrack: AudioTrack
+    private var localVideoTrack: VideoTrack? = null
+    private var localAudioTrack: AudioTrack? = null
     private var localStream: MediaStream? = null
+    private var localView: SurfaceViewRenderer? = null
     
     fun initNewConnection(observer: Observer<PeerConnectionState>) {
         peerConnection = peerConnectionFactory.createPeerConnection(
@@ -59,22 +60,25 @@ class WebRtcClient(
     }
     
     private fun startLocalVideoStreaming(view: SurfaceViewRenderer) {
+        localView?.release()
+        localVideoTrack?.removeSink(localView)
+        localView = view
         videoCapturer = getVideoCapturer()
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
         videoCapturer.initialize(helper, view.context, localVideoSource.capturerObserver)
         videoCapturer.startCapture(480, 360, 30)
-        addStreamTo(view)
+        addStreamTo()
     }
     
-    fun addStreamTo(view: SurfaceViewRenderer) {
-        localStream?.dispose()
-        localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
-            .apply { addSink(view) }
+    fun addStreamTo() {
+        localStream?.removeTrack(localAudioTrack)
+        localStream?.removeTrack(localVideoTrack)
+        localVideoTrack =
+            peerConnectionFactory.createVideoTrack(localVideoSource).apply { addSink(localView) }
         localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
-        localStream = peerConnectionFactory.createLocalMediaStream().apply {
-            addTrack(localVideoTrack)
-            addTrack(localAudioTrack)
-        }
+        if (localStream == null) localStream = peerConnectionFactory.createLocalMediaStream()
+        localStream?.addTrack(localAudioTrack)
+        localStream?.addTrack(localVideoTrack)
         peerConnection?.addStream(localStream)
     }
     
@@ -144,10 +148,10 @@ class WebRtcClient(
     
     fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
         pendingIceCandidates.clear()
-        localVideoTrack.dispose()
+        localVideoTrack?.dispose()
         videoCapturer.stopCapture()
         videoCapturer.dispose()
-        peerConnection?.dispose()
+        peerConnection?.close()
         dataChannel?.unregisterObserver()
         dataChannel?.close()
         peerConnectionObserver.closeConnection()

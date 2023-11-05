@@ -60,7 +60,6 @@ interface CallsController {
         private var makingOffer = false
         private var isHandlingAnswer = false
         private var remoteView: SurfaceViewRenderer? = null //??
-        private var localView: SurfaceViewRenderer? = null //??
         private var remoteMediaStream: MediaStream? = null //??
         private var user: ReadyToCallUser = ReadyToCallUser()
         private var opponent: ReadyToCallUser = ReadyToCallUser()
@@ -118,10 +117,7 @@ interface CallsController {
             
             fun onStreamAdded(mediaStream: MediaStream) {
                 remoteMediaStream = mediaStream
-                remoteMediaStream?.let {
-                    val track = it.videoTracks
-                    track[0].addSink(remoteView)
-                }
+                remoteMediaStream?.videoTracks?.get(0)?.addSink(remoteView)
             }
             
             fun onDataChannelCreated(dataChannel: DataChannel) {
@@ -144,19 +140,15 @@ interface CallsController {
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
-            localView?.release()
-            localView = view
             webRtcClient.initLocalSurfaceView(view)
         }
         
         override fun initRemoteView(view: SurfaceViewRenderer) {
+            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            remoteMediaStream?.videoTracks?.get(0)?.addSink(view)
             remoteView?.release()
             remoteView = view
             webRtcClient.initRemoteSurfaceView(view)
-            remoteMediaStream?.let {
-                val track = it.videoTracks
-                track[0].addSink(remoteView)
-            }
         }
         
         override fun initUser(user: ReadyToCallUser) {
@@ -238,7 +230,7 @@ interface CallsController {
         
         override fun createNewConnection() {
             webRtcClient.initNewConnection(observer)
-            webRtcClient.addStreamTo(localView ?: return)
+            webRtcClient.addStreamTo()
         }
         
         override fun closeCurrentConnection() {
@@ -257,7 +249,6 @@ interface CallsController {
             callsCloudService.removeCallback(connectionEventCallback)
             remoteMediaStream = null
             remoteView = null
-            localView = null
             scope.cancel()
             networkHandler.removeObserver(networkStateObserver)
         }
