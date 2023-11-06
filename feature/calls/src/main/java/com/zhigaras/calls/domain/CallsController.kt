@@ -144,11 +144,16 @@ interface CallsController {
         }
         
         override fun initRemoteView(view: SurfaceViewRenderer) {
-            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            releaseRemoteView()
             remoteMediaStream?.videoTracks?.get(0)?.addSink(view)
-            remoteView?.release()
             remoteView = view
             webRtcClient.initRemoteSurfaceView(view)
+        }
+        
+        private fun releaseRemoteView() {
+            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            remoteView?.release()
+            remoteView = null
         }
         
         override fun initUser(user: ReadyToCallUser) {
@@ -230,27 +235,31 @@ interface CallsController {
         
         override fun createNewConnection() {
             webRtcClient.initNewConnection(observer)
-            webRtcClient.addStreamTo()
+            webRtcClient.addLocalStream()
+        }
+        
+        private fun commonCloseStuff() {
+            isConnected = false
+            callsCloudService.removeOpponent(user.id)
+//            remoteMediaStream?.dispose()
+            remoteMediaStream = null
+            opponent = ReadyToCallUser()
         }
         
         override fun closeCurrentConnection() {
-            isConnected = false
-            callsCloudService.removeOpponent(user.id)
             webRtcClient.closeCurrentConnection(observer)
-            remoteMediaStream = null
-            opponent = ReadyToCallUser()
+            commonCloseStuff()
             remoteView?.clearImage()
         }
         
         override fun closeConnectionTotally() {
-            isConnected = false
-            callsCloudService.removeOpponent(user.id)
+            releaseRemoteView()
+            commonCloseStuff()
+            remoteMediaStream?.dispose()
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
-            remoteMediaStream = null
-            remoteView = null
-            scope.cancel()
             networkHandler.removeObserver(networkStateObserver)
+            scope.cancel()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
