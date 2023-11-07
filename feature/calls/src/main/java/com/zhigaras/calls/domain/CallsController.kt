@@ -1,6 +1,5 @@
 package com.zhigaras.calls.domain
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -54,20 +53,19 @@ interface CallsController {
         private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
-        private val messagingCommunication: DataChannelCommunication.Mutable, //??
-        private val webRtcClient: WebRtcClient //??
+        private val messagingCommunication: DataChannelCommunication.Mutable,
+        private val webRtcClient: WebRtcClient
     ) : CallsController, InitCalls, Messaging {
         private var isConnected = false
         private var makingOffer = false
         private var isHandlingAnswer = false
-        private var remoteView: SurfaceViewRenderer? = null //??
-        private var remoteMediaStream: MediaStream? = null //??
+        private var remoteView: SurfaceViewRenderer? = null
+        private var remoteMediaStream: MediaStream? = null
         private var user: ReadyToCallUser = ReadyToCallUser()
         private var opponent: ReadyToCallUser = ReadyToCallUser()
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
-//                opponent = data.opponent
                 data.handle(this@Base)
             }
             
@@ -117,7 +115,6 @@ interface CallsController {
             }
             
             fun onStreamAdded(mediaStream: MediaStream) {
-//                remoteMediaStream?.dispose()
                 remoteMediaStream = mediaStream
                 remoteMediaStream?.videoTracks?.get(0)?.addSink(remoteView)
             }
@@ -137,8 +134,6 @@ interface CallsController {
         }
         
         init {
-            Log.d("AASSS", this.toString())
-            Log.d("AASSS", webRtcClient.toString())
             webRtcClient.initNewConnection(observer)
             networkHandler.observeForever(networkStateObserver)
         }
@@ -155,7 +150,7 @@ interface CallsController {
         }
         
         private fun releaseRemoteView() {
-            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
             remoteView?.release()
             remoteView = null
         }
@@ -243,39 +238,24 @@ interface CallsController {
         }
         
         private fun commonCloseStuff() {
-//            remoteMediaStream?.dispose()
-//            remoteMediaStream = null
+            callsCloudService.removeOpponent(user.id)
+            isConnected = false
+            opponent = ReadyToCallUser()
         }
         
         override fun closeCurrentConnection() {
-            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            commonCloseStuff()
+            remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
             remoteView?.clearImage()
             webRtcClient.closeCurrentConnection(observer)
-            callsCloudService.removeOpponent(user.id)
-            isConnected = false
-            opponent = ReadyToCallUser()
-            
-//            webRtcClient.closeCurrentConnection(observer)
-//            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
-//            commonCloseStuff()
-//            remoteView?.clearImage()
         }
         
         override fun closeConnectionTotally() {
-            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            commonCloseStuff()
+            releaseRemoteView()
             remoteMediaStream?.videoTracks?.forEach { it.dispose() }
             remoteMediaStream?.audioTracks?.forEach { it.dispose() }
-            remoteView?.release()
-            remoteView = null
-            callsCloudService.removeOpponent(user.id)
-            isConnected = false
-            opponent = ReadyToCallUser()
-//            remoteMediaStream?.dispose()
             webRtcClient.closeConnectionTotally(observer)
-//            releaseRemoteView()
-//            commonCloseStuff()
-//            remoteMediaStream?.dispose()
-//            webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             networkHandler.removeObserver(networkStateObserver)
             scope.cancel()

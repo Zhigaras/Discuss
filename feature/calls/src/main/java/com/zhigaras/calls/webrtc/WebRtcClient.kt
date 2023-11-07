@@ -71,7 +71,6 @@ class WebRtcClient(
         videoCapturer.startCapture(480, 360, 30)
         localAudioTrack?.let { localStream.removeTrack(it) }
         localVideoTrack?.let { localStream.removeTrack(it) }
-//        localVideoTrack?.dispose()
         localVideoTrack =
             peerConnectionFactory.createVideoTrack(localVideoSource).apply { addSink(localView) }
         localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
