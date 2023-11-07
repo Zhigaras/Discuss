@@ -258,6 +258,7 @@ interface CallsController {
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             networkHandler.removeObserver(networkStateObserver)
+            callsCloudService.removeUserFromWaitList(user)
             scope.cancel()
         }
         
