@@ -107,7 +107,7 @@ fun webRtcModule() = module {
     
     factory {
         val eglContext = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<EglBase.Context>()
-        WebRtcClient(get(), get(), eglContext, get(), get())
+        WebRtcClient(androidApplication(), get(), get(), eglContext, get(), get())
     }
     
 }

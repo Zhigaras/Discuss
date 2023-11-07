@@ -16,7 +16,6 @@ import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
@@ -116,6 +115,7 @@ interface CallsController {
             }
             
             fun onStreamAdded(mediaStream: MediaStream) {
+//                remoteMediaStream?.dispose()
                 remoteMediaStream = mediaStream
                 remoteMediaStream?.videoTracks?.get(0)?.addSink(remoteView)
             }
@@ -239,27 +239,39 @@ interface CallsController {
         }
         
         private fun commonCloseStuff() {
-            isConnected = false
-            callsCloudService.removeOpponent(user.id)
+//            isConnected = false
+//            callsCloudService.removeOpponent(user.id)
 //            remoteMediaStream?.dispose()
-            remoteMediaStream = null
-            opponent = ReadyToCallUser()
+//            remoteMediaStream = null
+//            opponent = ReadyToCallUser()
         }
         
         override fun closeCurrentConnection() {
-            webRtcClient.closeCurrentConnection(observer)
-            commonCloseStuff()
+            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
             remoteView?.clearImage()
+            webRtcClient.closeCurrentConnection(observer)
+            
+//            webRtcClient.closeCurrentConnection(observer)
+//            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+//            commonCloseStuff()
+//            remoteView?.clearImage()
         }
         
         override fun closeConnectionTotally() {
-            releaseRemoteView()
-            commonCloseStuff()
-            remoteMediaStream?.dispose()
+            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
+            remoteMediaStream?.videoTracks?.forEach { it.dispose() }
+            remoteMediaStream?.audioTracks?.forEach { it.dispose() }
+            remoteView?.release()
+            remoteView = null
+//            remoteMediaStream?.dispose()
             webRtcClient.closeConnectionTotally(observer)
+//            releaseRemoteView()
+//            commonCloseStuff()
+//            remoteMediaStream?.dispose()
+//            webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             networkHandler.removeObserver(networkStateObserver)
-            scope.cancel()
+//            scope.cancel()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
