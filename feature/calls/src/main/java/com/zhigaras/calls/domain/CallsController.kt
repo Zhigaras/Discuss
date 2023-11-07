@@ -1,5 +1,6 @@
 package com.zhigaras.calls.domain
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -16,6 +17,7 @@ import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
@@ -135,6 +137,8 @@ interface CallsController {
         }
         
         init {
+            Log.d("AASSS", this.toString())
+            Log.d("AASSS", webRtcClient.toString())
             webRtcClient.initNewConnection(observer)
             networkHandler.observeForever(networkStateObserver)
         }
@@ -239,17 +243,17 @@ interface CallsController {
         }
         
         private fun commonCloseStuff() {
-//            isConnected = false
-//            callsCloudService.removeOpponent(user.id)
 //            remoteMediaStream?.dispose()
 //            remoteMediaStream = null
-//            opponent = ReadyToCallUser()
         }
         
         override fun closeCurrentConnection() {
             remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
             remoteView?.clearImage()
             webRtcClient.closeCurrentConnection(observer)
+            callsCloudService.removeOpponent(user.id)
+            isConnected = false
+            opponent = ReadyToCallUser()
             
 //            webRtcClient.closeCurrentConnection(observer)
 //            remoteMediaStream?.videoTracks?.get(0)?.removeSink(remoteView)
@@ -263,6 +267,9 @@ interface CallsController {
             remoteMediaStream?.audioTracks?.forEach { it.dispose() }
             remoteView?.release()
             remoteView = null
+            callsCloudService.removeOpponent(user.id)
+            isConnected = false
+            opponent = ReadyToCallUser()
 //            remoteMediaStream?.dispose()
             webRtcClient.closeConnectionTotally(observer)
 //            releaseRemoteView()
@@ -271,7 +278,7 @@ interface CallsController {
 //            webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
             networkHandler.removeObserver(networkStateObserver)
-//            scope.cancel()
+            scope.cancel()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {

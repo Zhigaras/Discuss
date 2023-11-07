@@ -142,12 +142,10 @@ class WebRtcClient(
     
     fun closeCurrentConnection(observer: Observer<PeerConnectionState>) {
         peerConnection?.close()
-//        dataChannel?.unregisterObserver()
-//        dataChannel?.close()
-//        peerConnection?.removeStream(localStream)
-//        peerConnection?.close()
-//        pendingIceCandidates.clear()
-//        peerConnectionObserver.removeObserver(observer)
+        dataChannel?.unregisterObserver()
+        dataChannel?.close()
+        pendingIceCandidates.clear()
+        peerConnectionObserver.removeObserver(observer)
     }
     
     fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
@@ -155,17 +153,10 @@ class WebRtcClient(
         localVideoTrack?.removeSink(localView)
         localView?.release()
         localView = null
-        videoCapturer.stopCapture()
-        peerConnection?.close()
-//        localVideoSource.dispose()
-//        localAudioSource.dispose()
-//        videoCapturer.dispose()
-//        localVideoTrack?.removeSink(localView)
-//        localVideoTrack?.dispose()
-//        localAudioTrack?.dispose()
-//        localStream.dispose()
-//        localView?.release()
-//        peerConnectionObserver.closeConnection()
-//        peerConnection?.dispose()
+        videoCapturer.dispose()
+        localVideoSource.dispose()
+        localAudioSource.dispose()
+        localStream.dispose()
+        peerConnectionObserver.closeConnection()
     }
 }
