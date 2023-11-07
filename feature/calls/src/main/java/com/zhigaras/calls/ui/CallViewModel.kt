@@ -10,7 +10,6 @@ import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import kotlinx.coroutines.launch
 import org.webrtc.SurfaceViewRenderer
 
@@ -19,10 +18,10 @@ class CallViewModel(
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
     private val routes: CallRoutes,
-    override val communication: CallCommunication.Mutable,
+    override val uiCommunication: CallCommunication.Mutable,
     provideUserId: ProvideUserId,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentCallBinding, CallUiState>(dispatchers) {
+) : BaseViewModel<CallUiState>(dispatchers) {
     
     init {
         initCalls.subscribeToConnectionEvents(provideUserId.provide())
@@ -33,12 +32,12 @@ class CallViewModel(
         initCalls.initRemoteView(remoteView)
     }
     
-    fun lookForOpponent(user: ReadyToCallUser) {
+    fun lookForOpponent(user: ReadyToCallUser) { // TODO: replace with scopeLaunch()
         viewModelScope.launch {
             initCalls.initUser(user)
-            communication.postUi(CallUiState.LookingForOpponent())
+            uiCommunication.postUi(CallUiState.LookingForOpponent())
             matchingInteractor.checkMatching(user)
-                .handle(callsController, matchingInteractor, communication)
+                .handle(callsController, matchingInteractor, uiCommunication)
         }
     }
     

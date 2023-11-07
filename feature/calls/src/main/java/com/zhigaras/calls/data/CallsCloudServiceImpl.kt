@@ -14,7 +14,7 @@ class CallsCloudServiceImpl(
             data,
             CloudService.USERS_PATH,
             opponentId,
-            CloudService.CONNECTION_EVENT_PATH
+            CloudService.CONNECTION_DATA_PATH
         )
     }
     
@@ -27,7 +27,7 @@ class CallsCloudServiceImpl(
             ConnectionData::class.java,
             CloudService.USERS_PATH,
             userId,
-            CloudService.CONNECTION_EVENT_PATH
+            CloudService.CONNECTION_DATA_PATH
         )
     }
     
@@ -36,8 +36,18 @@ class CallsCloudServiceImpl(
             null,
             CloudService.USERS_PATH,
             userId,
-            CloudService.CONNECTION_EVENT_PATH,
+            CloudService.CONNECTION_DATA_PATH,
             "iceCandidate"
+        )
+    }
+    
+    override fun removeOpponent(userId: String) {
+        cloudService.postMultipleLevels(
+            null,
+            CloudService.USERS_PATH,
+            userId,
+            CloudService.CONNECTION_DATA_PATH,
+            CloudService.OPPONENT_EVENT_PATH
         )
     }
     
@@ -46,7 +56,7 @@ class CallsCloudServiceImpl(
             false,
             CloudService.USERS_PATH,
             userId,
-            CloudService.CONNECTION_EVENT_PATH,
+            CloudService.CONNECTION_DATA_PATH,
             "interruptedByOpponent"
         )
     }

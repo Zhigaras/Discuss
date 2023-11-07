@@ -3,4 +3,14 @@
     <string name="against">Против</string>
     <string name="support">За</string>
     <string name="online">Онлайн</string>
+    <string name="topic_suggest_error_message">1-%1$d символов.</string>
+    <string name="suggest_a_topic">Предложить тему</string>
+    <string name="choose_a_topic">Выберите тему</string>
+    <string name="suggest_topic_hint">О чем хотите поспорить?</string>
+    <string name="send">Отправить</string>
+    <string name="close">Закрыть</string>
+    <string name="retry">Повторить</string>
+    <string name="suggest_successfully_sent">Спасибо за ваше предложение. Мы рассмотрим его в ближайшее время.</string>
+    <string name="suggest_sending_failed">Не удалось отправить. Проверьте соединение и попробуйте снова.</string>
+    <string name="connection_required">Для этого необходимо интернет соединение.</string>
 </resources>

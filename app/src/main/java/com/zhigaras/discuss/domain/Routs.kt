@@ -1,4 +1,4 @@
-package com.zhigaras.discuss
+package com.zhigaras.discuss.domain
 
 interface MainRouts : NavigateToSignIn
 

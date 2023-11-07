@@ -2,24 +2,23 @@ package com.zhigaras.login.presentation.resetpassword
 
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.login.databinding.DialogResetPasswordBinding
 import com.zhigaras.login.domain.resetpassword.ResetPasswordCommunication
 import com.zhigaras.login.domain.resetpassword.ResetPasswordRepository
 
 class ResetPasswordViewModel(
     private val resetPasswordRepository: ResetPasswordRepository,
-    override val communication: ResetPasswordCommunication.Mutable,
+    override val uiCommunication: ResetPasswordCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<DialogResetPasswordBinding, ResetPasswordUiState>(dispatchers) {
+) : BaseViewModel<ResetPasswordUiState>(dispatchers) {
     
     fun resetPassword(email: String) {
-        communication.postUi(ResetPasswordUiState.Progress)
+        uiCommunication.postUi(ResetPasswordUiState.Progress)
         scopeLaunch({
             resetPasswordRepository.resetPassword(email)
         }) {
-            it.handle(communication)
+            it.handle(uiCommunication)
         }
     }
     
-    fun setInitialState() = communication.postUi(ResetPasswordUiState.Initial)
+    fun setInitialState() = uiCommunication.postUi(ResetPasswordUiState.Initial)
 }

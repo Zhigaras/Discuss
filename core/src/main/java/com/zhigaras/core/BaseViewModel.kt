@@ -4,18 +4,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class BaseViewModel<VB : ViewBinding, T : UiState<VB>>(
+abstract class BaseViewModel<T : UiState<*>>(
     private val dispatchers: Dispatchers,
 ) : ViewModel(), Communication.Observe<T> {
     
-    protected abstract val communication: Communication.Mutable<T>
+    protected abstract val uiCommunication: Communication.Mutable<T>
     
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
-        communication.observe(owner, observer)
+        uiCommunication.observe(owner, observer)
     }
     
     protected fun <E> scopeLaunch(

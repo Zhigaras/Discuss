@@ -1,9 +1,9 @@
-package com.zhigaras.login.presentation.input
+package com.zhigaras.core
 
 import android.text.Editable
 import android.text.TextWatcher
 
-class AuthTextWatcher(private val onTextChanged: () -> Unit) : TextWatcher {
+class BaseTextWatcher(private val onTextChanged: () -> Unit) : TextWatcher {
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
     

@@ -31,7 +31,7 @@ open class LandscapeMessagesLayout @JvmOverloads constructor(
             .addAdapter(OutgoingMessageAdapter())
             .build()
         messagesRv.adapter = adapter
-        viewModel.observe(findViewTreeLifecycleOwner() ?: return) {
+        viewModel.observe(findViewTreeLifecycleOwner() ?: return) {// TODO: fix return!!!
             it.handle(adapter)
         }
         val textWatcher = MessageTextWatcher {

@@ -35,7 +35,8 @@ interface CloudService {
     
     companion object {
         const val USERS_PATH = "Users"
-        const val SUBJECTS_PATH = "Subjects"
-        const val CONNECTION_EVENT_PATH = "connectionData"
+        const val TOPICS_PATH = "Topics"
+        const val CONNECTION_DATA_PATH = "connectionData"
+        const val OPPONENT_EVENT_PATH = "opponent"
     }
 }

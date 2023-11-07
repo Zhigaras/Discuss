@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-abstract class BaseDialog<VB : ViewBinding> : DialogFragment() {
+abstract class BaseDialog<VB : ViewBinding> : BottomSheetDialogFragment() {
     
     private var _binding: VB? = null
     protected val binding get() = _binding!!

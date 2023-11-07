@@ -35,6 +35,7 @@ android {
     kotlinOptions {
         jvmTarget = Config.jvmTarget
     }
+    buildFeatures { viewBinding = true }
 }
 
 dependencies {
@@ -52,6 +53,8 @@ dependencies {
     implementation(platform(Dependencies.firebaseBom))
     implementation(Dependencies.crashlytics)
     implementation(Dependencies.analytics)
+    
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
     
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidJUnit)

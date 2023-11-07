@@ -8,41 +8,46 @@ import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.home.databinding.FragmentHomeBinding
-import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.domain.HomeCommunication
+import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.NavigateToCall
-import com.zhigaras.home.domain.model.HomeSubject
+import com.zhigaras.home.domain.model.HomeTopic
 
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
     private val provideUserId: ProvideUserId,
-    private val homeCloudService: HomeCloudService,
-    override val communication: HomeCommunication.Mutable,
+    private val homeInteractor: HomeInteractor,
+    override val uiCommunication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<FragmentHomeBinding, HomeUiState>(dispatchers) {
+) : BaseViewModel<HomeUiState>(dispatchers) {
     
-    private val callback = object : CloudService.Callback<List<HomeSubject>> {
-        override fun provide(data: List<HomeSubject>) {
-            communication.postBackground(HomeUiState.NewSubjectList(data))
+    private val callback =
+        object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
+            override fun provide(data: List<HomeTopic>) {
+                uiCommunication.postBackground(HomeUiState.NewTopicList(data))
+            }
+            
+            override fun error(message: String) {
+                uiCommunication.postBackground(HomeUiState.DataError(message))
+            }
         }
-        
-        override fun error(message: String) {
-            communication.postBackground(HomeUiState.Error(message))
-        }
-    }
     
     init {
-        homeCloudService.subscribeToSubjects(callback)
+        homeInteractor.subscribeToTopics(callback)
     }
     
-    fun navigateToCall(subjectId: Int, disputeParty: DisputeParty) {
-        val user = ReadyToCallUser(provideUserId.provide(), subjectId, disputeParty)
-        navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+    fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
+        if (homeInteractor.isOnline()) {
+            val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
+            navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
+        } else {
+            uiCommunication.postBackground(HomeUiState.CantGoToCall())
+        }
+        
     }
     
     override fun onCleared() {
-        homeCloudService.removeCallback(callback)
+        homeInteractor.removeCallback(callback)
         super.onCleared()
     }
 }

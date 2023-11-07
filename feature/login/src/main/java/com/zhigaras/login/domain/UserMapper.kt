@@ -6,6 +6,6 @@ import com.zhigaras.home.domain.model.User
 class UserMapper : UserDto.Mapper<User> {
     
     override fun map(id: String, email: String, name: String): User {
-        return User(name, email, "empty")
+        return User(name, email)
     }
 }

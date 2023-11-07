@@ -14,9 +14,11 @@ import com.zhigaras.calls.webrtc.PeerConnectionCommunication
 import com.zhigaras.calls.webrtc.PeerConnectionObserveWrapper
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.messaging.di.messagesModule
+import com.zhigaras.messaging.domain.MessagesInteractor
 import com.zhigaras.messaging.domain.Messaging
 import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
@@ -25,34 +27,48 @@ import org.webrtc.EglBase
 import org.webrtc.PeerConnection
 import org.webrtc.PeerConnectionFactory
 
-/**
- * scope = CallsController, WebRTCClient, EglBase.Context, PeerConnectionFactory??
- *
- */
+const val CALL_FRAGMENT_SCOPE = "callFragmentScope"
 
 fun callModule() = listOf(messagesModule(), module {
     
-    viewModelOf(::CallViewModel)
+    scope(named(CALL_FRAGMENT_SCOPE)) {
+        scoped {
+            CallsController.Base(get(), get(), get(), get(), get(), get())
+        } binds arrayOf(
+            CallsController::class,
+            InitCalls::class,
+            Messaging::class
+        )
+        
+        scoped { CallCommunication.Base() } binds arrayOf(
+            CallCommunication.Mutable::class,
+            CallCommunication.Observe::class,
+            CallCommunication.Post::class
+        )
+        
+        scoped { EglBase.create().eglBaseContext } bind EglBase.Context::class
+    }
     
-    single { CallCommunication.Base() } binds arrayOf(
-        CallCommunication.Mutable::class,
-        CallCommunication.Observe::class,
-        CallCommunication.Post::class
-    )
+    viewModel {
+        val initCalls = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<InitCalls>()
+        val callsController = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallsController>()
+        val communication = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallCommunication.Mutable>()
+        CallViewModel(initCalls, callsController, get(), get(), communication, get(), get())
+    }
     
-    single {
-        CallsController.Base(get(), androidApplication(), get(), get(), get(), get())
-    } binds arrayOf(
-        CallsController::class,
-        InitCalls::class,
-        Messaging::class
-    )
+    factory {
+        val messaging = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<Messaging>()
+        MessagesInteractor.Base(messaging)
+    } bind MessagesInteractor::class
     
     factory { MatchingInteractor.Base(get()) } bind MatchingInteractor::class
     
     factory { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
     
-    factory { PeerConnectionCallback(get()) } bind PeerConnectionCallback::class
+    factory {
+        val communication = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallCommunication.Mutable>()
+        PeerConnectionCallback(communication)
+    } bind PeerConnectionCallback::class
 })
 
 fun webRtcModule() = module {
@@ -84,10 +100,14 @@ fun webRtcModule() = module {
     
     factory { Camera2Enumerator(androidApplication()) }
     
-    single { EglBase.create().eglBaseContext } bind EglBase.Context::class
+    factory {
+        val eglContext = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<EglBase.Context>()
+        MyPeerConnectionFactory(androidApplication(), eglContext, get())
+    }
     
-    factory { MyPeerConnectionFactory(androidApplication(), get(), get()) }
-    
-    factory { WebRtcClient(get(), get(), get(), get(), get()) }
+    factory {
+        val eglContext = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<EglBase.Context>()
+        WebRtcClient(androidApplication(), get(), get(), eglContext, get(), get())
+    }
     
 }

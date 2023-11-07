@@ -1,10 +1,5 @@
 package com.zhigaras.calls.domain
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
@@ -15,8 +10,8 @@ import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.core.IntentAction
-import com.zhigaras.core.InternetConnectionState
+import com.zhigaras.core.NetworkHandler
+import com.zhigaras.core.NetworkState
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +28,7 @@ import org.webrtc.SurfaceViewRenderer
 
 interface CallsController {
     
-    fun sendInitialOffer(user: ReadyToCallUser)
+    fun sendInitialOffer(opponent: ReadyToCallUser)
     
     fun handleOffer(offer: SessionDescription, opponent: ReadyToCallUser)
     
@@ -55,24 +50,22 @@ interface CallsController {
     
     class Base(
         dispatchers: Dispatchers,
-        private val application: Context,
+        private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
-        private val messagingCommunication: DataChannelCommunication.Mutable, //??
-        private val webRtcClient: WebRtcClient //??
+        private val messagingCommunication: DataChannelCommunication.Mutable,
+        private val webRtcClient: WebRtcClient
     ) : CallsController, InitCalls, Messaging {
         private var isConnected = false
         private var makingOffer = false
         private var isHandlingAnswer = false
-        private var remoteView: SurfaceViewRenderer? = null //??
-        private var localView: SurfaceViewRenderer? = null //??
-        private var remoteMediaStream: MediaStream? = null //??
+        private var remoteView: SurfaceViewRenderer? = null
+        private var remoteMediaStream: MediaStream? = null
         private var user: ReadyToCallUser = ReadyToCallUser()
         private var opponent: ReadyToCallUser = ReadyToCallUser()
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
-                opponent = data.opponent
                 data.handle(this@Base)
             }
             
@@ -83,25 +76,19 @@ interface CallsController {
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
-        private val connectionReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == IntentAction.ACTION_NETWORK_STATE) {
-                    val networkState = InternetConnectionState.valueOf(
-                        intent.getStringExtra("state")
-                            ?: InternetConnectionState.UNKNOWN.name
-                    )
+        private val networkStateObserver = Observer<NetworkState> {
+            when (it) {
+                is NetworkState.Available -> {
                     val connState = webRtcClient.provideConnectionState()
-                    if (networkState == InternetConnectionState.ONLINE) {
-                        if (connState == PeerConnectionState.DISCONNECTED ||
-                            connState == PeerConnectionState.FAILED
-                        ) {
-                            peerConnectionCallback.postTryingToReconnect()
-                            sendRestartOffer()
-                        }
-                    } else {
-                        peerConnectionCallback.postCheckConnection()
+                    if (connState == PeerConnectionState.DISCONNECTED ||
+                        connState == PeerConnectionState.FAILED
+                    ) {
+                        peerConnectionCallback.postTryingToReconnect()
+                        sendRestartOffer()
                     }
                 }
+                
+                is NetworkState.Lost -> peerConnectionCallback.postCheckConnection()
             }
         }
         
@@ -129,10 +116,7 @@ interface CallsController {
             
             fun onStreamAdded(mediaStream: MediaStream) {
                 remoteMediaStream = mediaStream
-                remoteMediaStream?.let {
-                    val track = it.videoTracks
-                    track[0].addSink(remoteView)
-                }
+                remoteMediaStream?.videoTracks?.get(0)?.addSink(remoteView)
             }
             
             fun onDataChannelCreated(dataChannel: DataChannel) {
@@ -151,26 +135,24 @@ interface CallsController {
         
         init {
             webRtcClient.initNewConnection(observer)
-            ContextCompat.registerReceiver(
-                application,
-                connectionReceiver,
-                IntentFilter(IntentAction.ACTION_NETWORK_STATE),
-                ContextCompat.RECEIVER_NOT_EXPORTED
-            )
+            networkHandler.observeForever(networkStateObserver)
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
-            localView = view
             webRtcClient.initLocalSurfaceView(view)
         }
         
         override fun initRemoteView(view: SurfaceViewRenderer) {
-            webRtcClient.initRemoteSurfaceView(view)
+            releaseRemoteView()
+            remoteMediaStream?.videoTracks?.get(0)?.addSink(view)
             remoteView = view
-            remoteMediaStream?.let {
-                val track = it.videoTracks
-                track[0].addSink(remoteView)
-            }
+            webRtcClient.initRemoteSurfaceView(view)
+        }
+        
+        private fun releaseRemoteView() {
+            remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
+            remoteView?.release()
+            remoteView = null
         }
         
         override fun initUser(user: ReadyToCallUser) {
@@ -193,15 +175,15 @@ interface CallsController {
             callsCloudService.removeUserFromWaitList(user)
         }
         
-        fun sendRestartOffer() {
+        private fun sendRestartOffer() {
             sendOffer(MediaConstraints().apply {
                 mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
                 mandatory.add(MediaConstraints.KeyValuePair("IceRestart", "true"))
             })
         }
         
-        override fun sendInitialOffer(user: ReadyToCallUser) {
-            opponent = user
+        override fun sendInitialOffer(opponent: ReadyToCallUser) {
+            this.opponent = opponent
             sendOffer(MediaConstraints().also {
                 it.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
             })
@@ -236,7 +218,7 @@ interface CallsController {
         }
         
         override fun handleIceCandidate(iceCandidate: MyIceCandidate) {
-            if (isHandlingAnswer) return // TODO: Probably loosing iceCandidates
+//            if (isHandlingAnswer) return // TODO: Probably loosing iceCandidates
             scope.launch {
                 webRtcClient.addIceCandidate(iceCandidate)
             }
@@ -252,26 +234,31 @@ interface CallsController {
         
         override fun createNewConnection() {
             webRtcClient.initNewConnection(observer)
-            webRtcClient.addStreamTo(localView ?: return)
+            webRtcClient.addLocalStream()
+        }
+        
+        private fun commonCloseStuff() {
+            callsCloudService.removeOpponent(user.id)
+            isConnected = false
+            opponent = ReadyToCallUser()
         }
         
         override fun closeCurrentConnection() {
-            isConnected = false
-            webRtcClient.closeCurrentConnection(observer)
-            remoteMediaStream = null
-            opponent = ReadyToCallUser()
+            commonCloseStuff()
+            remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
             remoteView?.clearImage()
+            webRtcClient.closeCurrentConnection(observer)
         }
         
         override fun closeConnectionTotally() {
-            isConnected = false
+            commonCloseStuff()
+            releaseRemoteView()
+            remoteMediaStream?.videoTracks?.forEach { it.dispose() }
+            remoteMediaStream?.audioTracks?.forEach { it.dispose() }
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
-            remoteMediaStream = null
-            remoteView = null
-            localView = null
+            networkHandler.removeObserver(networkStateObserver)
             scope.cancel()
-            application.unregisterReceiver(connectionReceiver)
         }
         
         override fun subscribeToConnectionEvents(userId: String) {
