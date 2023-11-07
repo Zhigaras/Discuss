@@ -53,21 +53,19 @@ interface CallsController {
         private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
-        private val messagingCommunication: DataChannelCommunication.Mutable, //??
-        private val webRtcClient: WebRtcClient //??
+        private val messagingCommunication: DataChannelCommunication.Mutable,
+        private val webRtcClient: WebRtcClient
     ) : CallsController, InitCalls, Messaging {
         private var isConnected = false
         private var makingOffer = false
         private var isHandlingAnswer = false
-        private var remoteView: SurfaceViewRenderer? = null //??
-        private var localView: SurfaceViewRenderer? = null //??
-        private var remoteMediaStream: MediaStream? = null //??
+        private var remoteView: SurfaceViewRenderer? = null
+        private var remoteMediaStream: MediaStream? = null
         private var user: ReadyToCallUser = ReadyToCallUser()
         private var opponent: ReadyToCallUser = ReadyToCallUser()
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
         private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
             override fun provide(data: ConnectionData) {
-//                opponent = data.opponent
                 data.handle(this@Base)
             }
             
@@ -118,10 +116,7 @@ interface CallsController {
             
             fun onStreamAdded(mediaStream: MediaStream) {
                 remoteMediaStream = mediaStream
-                remoteMediaStream?.let {
-                    val track = it.videoTracks
-                    track[0].addSink(remoteView)
-                }
+                remoteMediaStream?.videoTracks?.get(0)?.addSink(remoteView)
             }
             
             fun onDataChannelCreated(dataChannel: DataChannel) {
@@ -144,17 +139,20 @@ interface CallsController {
         }
         
         override fun initLocalView(view: SurfaceViewRenderer) {
-            localView = view
             webRtcClient.initLocalSurfaceView(view)
         }
         
         override fun initRemoteView(view: SurfaceViewRenderer) {
-            webRtcClient.initRemoteSurfaceView(view)
+            releaseRemoteView()
+            remoteMediaStream?.videoTracks?.get(0)?.addSink(view)
             remoteView = view
-            remoteMediaStream?.let {
-                val track = it.videoTracks
-                track[0].addSink(remoteView)
-            }
+            webRtcClient.initRemoteSurfaceView(view)
+        }
+        
+        private fun releaseRemoteView() {
+            remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
+            remoteView?.release()
+            remoteView = null
         }
         
         override fun initUser(user: ReadyToCallUser) {
@@ -236,28 +234,31 @@ interface CallsController {
         
         override fun createNewConnection() {
             webRtcClient.initNewConnection(observer)
-            webRtcClient.addStreamTo(localView ?: return)
+            webRtcClient.addLocalStream()
+        }
+        
+        private fun commonCloseStuff() {
+            callsCloudService.removeOpponent(user.id)
+            isConnected = false
+            opponent = ReadyToCallUser()
         }
         
         override fun closeCurrentConnection() {
-            isConnected = false
-            callsCloudService.removeOpponent(user.id)
-            webRtcClient.closeCurrentConnection(observer)
-            remoteMediaStream = null
-            opponent = ReadyToCallUser()
+            commonCloseStuff()
+            remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
             remoteView?.clearImage()
+            webRtcClient.closeCurrentConnection(observer)
         }
         
         override fun closeConnectionTotally() {
-            isConnected = false
-            callsCloudService.removeOpponent(user.id)
+            commonCloseStuff()
+            releaseRemoteView()
+            remoteMediaStream?.videoTracks?.forEach { it.dispose() }
+            remoteMediaStream?.audioTracks?.forEach { it.dispose() }
             webRtcClient.closeConnectionTotally(observer)
             callsCloudService.removeCallback(connectionEventCallback)
-            remoteMediaStream = null
-            remoteView = null
-            localView = null
-            scope.cancel()
             networkHandler.removeObserver(networkStateObserver)
+            scope.cancel()
         }
         
         override fun subscribeToConnectionEvents(userId: String) {

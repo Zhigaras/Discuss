@@ -1,5 +1,6 @@
 package com.zhigaras.calls.webrtc
 
+import android.app.Application
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -10,6 +11,7 @@ import org.webrtc.DataChannel
 import org.webrtc.EglBase
 import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
+import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
@@ -18,6 +20,7 @@ import org.webrtc.VideoTrack
 import java.nio.ByteBuffer
 
 class WebRtcClient(
+    private val application: Application,
     private val iceServers: IceServersList,
     private val peerConnectionObserver: PeerConnectionObserveWrapper,
     private val eglBaseContext: EglBase.Context,
@@ -31,8 +34,10 @@ class WebRtcClient(
     private val pendingIceCandidates = mutableListOf<IceCandidate>()
     private var dataChannel: DataChannel? = null
     private lateinit var videoCapturer: CameraVideoCapturer
-    private lateinit var localVideoTrack: VideoTrack
-    private lateinit var localAudioTrack: AudioTrack
+    private var localVideoTrack: VideoTrack? = null
+    private var localAudioTrack: AudioTrack? = null
+    private var localStream: MediaStream = peerConnectionFactory.createLocalMediaStream()
+    private var localView: SurfaceViewRenderer? = null
     
     fun initNewConnection(observer: Observer<PeerConnectionState>) {
         peerConnection = peerConnectionFactory.createPeerConnection(
@@ -57,21 +62,24 @@ class WebRtcClient(
     }
     
     private fun startLocalVideoStreaming(view: SurfaceViewRenderer) {
+        localVideoTrack?.removeSink(localView)
+        localView?.release()
+        localView = view
         videoCapturer = getVideoCapturer()
         val helper = SurfaceTextureHelper.create(Thread.currentThread().name, eglBaseContext)
-        videoCapturer.initialize(helper, view.context, localVideoSource.capturerObserver)
+        videoCapturer.initialize(helper, application, localVideoSource.capturerObserver)
         videoCapturer.startCapture(480, 360, 30)
-        addStreamTo(view)
+        localAudioTrack?.let { localStream.removeTrack(it) }
+        localVideoTrack?.let { localStream.removeTrack(it) }
+        localVideoTrack =
+            peerConnectionFactory.createVideoTrack(localVideoSource).apply { addSink(localView) }
+        localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
+        localAudioTrack?.let { localStream.addTrack(it) }
+        localVideoTrack?.let { localStream.addTrack(it) }
+        addLocalStream()
     }
     
-    fun addStreamTo(view: SurfaceViewRenderer) {
-        localVideoTrack = peerConnectionFactory.createVideoTrack(localVideoSource)
-            .apply { addSink(view) }
-        localAudioTrack = peerConnectionFactory.createAudioTrack(localAudioSource)
-        val localStream = peerConnectionFactory.createLocalMediaStream().apply {
-            addTrack(localVideoTrack)
-            addTrack(localAudioTrack)
-        }
+    fun addLocalStream() {
         peerConnection?.addStream(localStream)
     }
     
@@ -132,22 +140,22 @@ class WebRtcClient(
     }
     
     fun closeCurrentConnection(observer: Observer<PeerConnectionState>) {
-        pendingIceCandidates.clear()
         peerConnection?.close()
         dataChannel?.unregisterObserver()
         dataChannel?.close()
+        pendingIceCandidates.clear()
         peerConnectionObserver.removeObserver(observer)
     }
     
     fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
-        pendingIceCandidates.clear()
-        localVideoTrack.dispose()
-        videoCapturer.stopCapture()
+        closeCurrentConnection(observer)
+        localVideoTrack?.removeSink(localView)
+        localView?.release()
+        localView = null
         videoCapturer.dispose()
-        peerConnection?.close()
-        dataChannel?.unregisterObserver()
-        dataChannel?.close()
+        localVideoSource.dispose()
+        localAudioSource.dispose()
+        localStream.dispose()
         peerConnectionObserver.closeConnection()
-        peerConnectionObserver.removeObserver(observer)
     }
 }
