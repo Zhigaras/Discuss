@@ -7,8 +7,9 @@
     <color name="grey4">#5C5A5A</color>
     <color name="grey5">#292828</color>
     <color name="black">#000000</color>
-    <color name="light_green">#4DC553</color>
-    <color name="dark_green">#175A1B</color>
+    <color name="green1">#4DC553</color>
+    <color name="green2">#175A1B</color>
+    <color name="green3">#09290B</color>
     <color name="light_red">#E11A1A</color>
     <color name="dark_red">#810808</color>
 </resources>
