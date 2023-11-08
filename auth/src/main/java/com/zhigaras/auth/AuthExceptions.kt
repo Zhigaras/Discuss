@@ -22,6 +22,11 @@ class EmailIsUsed : RegistrationException() {
 
 abstract class LoginException : DiscussException()
 
+class LogoutException : DiscussException() {
+    
+    override fun errorId() = R.string.logout_failed
+}
+
 class SigningInFailed : LoginException() {
     override fun errorId(): Int = R.string.signing_in_failed
 }

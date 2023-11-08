@@ -29,5 +29,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.suggestTopicButton.setOnClickListener {
             SuggestTopicBottomSheetDialog().show(parentFragmentManager, null)
         }
+        
+        binding.toProfileButton.setOnClickListener {
+            viewModel.navigateToProfile()
+        }
     }
 }

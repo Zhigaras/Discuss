@@ -11,15 +11,17 @@ import com.zhigaras.core.ProvideUserId
 import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.NavigateToCall
+import com.zhigaras.home.domain.NavigateToProfile
 import com.zhigaras.home.domain.model.HomeTopic
 
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
+    private val navigateToProfile: NavigateToProfile,
     private val provideUserId: ProvideUserId,
     private val homeInteractor: HomeInteractor,
     override val uiCommunication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<HomeUiState>(dispatchers) {
+) : BaseViewModel<HomeUiState>(dispatchers), NavigateToProfile {
     
     private val callback =
         object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
@@ -44,6 +46,10 @@ class HomeViewModel(
             uiCommunication.postBackground(HomeUiState.CantGoToCall())
         }
         
+    }
+    
+    override fun navigateToProfile() {
+        navigateToProfile.navigateToProfile()
     }
     
     override fun onCleared() {

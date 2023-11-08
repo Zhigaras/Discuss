@@ -12,4 +12,6 @@ interface Auth {
     
     fun isUserAuthorized(): Boolean
     
+    fun logout()
+    
 }

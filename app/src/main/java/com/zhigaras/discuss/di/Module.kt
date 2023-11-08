@@ -13,8 +13,10 @@ import com.zhigaras.discuss.domain.MainUiStateCommunication
 import com.zhigaras.discuss.presentation.MainViewModel
 import com.zhigaras.discuss.domain.NavigateToSignIn
 import com.zhigaras.home.domain.NavigateToCall
+import com.zhigaras.home.domain.NavigateToProfile
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
+import com.zhigaras.profile.domain.NavigateToSignInTwo
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -58,7 +60,9 @@ fun mainModule() = module {
         NavigateToSignUp::class,
         NavigateToHome::class,
         NavigateToCall::class,
-        CallRoutes::class
+        CallRoutes::class,
+        NavigateToSignInTwo::class, // TODO: fix naming
+        NavigateToProfile::class
     )
     
     factory { Dispatchers.Base() } bind Dispatchers::class
