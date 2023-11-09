@@ -39,7 +39,10 @@ interface Screen {
     ) : Screen {
         
         override fun show(fragmentManager: FragmentManager, containerId: Int) {
-            fragmentManager.popBackStack(0, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            if (fragmentManager.backStackEntryCount > 0) {
+                val first = fragmentManager.getBackStackEntryAt(0)
+                fragmentManager.popBackStack(first.id, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
             fragmentManager.beginTransaction()
                 .replace(containerId, className.newInstance().also { it.arguments = args })
                 .commit()
