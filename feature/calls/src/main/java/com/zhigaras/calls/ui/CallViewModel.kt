@@ -1,6 +1,5 @@
 package com.zhigaras.calls.ui
 
-import androidx.lifecycle.viewModelScope
 import com.zhigaras.calls.domain.CallCommunication
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.CallsController
@@ -10,7 +9,6 @@ import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import kotlinx.coroutines.launch
 import org.webrtc.SurfaceViewRenderer
 
 class CallViewModel(
@@ -43,13 +41,13 @@ class CallViewModel(
         else endConversation()
     }
     
-    fun lookForOpponent(user: ReadyToCallUser) { // TODO: replace with scopeLaunch()
-        viewModelScope.launch {
-            initCalls.initUser(user)
-            uiCommunication.postUi(CallUiState.LookingForOpponent())
-            matchingInteractor.checkMatching(user)
-                .handle(callsController, matchingInteractor, uiCommunication)
-        }
+    fun lookForOpponent(user: ReadyToCallUser) {
+        initCalls.initUser(user)
+        uiCommunication.postUi(CallUiState.LookingForOpponent())
+        scopeLaunch(
+            onBackground = {matchingInteractor.checkMatching(user)},
+            onUi = {it.handle(callsController, matchingInteractor, uiCommunication)}
+        )
     }
     
     fun nextOpponent(user: ReadyToCallUser) {
