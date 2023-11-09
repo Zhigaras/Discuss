@@ -32,6 +32,17 @@ class CallViewModel(
         initCalls.initRemoteView(remoteView)
     }
     
+    fun handleNextOpponentClick(user: ReadyToCallUser?, showDialog: () -> Unit) {
+        if (callsController.isConnected()) showDialog.invoke()
+        else user?.let { nextOpponent(it) }
+        
+    }
+    
+    fun handleEndConversationClick(showDialog: () -> Unit) {
+        if (callsController.isConnected()) showDialog.invoke()
+        else endConversation()
+    }
+    
     fun lookForOpponent(user: ReadyToCallUser) { // TODO: replace with scopeLaunch()
         viewModelScope.launch {
             initCalls.initUser(user)

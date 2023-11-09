@@ -46,18 +46,24 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
             it.update(binding)
         }
         
-        binding.escapeButton.setOnClickListener {
-            EndConversationAlertDialog().apply {
-                arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to END_CONVERSATION_KEY)
-                show(this@CallFragment.parentFragmentManager, null)
-            }
-        }
         binding.nextButton.setOnClickListener {
-            EndConversationAlertDialog().apply {
-                arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to NEXT_OPPONENT_KEY)
-                show(this@CallFragment.parentFragmentManager, null)
+            viewModel.handleNextOpponentClick(getUserFromArgs()) {
+                EndConversationAlertDialog().apply {
+                    arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to NEXT_OPPONENT_KEY)
+                    show(this@CallFragment.parentFragmentManager, null)
+                }
             }
         }
+        
+        binding.escapeButton.setOnClickListener {
+            viewModel.handleEndConversationClick {
+                EndConversationAlertDialog().apply {
+                    arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to END_CONVERSATION_KEY)
+                    show(this@CallFragment.parentFragmentManager, null)
+                }
+            }
+        }
+        
         parentFragmentManager.setFragmentResultListener(
             NEXT_OPPONENT_KEY,
             viewLifecycleOwner
