@@ -17,14 +17,16 @@ abstract class BaseAlertDialog : BaseDialog<BaseAlertDialogBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        val requestKey = arguments?.getString(REQUEST_KEY) ?: ""
+        
         binding.alertText.setText(alertText)
         binding.dismissButton.setOnClickListener {
-            parentFragmentManager.setFragmentResult(REQUEST_KEY, bundleOf(PARAM_KEY to false))
+            parentFragmentManager.setFragmentResult(requestKey, bundleOf(PARAM_KEY to false))
             dismiss()
         }
         
         binding.positiveButton.setOnClickListener {
-            parentFragmentManager.setFragmentResult(REQUEST_KEY, bundleOf(PARAM_KEY to true))
+            parentFragmentManager.setFragmentResult(requestKey, bundleOf(PARAM_KEY to true))
             dismiss()
         }
     }

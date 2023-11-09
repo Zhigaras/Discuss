@@ -3,6 +3,7 @@ package com.zhigaras.profile.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.os.bundleOf
 import com.zhigaras.core.BaseAlertDialog
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.profile.databinding.FragmentProfileBinding
@@ -17,7 +18,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         super.onViewCreated(view, savedInstanceState)
         
         binding.logoutButton.setOnClickListener {
-            ProfileAlertDialog().show(parentFragmentManager, null)
+            ProfileAlertDialog().apply {
+                arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to LOGOUT_KEY)
+                show(this@ProfileFragment.parentFragmentManager, null)
+            }
         }
         
         viewModel.observe(this) {
@@ -25,11 +29,15 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         }
         
         parentFragmentManager.setFragmentResultListener(
-            BaseAlertDialog.REQUEST_KEY,
+            LOGOUT_KEY,
             viewLifecycleOwner
         ) { _, bundle ->
             val shouldToLogout = bundle.getBoolean(BaseAlertDialog.PARAM_KEY)
             if (shouldToLogout) viewModel.logout()
         }
+    }
+    
+    companion object {
+        private const val LOGOUT_KEY = "logoutKey"
     }
 }
