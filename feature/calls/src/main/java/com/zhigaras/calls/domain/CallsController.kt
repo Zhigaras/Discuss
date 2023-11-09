@@ -48,6 +48,8 @@ interface CallsController {
     
     fun removeUserFromWaitList(user: ReadyToCallUser)
     
+    fun isConnected(): Boolean
+    
     class Base(
         dispatchers: Dispatchers,
         private val networkHandler: NetworkHandler,
@@ -137,6 +139,8 @@ interface CallsController {
             webRtcClient.initNewConnection(observer)
             networkHandler.observeForever(networkStateObserver)
         }
+        
+        override fun isConnected() = isConnected
         
         override fun initLocalView(view: SurfaceViewRenderer) {
             webRtcClient.initLocalSurfaceView(view)

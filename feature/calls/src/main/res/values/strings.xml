@@ -12,4 +12,5 @@
     <string name="trying_to_reconnect">Trying to reconnect</string>
     <string name="connection_failed">Connection failed</string>
     <string name="connection_error">Something went wrong: %1%s. Try to reenter.</string>
+    <string name="end_conversation_alert_dialog_text">Are you sure you want to end the conversation?</string>
 </resources>

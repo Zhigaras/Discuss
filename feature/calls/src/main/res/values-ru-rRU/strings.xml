@@ -12,4 +12,5 @@
     <string name="trying_to_reconnect">Пробуем переподключиться</string>
     <string name="connection_failed">Не удалось установить соеднение</string>
     <string name="connection_error">Что-то пошло не так: %1%s. Попробуйте войти снова.</string>
+    <string name="end_conversation_alert_dialog_text">Вы уверены, что хотите закончить разговор?</string>
 </resources>
