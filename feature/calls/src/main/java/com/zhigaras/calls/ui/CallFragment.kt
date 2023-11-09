@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import com.zhigaras.calls.di.CALL_FRAGMENT_SCOPE
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.model.ReadyToCallUser
+import com.zhigaras.core.BaseAlertDialog
 import com.zhigaras.core.BaseFragment
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
 import org.koin.android.ext.android.getKoin
@@ -22,7 +24,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
         getKoin().createScope(CALL_FRAGMENT_SCOPE, named(CALL_FRAGMENT_SCOPE))
     
     override val canHandleBackPress = true
-    override val backPressedCallback = { viewModel.finishConversation() }
+    override val backPressedCallback = { viewModel.endConversation() }
     
     override fun onDestroy() {
         super.onDestroy()
@@ -45,10 +47,30 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
         }
         
         binding.escapeButton.setOnClickListener {
-            viewModel.finishConversation()
+            EndConversationAlertDialog().apply {
+                arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to END_CONVERSATION_KEY)
+                show(this@CallFragment.parentFragmentManager, null)
+            }
         }
         binding.nextButton.setOnClickListener {
-            getUserFromArgs()?.let { viewModel.nextOpponent(it) }
+            EndConversationAlertDialog().apply {
+                arguments = bundleOf(BaseAlertDialog.REQUEST_KEY to NEXT_OPPONENT_KEY)
+                show(this@CallFragment.parentFragmentManager, null)
+            }
+        }
+        parentFragmentManager.setFragmentResultListener(
+            NEXT_OPPONENT_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val shouldToGoNext = bundle.getBoolean(BaseAlertDialog.PARAM_KEY)
+            if (shouldToGoNext) getUserFromArgs()?.let { viewModel.nextOpponent(it) }
+        }
+        parentFragmentManager.setFragmentResultListener(
+            END_CONVERSATION_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val shouldToEscape = bundle.getBoolean(BaseAlertDialog.PARAM_KEY)
+            if (shouldToEscape) viewModel.endConversation()
         }
     }
     
@@ -69,5 +91,10 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
                 args, CallRoutes.READY_TO_CALL_USER_KEY, ReadyToCallUser::class.java
             )
         } else null
+    }
+    
+    companion object {
+        private const val NEXT_OPPONENT_KEY = "nextOpponent"
+        private const val END_CONVERSATION_KEY = "endConversation"
     }
 }
