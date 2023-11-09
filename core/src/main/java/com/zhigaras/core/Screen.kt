@@ -21,18 +21,6 @@ interface Screen {
         }
     }
     
-    abstract class Replace(
-        private val className: Class<out Fragment>,
-        private val args: Bundle? = null
-    ) : Screen {
-        
-        override fun show(fragmentManager: FragmentManager, containerId: Int) {
-            fragmentManager.beginTransaction()
-                .replace(containerId, className.newInstance().also { it.arguments = args })
-                .commit()
-        }
-    }
-    
     abstract class ReplaceWithClearBackstack(
         private val className: Class<out Fragment>,
         private val args: Bundle? = null
