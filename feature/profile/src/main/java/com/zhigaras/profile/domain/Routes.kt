@@ -1,8 +1,8 @@
 package com.zhigaras.profile.domain
 
-interface ProfileRoutes : NavigateToSignInTwo
+interface ProfileRoutes : NavigateToSignIn
 
-interface NavigateToSignInTwo {
+interface NavigateToSignIn {
     
     fun navigateToSignIn()
 }

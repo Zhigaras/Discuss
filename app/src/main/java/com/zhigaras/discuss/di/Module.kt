@@ -10,13 +10,12 @@ import com.zhigaras.core.NetworkHandler
 import com.zhigaras.discuss.domain.AvailableRouts
 import com.zhigaras.discuss.domain.MainInteractor
 import com.zhigaras.discuss.domain.MainUiStateCommunication
-import com.zhigaras.discuss.presentation.MainViewModel
 import com.zhigaras.discuss.domain.NavigateToSignIn
+import com.zhigaras.discuss.presentation.MainViewModel
 import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.home.domain.NavigateToProfile
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
-import com.zhigaras.profile.domain.NavigateToSignInTwo
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -61,7 +60,7 @@ fun mainModule() = module {
         NavigateToHome::class,
         NavigateToCall::class,
         CallRoutes::class,
-        NavigateToSignInTwo::class, // TODO: fix naming
+        com.zhigaras.profile.domain.NavigateToSignIn::class,
         NavigateToProfile::class
     )
     

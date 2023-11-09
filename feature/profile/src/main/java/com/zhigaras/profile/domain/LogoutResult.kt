@@ -5,12 +5,12 @@ import com.zhigaras.profile.ui.ProfileUiState
 
 interface LogoutResult {
     
-    fun handle(communication: ProfileCommunication.Post, navigateToSignIn: NavigateToSignInTwo)
+    fun handle(communication: ProfileCommunication.Post, navigateToSignIn: NavigateToSignIn)
     
     class Success : LogoutResult {
         override fun handle(
             communication: ProfileCommunication.Post,
-            navigateToSignIn: NavigateToSignInTwo
+            navigateToSignIn: NavigateToSignIn
         ) {
             communication.postUi(ProfileUiState.Success())
             navigateToSignIn.navigateToSignIn()
@@ -21,7 +21,7 @@ interface LogoutResult {
         
         override fun handle(
             communication: ProfileCommunication.Post,
-            navigateToSignIn: NavigateToSignInTwo
+            navigateToSignIn: NavigateToSignIn
         ) {
             communication.postUi(ProfileUiState.Error(messageId))
         }
