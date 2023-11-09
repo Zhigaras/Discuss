@@ -21,6 +21,9 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
     override val scope: Scope =
         getKoin().createScope(CALL_FRAGMENT_SCOPE, named(CALL_FRAGMENT_SCOPE))
     
+    override val canHandleBackPress = true
+    override val backPressedCallback = { viewModel.finishConversation() }
+    
     override fun onDestroy() {
         super.onDestroy()
         scope.close()
@@ -42,7 +45,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
         }
         
         binding.escapeButton.setOnClickListener {
-            viewModel.closeConnection()
+            viewModel.finishConversation()
         }
         binding.nextButton.setOnClickListener {
             getUserFromArgs()?.let { viewModel.nextOpponent(it) }
