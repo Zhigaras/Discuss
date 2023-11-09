@@ -5,12 +5,12 @@
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="@color/gray"
-        android:textSize="25sp"
         android:text="The profile info will be here"
-        android:layout_height="wrap_content"/>
+        android:textColor="@color/gray"
+        android:textSize="25sp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/logout_button"
@@ -19,9 +19,5 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="16dp"
         android:text="@string/log_out" />
-
-    <include
-        android:id="@+id/progress_layout"
-        layout="@layout/progress_layout" />
 
 </FrameLayout>

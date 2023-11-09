@@ -1,6 +1,5 @@
 package com.zhigaras.profile.ui
 
-import android.view.View
 import android.widget.Toast
 import androidx.annotation.StringRes
 import com.zhigaras.core.UiState
@@ -11,15 +10,13 @@ interface ProfileUiState : UiState<FragmentProfileBinding> {
     class Progress : ProfileUiState {
         
         override fun update(binding: FragmentProfileBinding) {
-            binding.progressLayout.root.visibility = View.VISIBLE
+            binding.logoutButton.isEnabled = false
         }
     }
     
     class Success : ProfileUiState {
         
-        override fun update(binding: FragmentProfileBinding) {
-            binding.progressLayout.root.visibility = View.GONE
-        }
+        override fun update(binding: FragmentProfileBinding) = Unit
     }
     
     class Error(@StringRes private val messageId: Int) : ProfileUiState,
@@ -27,7 +24,7 @@ interface ProfileUiState : UiState<FragmentProfileBinding> {
         
         override val block: FragmentProfileBinding.() -> Unit = {
             Toast.makeText(root.context, messageId, Toast.LENGTH_SHORT).show()
-            progressLayout.root.visibility = View.GONE
+            logoutButton.isEnabled = true
         }
     }
 }
