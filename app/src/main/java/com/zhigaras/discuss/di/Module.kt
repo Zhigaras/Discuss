@@ -10,9 +10,10 @@ import com.zhigaras.core.NetworkHandler
 import com.zhigaras.discuss.domain.AvailableRouts
 import com.zhigaras.discuss.domain.MainInteractor
 import com.zhigaras.discuss.domain.MainUiStateCommunication
-import com.zhigaras.discuss.presentation.MainViewModel
 import com.zhigaras.discuss.domain.NavigateToSignIn
+import com.zhigaras.discuss.presentation.MainViewModel
 import com.zhigaras.home.domain.NavigateToCall
+import com.zhigaras.home.domain.NavigateToProfile
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
 import org.koin.android.ext.koin.androidApplication
@@ -58,7 +59,9 @@ fun mainModule() = module {
         NavigateToSignUp::class,
         NavigateToHome::class,
         NavigateToCall::class,
-        CallRoutes::class
+        CallRoutes::class,
+        com.zhigaras.profile.domain.NavigateToSignIn::class,
+        NavigateToProfile::class
     )
     
     factory { Dispatchers.Base() } bind Dispatchers::class

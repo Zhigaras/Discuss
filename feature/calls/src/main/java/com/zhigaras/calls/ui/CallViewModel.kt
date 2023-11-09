@@ -48,7 +48,7 @@ class CallViewModel(
         lookForOpponent(user)
     }
     
-    fun closeConnection() {
+    fun finishConversation() {
         callsController.sendInterruptionToOpponent()
         callsController.closeConnectionTotally()
         routes.goBack()

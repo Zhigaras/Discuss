@@ -1,22 +1,17 @@
 plugins {
-    id(Plugins.application)
+    id(Plugins.library)
     id(Plugins.android)
-    id(Plugins.crashlytics)
-    id(Plugins.googleServices)
 }
 
 android {
-    namespace = "com.zhigaras.discuss"
+    namespace = "com.zhigaras.profile"
     compileSdk = Config.compileSdk
     
     defaultConfig {
-        applicationId = "com.zhigaras.discuss"
         minSdk = Config.minSdk
-        targetSdk = Config.targetSdk
-        versionCode = Config.versionCode
-        versionName = Config.versionName
         
         testInstrumentationRunner = Config.testInstrumentationRunner
+        consumerProguardFiles("consumer-rules.pro")
     }
     
     buildTypes {
@@ -39,25 +34,13 @@ android {
 }
 
 dependencies {
-    
     implementation(project(":core"))
-    implementation(project(":feature:login"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:calls"))
-    implementation(project(":feature:profile"))
+    implementation(project(":auth"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)
+    implementation(Dependencies.material)
+    implementation(Dependencies.lificycle)
     
     implementation(Dependencies.koinAndroid)
-    
-    implementation(platform(Dependencies.firebaseBom))
-    implementation(Dependencies.crashlytics)
-    implementation(Dependencies.analytics)
-    
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
-    
-    testImplementation(Dependencies.jUnit)
-    androidTestImplementation(Dependencies.androidJUnit)
-    androidTestImplementation(Dependencies.espresso)
 }
