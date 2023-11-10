@@ -2,7 +2,6 @@ package com.zhigaras.calls.domain
 
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.ReadyToCallUser
-import com.zhigaras.cloudservice.CloudService
 import kotlinx.coroutines.flow.Flow
 
 interface CallsCloudService {
@@ -18,6 +17,4 @@ interface CallsCloudService {
     fun removeInterruptionFlag(userId: String)
     
     fun removeUserFromWaitList(opponent: ReadyToCallUser)
-    
-    fun removeCallback(callback: CloudService.Callback<*>)
 }

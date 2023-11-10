@@ -59,8 +59,4 @@ class CallsCloudServiceImpl(
     override fun removeUserFromWaitList(
         opponent: ReadyToCallUser
     ) = opponent.removeSelfFromWaitList(cloudService)
-    
-    override fun removeCallback(callback: CloudService.Callback<*>) {
-        cloudService.removeListener(callback)
-    }
 }

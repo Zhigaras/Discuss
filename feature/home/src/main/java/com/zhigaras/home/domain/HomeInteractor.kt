@@ -1,16 +1,14 @@
 package com.zhigaras.home.domain
 
-import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.NetworkHandler
 import com.zhigaras.core.NetworkState
 import com.zhigaras.home.domain.model.HomeTopic
 import com.zhigaras.home.presentation.suggesttopic.SuggestTopicUiState
+import kotlinx.coroutines.flow.Flow
 
 interface HomeInteractor {
     
-    fun subscribeToTopics(callback: CloudService.Callback<List<HomeTopic>>)
-    
-    fun removeCallback(callback: CloudService.Callback<List<HomeTopic>>)
+    fun subscribeToTopics(): Flow<List<HomeTopic>>
     
     fun isOnline(): Boolean
     
@@ -19,13 +17,7 @@ interface HomeInteractor {
         private val networkHandler: NetworkHandler
     ) : HomeInteractor, SuggestTopic {
         
-        override fun subscribeToTopics(callback: CloudService.Callback<List<HomeTopic>>) {
-            homeCloudService.subscribeToTopics(callback)
-        }
-        
-        override fun removeCallback(callback: CloudService.Callback<List<HomeTopic>>) {
-            homeCloudService.removeCallback(callback)
-        }
+        override fun subscribeToTopics() = homeCloudService.subscribeToTopics()
         
         override suspend fun sendTopicSuggest(topic: String): SuggestTopicUiState {
             return kotlin.runCatching {
