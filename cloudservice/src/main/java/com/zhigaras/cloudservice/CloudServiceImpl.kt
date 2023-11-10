@@ -4,6 +4,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -42,26 +44,23 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         makeReference(*children).setValue(obj)
     }
     
-    override fun <T : Any> subscribeMultipleLevels(
-        callback: CloudService.Callback<T>,
-        clazz: Class<T>,
-        vararg children: String
-    ) {
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val result = snapshot.getValue(clazz)
-                if (result == null) callback.error("Data is null")
-                else callback.provide(result)
+    override fun <T : Any> subscribeMultipleLevels(clazz: Class<T>, vararg children: String) =
+        callbackFlow {
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(clazz)?.let { trySend(it) }
+                        ?: throw IllegalStateException("Data is null")
+                }
+                
+                override fun onCancelled(error: DatabaseError) {
+                    throw IllegalStateException(error.message)
+                }
             }
-            
-            override fun onCancelled(error: DatabaseError) {
-                callback.error(error.message)
-            }
+            val ref = makeReference(*children)
+            ref.addValueEventListener(listener)
+            awaitClose { ref.removeEventListener(listener) }
         }
-        val ref = makeReference(*children)
-        listeners[callback] = ref to listener
-        ref.addValueEventListener(listener)
-    }
+    
     
     override fun <T : Any> subscribeToListMultipleLevels(
         callback: CloudService.Callback<List<T>>,

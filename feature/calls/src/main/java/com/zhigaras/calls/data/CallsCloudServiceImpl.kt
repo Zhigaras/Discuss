@@ -18,18 +18,13 @@ class CallsCloudServiceImpl(
         )
     }
     
-    override fun observeUpdates(
-        userId: String,
-        callback: CloudService.Callback<ConnectionData>
-    ) {
-        cloudService.subscribeMultipleLevels(
-            callback,
-            ConnectionData::class.java,
-            CloudService.USERS_PATH,
-            userId,
-            CloudService.CONNECTION_DATA_PATH
-        )
-    }
+    override fun observeUpdates(userId: String) = cloudService.subscribeMultipleLevels(
+        ConnectionData::class.java,
+        CloudService.USERS_PATH,
+        userId,
+        CloudService.CONNECTION_DATA_PATH
+    )
+    
     
     override fun removeConnectionData(userId: String) {
         cloudService.postMultipleLevels(

@@ -1,5 +1,7 @@
 package com.zhigaras.cloudservice
 
+import kotlinx.coroutines.flow.Flow
+
 interface CloudService {
     
     interface Callback<T : Any> {
@@ -15,11 +17,7 @@ interface CloudService {
     
     fun postMultipleLevels(obj: Any?, vararg children: String)
     
-    fun <T : Any> subscribeMultipleLevels(
-        callback: Callback<T>,
-        clazz: Class<T>,
-        vararg children: String
-    )
+    fun <T : Any> subscribeMultipleLevels(clazz: Class<T>, vararg children: String): Flow<T>
     
     fun <T : Any> subscribeToListMultipleLevels(
         callback: Callback<List<T>>,
