@@ -11,6 +11,6 @@ interface SaveUserToCloud {
     class Base(private val cloudService: CloudService) : SaveUserToCloud {
         
         override suspend fun save(userId: String, user: User) =
-            cloudService.postMultipleLevels(user, USERS_PATH, userId)
+            cloudService.post(user, USERS_PATH, userId)
     }
 }

@@ -37,11 +37,11 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         }
     }
     
-    override fun postMultipleLevels(obj: Any?, vararg children: String) {
+    override fun post(obj: Any?, vararg children: String) {
         makeReference(*children).setValue(obj)
     }
     
-    override fun <T : Any> subscribeMultipleLevels(clazz: Class<T>, vararg children: String) =
+    override fun <T : Any> subscribe(clazz: Class<T>, vararg children: String) =
         callbackFlow {
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -59,7 +59,7 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         }
     
     
-    override fun <T : Any> subscribeToListMultipleLevels(clazz: Class<T>, vararg children: String) =
+    override fun <T : Any> subscribeToList(clazz: Class<T>, vararg children: String) =
         callbackFlow<List<T>> {
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

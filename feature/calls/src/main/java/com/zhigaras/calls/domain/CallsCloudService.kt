@@ -17,4 +17,9 @@ interface CallsCloudService {
     fun removeInterruptionFlag(userId: String)
     
     fun removeUserFromWaitList(opponent: ReadyToCallUser)
+    
+    companion object {
+        const val CONNECTION_DATA_PATH = "connectionData"
+        const val OPPONENT_EVENT_PATH = "opponent"
+    }
 }

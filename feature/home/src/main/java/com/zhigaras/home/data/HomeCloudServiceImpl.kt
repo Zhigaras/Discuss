@@ -12,7 +12,7 @@ import kotlinx.coroutines.withTimeout
 class HomeCloudServiceImpl(private val cloudService: CloudService) : HomeCloudService {
     
     override fun subscribeToTopics() =
-        cloudService.subscribeToListMultipleLevels(HomeTopic::class.java, TOPICS_PATH)
+        cloudService.subscribeToList(HomeTopic::class.java, TOPICS_PATH)
     
     
     override suspend fun sendTopicSuggest(topic: String): String {
