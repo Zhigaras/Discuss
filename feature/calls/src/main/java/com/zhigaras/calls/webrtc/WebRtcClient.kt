@@ -144,7 +144,7 @@ class WebRtcClient(
         dataChannel?.unregisterObserver()
         dataChannel?.close()
         pendingIceCandidates.clear()
-        peerConnectionObserver.removeObserver(observer)
+//        peerConnectionObserver.removeObserver(observer)
     }
     
     fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
