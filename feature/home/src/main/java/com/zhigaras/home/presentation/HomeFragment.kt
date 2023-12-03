@@ -25,12 +25,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         
         val adapter = CompositeAdapter.Builder()
             .addAdapter(TopicAdapter { topicId, opinion ->
-                run {
-                    permissions.check(
-                        requireContext(),
-                        doOnDenied = { launcher.launch(PermissionRequest(it, topicId, opinion)) },
-                        doOnGranted = { viewModel.navigateToCall(topicId, opinion) })
-                }
+                run { permissions.check(requireContext(), launcher, viewModel, topicId, opinion) }
             })
             .build()
         binding.topicsRv.adapter = adapter
