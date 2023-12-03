@@ -23,8 +23,7 @@ class HomeTopic(
         if (other !is HomeTopic) return false
         if (nameRu != other.nameRu) return false
         if (supportList.size != other.supportList.size) return false
-        if (againstList.size != other.againstList.size) return false
-        return true
+        return againstList.size == other.againstList.size
     }
     
     override fun payload(other: ListItem): Payload<*> {
@@ -32,7 +31,7 @@ class HomeTopic(
         return when {
             nameRu != other.nameRu -> return TitleChanged(other.nameRu)
             supportList.size != other.supportList.size -> SupportListSizeChanged(other.supportList.size)
-            againstList.size != other.againstList.size -> AgainstListSizeChanged(other.supportList.size)
+            againstList.size != other.againstList.size -> AgainstListSizeChanged(other.againstList.size)
             else -> super.payload(other)
         }
     }
