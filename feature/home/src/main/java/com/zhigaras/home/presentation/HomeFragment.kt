@@ -24,7 +24,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         
         val adapter = CompositeAdapter.Builder()
-            .addAdapter(TopicAdapter { topicId, opinion ->
+            .addDelegate(TopicDelegate { topicId, opinion ->
                 run { permissions.check(requireContext(), launcher, viewModel, topicId, opinion) }
             })
             .build()

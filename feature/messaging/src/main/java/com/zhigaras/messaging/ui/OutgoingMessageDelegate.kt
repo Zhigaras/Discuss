@@ -9,8 +9,8 @@ import com.zhigaras.messaging.databinding.OutgoingMessageItemBinding
 import com.zhigaras.messaging.domain.model.Message
 import com.zhigaras.messaging.domain.model.MessageType
 
-class OutgoingMessageAdapter :
-    DelegateAdapter<Message.Outgoing, OutgoingMessageAdapter.OutgoingMessageViewHolder>() {
+class OutgoingMessageDelegate :
+    DelegateAdapter<Message.Outgoing, OutgoingMessageDelegate.OutgoingMessageViewHolder>() {
     
     inner class OutgoingMessageViewHolder(
         private val binding: OutgoingMessageItemBinding

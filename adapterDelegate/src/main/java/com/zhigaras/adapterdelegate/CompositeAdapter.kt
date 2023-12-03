@@ -45,7 +45,7 @@ class CompositeAdapter(
         private val delegates =
             mutableMapOf<Int, DelegateAdapter<ListItem, DelegateViewHolder<ListItem>>>()
         
-        fun addAdapter(adapter: DelegateAdapter<out ListItem, *>): Builder {
+        fun addDelegate(adapter: DelegateAdapter<out ListItem, *>): Builder {
             delegates[adapter.viewType()] =
                 adapter as DelegateAdapter<ListItem, DelegateViewHolder<ListItem>>
             return this
