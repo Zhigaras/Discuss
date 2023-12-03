@@ -33,7 +33,7 @@ fun callModule() = listOf(messagesModule(), module {
     
     scope(named(CALL_FRAGMENT_SCOPE)) {
         scoped {
-            CallsController.Base(get(), get(), get(), get(), get(), get())
+            CallsController.Base(get(), get(), get(), get(), get(), get(), get())
         } binds arrayOf(
             CallsController::class,
             InitCalls::class,
@@ -53,7 +53,7 @@ fun callModule() = listOf(messagesModule(), module {
         val initCalls = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<InitCalls>()
         val callsController = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallsController>()
         val communication = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallCommunication.Mutable>()
-        CallViewModel(initCalls, callsController, get(), get(), communication, get(), get())
+        CallViewModel(initCalls, callsController, get(), get(), communication, get())
     }
     
     factory {

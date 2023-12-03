@@ -8,7 +8,6 @@ import com.zhigaras.calls.domain.MatchingInteractor
 import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.core.ProvideUserId
 import org.webrtc.SurfaceViewRenderer
 
 class CallViewModel(
@@ -17,13 +16,8 @@ class CallViewModel(
     private val matchingInteractor: MatchingInteractor,
     private val routes: CallRoutes,
     override val uiCommunication: CallCommunication.Mutable,
-    provideUserId: ProvideUserId,
     dispatchers: Dispatchers
 ) : BaseViewModel<CallUiState>(dispatchers) {
-    
-    init {
-        initCalls.subscribeToConnectionEvents(provideUserId.provide())
-    }
     
     fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
         initCalls.initLocalView(localView)
@@ -45,8 +39,8 @@ class CallViewModel(
         initCalls.initUser(user)
         uiCommunication.postUi(CallUiState.LookingForOpponent())
         scopeLaunch(
-            onBackground = {matchingInteractor.checkMatching(user)},
-            onUi = {it.handle(callsController, matchingInteractor, uiCommunication)}
+            onBackground = { matchingInteractor.checkMatching(user) },
+            onUi = { it.handle(callsController, matchingInteractor, uiCommunication) }
         )
     }
     

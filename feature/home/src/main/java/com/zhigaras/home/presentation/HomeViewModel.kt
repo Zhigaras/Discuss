@@ -1,10 +1,10 @@
 package com.zhigaras.home.presentation
 
 import androidx.core.os.bundleOf
+import androidx.lifecycle.viewModelScope
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.calls.domain.model.ReadyToCallUser
-import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
@@ -12,7 +12,8 @@ import com.zhigaras.home.domain.HomeCommunication
 import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.home.domain.NavigateToProfile
-import com.zhigaras.home.domain.model.HomeTopic
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val navigateToCall: NavigateToCall,
@@ -22,20 +23,12 @@ class HomeViewModel(
     override val uiCommunication: HomeCommunication.Mutable,
     dispatchers: Dispatchers
 ) : BaseViewModel<HomeUiState>(dispatchers), NavigateToProfile {
-    
-    private val callback =
-        object : CloudService.Callback<List<HomeTopic>> { // TODO: replace with coroutines??
-            override fun provide(data: List<HomeTopic>) {
-                uiCommunication.postBackground(HomeUiState.NewTopicList(data))
-            }
-            
-            override fun error(message: String) {
-                uiCommunication.postBackground(HomeUiState.DataError(message))
-            }
+    private val topicsFlowJob = viewModelScope.launch {
+        homeInteractor.subscribeToTopics().catch {
+            uiCommunication.postBackground(HomeUiState.DataError(it.message!!)) // TODO: escape of !!
+        }.collect {
+            uiCommunication.postBackground(HomeUiState.NewTopicList(it))
         }
-    
-    init {
-        homeInteractor.subscribeToTopics(callback)
     }
     
     fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
@@ -53,7 +46,7 @@ class HomeViewModel(
     }
     
     override fun onCleared() {
-        homeInteractor.removeCallback(callback)
+        topicsFlowJob.cancel()
         super.onCleared()
     }
 }

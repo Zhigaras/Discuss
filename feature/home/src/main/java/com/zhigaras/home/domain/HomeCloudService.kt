@@ -1,13 +1,11 @@
 package com.zhigaras.home.domain
 
-import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.home.domain.model.HomeTopic
+import kotlinx.coroutines.flow.Flow
 
 interface HomeCloudService {
     
-    fun subscribeToTopics(callback: CloudService.Callback<List<HomeTopic>>)
-    
-    fun removeCallback(callback: CloudService.Callback<List<HomeTopic>>)
+    fun subscribeToTopics(): Flow<List<HomeTopic>>
     
     suspend fun sendTopicSuggest(topic: String): String
     

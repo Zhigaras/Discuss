@@ -10,53 +10,48 @@ class CallsCloudServiceImpl(
 ) : CallsCloudService {
     
     override fun sendToCloud(data: ConnectionData, opponentId: String) {
-        cloudService.postMultipleLevels(
+        cloudService.post(
             data,
             CloudService.USERS_PATH,
             opponentId,
-            CloudService.CONNECTION_DATA_PATH
+            CallsCloudService.CONNECTION_DATA_PATH
         )
     }
     
-    override fun observeUpdates(
-        userId: String,
-        callback: CloudService.Callback<ConnectionData>
-    ) {
-        cloudService.subscribeMultipleLevels(
-            callback,
-            ConnectionData::class.java,
-            CloudService.USERS_PATH,
-            userId,
-            CloudService.CONNECTION_DATA_PATH
-        )
-    }
+    override fun observeUpdates(userId: String) = cloudService.subscribe(
+        ConnectionData::class.java,
+        CloudService.USERS_PATH,
+        userId,
+        CallsCloudService.CONNECTION_DATA_PATH
+    )
+    
     
     override fun removeConnectionData(userId: String) {
-        cloudService.postMultipleLevels(
+        cloudService.post(
             null,
             CloudService.USERS_PATH,
             userId,
-            CloudService.CONNECTION_DATA_PATH,
+            CallsCloudService.CONNECTION_DATA_PATH,
             "iceCandidate"
         )
     }
     
     override fun removeOpponent(userId: String) {
-        cloudService.postMultipleLevels(
+        cloudService.post(
             null,
             CloudService.USERS_PATH,
             userId,
-            CloudService.CONNECTION_DATA_PATH,
-            CloudService.OPPONENT_EVENT_PATH
+            CallsCloudService.CONNECTION_DATA_PATH,
+            CallsCloudService.OPPONENT_EVENT_PATH
         )
     }
     
     override fun removeInterruptionFlag(userId: String) {
-        cloudService.postMultipleLevels(
+        cloudService.post(
             false,
             CloudService.USERS_PATH,
             userId,
-            CloudService.CONNECTION_DATA_PATH,
+            CallsCloudService.CONNECTION_DATA_PATH,
             "interruptedByOpponent"
         )
     }
@@ -64,8 +59,4 @@ class CallsCloudServiceImpl(
     override fun removeUserFromWaitList(
         opponent: ReadyToCallUser
     ) = opponent.removeSelfFromWaitList(cloudService)
-    
-    override fun removeCallback(callback: CloudService.Callback<*>) {
-        cloudService.removeListener(callback)
-    }
 }
