@@ -14,12 +14,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun initBinding(inflater: LayoutInflater) = FragmentHomeBinding.inflate(inflater)
     
     private val viewModel by viewModel<HomeViewModel>()
+    private val permissions = Permissions()
+    
+    private val launcher = registerForActivityResult(CustomPermissionsContract()) {
+        it.handle(requireContext(), viewModel)
+    }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
         val adapter = CompositeAdapter.Builder()
-            .addAdapter(TopicAdapter { subId, opinion -> viewModel.navigateToCall(subId, opinion) })
+            .addAdapter(TopicAdapter { topicId, opinion ->
+                run {
+                    permissions.check(
+                        requireContext(),
+                        doOnDenied = { launcher.launch(PermissionRequest(it, topicId, opinion)) },
+                        doOnGranted = { viewModel.navigateToCall(topicId, opinion) })
+                }
+            })
             .build()
         binding.topicsRv.adapter = adapter
         viewModel.observe(this) {
