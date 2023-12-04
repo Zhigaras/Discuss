@@ -9,9 +9,9 @@ import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.home.databinding.TopicItemBinding
 import com.zhigaras.home.domain.model.HomeTopic
 
-class TopicAdapter(
+class TopicDelegate(
     private val onClick: (Int, DisputeParty) -> Unit
-) : DelegateAdapter<HomeTopic, TopicAdapter.TopicViewHolder>() {
+) : DelegateAdapter<HomeTopic, TopicDelegate.TopicViewHolder>() {
     
     inner class TopicViewHolder(
         private val binding: TopicItemBinding

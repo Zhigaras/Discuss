@@ -27,8 +27,8 @@ open class LandscapeMessagesLayout @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         val adapter = CompositeAdapter.Builder()
-            .addAdapter(IncomingMessageAdapter())
-            .addAdapter(OutgoingMessageAdapter())
+            .addDelegate(IncomingMessageDelegate())
+            .addDelegate(OutgoingMessageDelegate())
             .build()
         messagesRv.adapter = adapter
         viewModel.observe(findViewTreeLifecycleOwner() ?: return) {// TODO: fix return!!!
