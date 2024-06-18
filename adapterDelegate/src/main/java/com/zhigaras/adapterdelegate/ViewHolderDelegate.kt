@@ -3,7 +3,7 @@ package com.zhigaras.adapterdelegate
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
-abstract class DelegateViewHolder<in M : ListItem>(
+abstract class ViewHolderDelegate<in M : ListItem>(
     private val binding: ViewBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     

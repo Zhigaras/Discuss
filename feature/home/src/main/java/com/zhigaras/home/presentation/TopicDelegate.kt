@@ -2,9 +2,8 @@ package com.zhigaras.home.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.zhigaras.adapterdelegate.DelegateAdapter
-import com.zhigaras.adapterdelegate.DelegateViewHolder
+import com.zhigaras.adapterdelegate.ViewHolderDelegate
 import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.home.databinding.TopicItemBinding
 import com.zhigaras.home.domain.model.HomeTopic
@@ -15,7 +14,7 @@ class TopicDelegate(
     
     inner class TopicViewHolder(
         private val binding: TopicItemBinding
-    ) : DelegateViewHolder<HomeTopic>(binding) {
+    ) : ViewHolderDelegate<HomeTopic>(binding) {
         
         override fun bind(item: HomeTopic) {
             binding.topicDescription.text = item.nameRu
@@ -32,7 +31,7 @@ class TopicDelegate(
     
     override fun viewType() = 0
     
-    override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+    override fun createViewHolder(parent: ViewGroup): ViewHolderDelegate<HomeTopic> {
         return TopicViewHolder(
             TopicItemBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
