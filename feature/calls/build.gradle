@@ -1,0 +1,21 @@
+apply from: "$rootDir/gradle/scripts/android-module.gradle"
+apply plugin: "kotlin-parcelize"
+
+android {
+    namespace = "com.zhigaras.webrtc"
+}
+
+dependencies {
+    implementation(files("./libs/libwebrtc.aar"))
+
+    implementation library.core
+    implementation library.auth
+    implementation library.cloudservice
+    implementation library.feature_messaging
+
+    implementation library.core_ktx
+    implementation library.lificycle
+    implementation library.appcompat
+    implementation library.material
+    implementation library.koin_android
+}

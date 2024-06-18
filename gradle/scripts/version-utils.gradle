@@ -1,0 +1,73 @@
+ext.getBuildFileName = { moduleName, variantName ->
+    return "${moduleName}-${getGitVersionName()}-${variantName}.apk"
+}
+
+ext.getGitVersionName = {
+    def stdout = new ByteArrayOutputStream()
+    def errout = new ByteArrayOutputStream()
+
+    try {
+        exec {
+            workingDir '..'
+            commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+            errorOutput = errout
+        }
+        return stdout.toString().trim()
+    } catch (Exception ignored) {
+        // When there aren't any tags in git history yet
+        return "default"
+    }
+}
+
+ext.getGitCommitNumber = {
+    def stdout = new ByteArrayOutputStream()
+
+    try {
+        exec {
+            workingDir '..'
+            commandLine 'git', 'rev-list', '--count', 'HEAD'
+            standardOutput = stdout
+        }
+        def commitNumber = stdout.toString().trim()
+        return Integer.valueOf(commitNumber)
+    } catch (Exception ignored) {
+        // When there aren't any commits in git history yet
+        return 1
+    }
+}
+
+/** Expects string format ([\d]+\.)+[\d]+.* (e.g. "3.2.1", "1.2.3-4567-g1a512443") */
+ext.getReleaseVersionCode = { versionName ->
+    char separator = '.'
+    String tag = versionName.takeWhile { char c -> c.isDigit() || c == separator }
+    List<String> versions = tag.split("\\.")
+    int code = 0
+    for (int i = 0; i < 4; i++) {
+        int v = i < versions.size() ? Integer.valueOf(versions[i]) : 0
+        code = code * 100 + v
+    }
+    return (int) code
+}
+
+ext.getGitVersionCode = {
+    try {
+        getReleaseVersionCode(getGitVersionName())
+    } catch (NumberFormatException ignored) {
+        getGitCommitNumber()
+    }
+}
+
+task printVersionCode {
+    group = "versioning"
+    doLast {
+        println 'VersionCode=' + getGitVersionCode()
+    }
+}
+
+task printVersionName {
+    group = "versioning"
+    doLast {
+        println getGitVersionName()
+    }
+}

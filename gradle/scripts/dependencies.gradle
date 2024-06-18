@@ -1,0 +1,30 @@
+apply from: "$rootDir/gradle/scripts/dependencies-versions.gradle"
+
+ext {
+    library = [
+            koin_android     : ("io.insert-koin:koin-android:$koin"),
+
+            appcompat        : ("androidx.appcompat:appcompat:$appcompat"),
+            core_ktx         : ("androidx.core:core-ktx:$core_ktx"),
+            firebase_bom     : ("com.google.firebase:firebase-bom:$firebase_bom"),
+            crashlytics      : ("com.google.firebase:firebase-crashlytics-ktx"),
+            analytics        : ("com.google.firebase:firebase-analytics-ktx"),
+            firebase_auth    : ("com.google.firebase:firebase-auth-ktx"),
+            google_play_auth : ("com.google.android.gms:play-services-auth:$google_play_auth"),
+            firebase_database: ("com.google.firebase:firebase-database-ktx"),
+            material         : ("com.google.android.material:material:$material"),
+            lificycle        : ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"),
+            web_rtc          : ("io.getstream:stream-webrtc-android-ui:$web_rtc"),
+            recycler_view    : ("androidx.recyclerview:recyclerview:$recycler_view"),
+
+            adapter_delegate : project(":adapterDelegate"),
+            auth             : project(":auth"),
+            core             : project(":core"),
+            cloudservice     : project(":cloudservice"),
+            feature_login    : project(":feature:login"),
+            feature_home     : project(":feature:home"),
+            feature_calls    : project(":feature:calls"),
+            feature_messaging: project(":feature:messaging"),
+            feature_profile  : project(":feature:profile")
+    ]
+}

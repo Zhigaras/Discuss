@@ -1,0 +1,16 @@
+apply from: "$rootDir/gradle/scripts/android-module.gradle"
+
+android {
+    namespace = "com.zhigaras.profile"
+}
+
+dependencies {
+    implementation library.core
+    implementation library.auth
+
+    implementation library.core_ktx
+    implementation library.lificycle
+    implementation library.appcompat
+    implementation library.material
+    implementation library.koin_android
+}

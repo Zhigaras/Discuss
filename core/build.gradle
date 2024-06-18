@@ -1,0 +1,11 @@
+apply from: "$rootDir/gradle/scripts/android-module.gradle"
+
+android {
+    namespace = "com.zhigaras.core"
+}
+
+dependencies {
+    implementation library.lificycle
+    implementation library.material
+    implementation library.koin_android
+}

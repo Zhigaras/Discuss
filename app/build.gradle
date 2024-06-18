@@ -1,0 +1,29 @@
+plugins {
+    id("com.android.application")
+    id("com.google.firebase.crashlytics")
+    id("com.google.gms.google-services")
+}
+
+apply from: "$rootDir/gradle/scripts/android-config.gradle"
+
+android {
+    namespace = "com.zhigaras.discuss"
+    defaultConfig {
+        applicationId = "com.zhigaras.discuss"
+    }
+}
+
+dependencies {
+    implementation library.core
+    implementation library.feature_login
+    implementation library.feature_home
+    implementation library.feature_calls
+    implementation library.feature_profile
+
+    implementation library.core_ktx
+    implementation library.appcompat
+    implementation library.koin_android
+    implementation library.firebase_bom
+    implementation library.crashlytics
+    implementation library.analytics
+}

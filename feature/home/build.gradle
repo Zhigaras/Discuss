@@ -1,0 +1,17 @@
+apply from: "$rootDir/gradle/scripts/android-module.gradle"
+
+android {
+    namespace = "com.zhigaras.home"
+}
+
+dependencies {
+    implementation library.core
+    implementation library.cloudservice
+    implementation library.feature_calls
+    implementation library.adapter_delegate
+
+    implementation library.core_ktx
+    implementation library.appcompat
+    implementation library.material
+    implementation library.koin_android
+}
