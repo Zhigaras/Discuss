@@ -64,4 +64,12 @@ class AuthRepository : Auth {
         Log.d("AAAA", auth.currentUser?.uid.toString()) // TODO: provide Logger
         return auth.currentUser != null
     }
+    
+    override fun logout() {
+        try {
+            auth.signOut()
+        } catch (e: Exception) {
+            throw LogoutException()
+        }
+    }
 }

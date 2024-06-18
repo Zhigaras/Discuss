@@ -4,6 +4,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -11,9 +13,6 @@ import kotlin.coroutines.suspendCoroutine
 class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     
     private val reference = provideDatabase.database()
-    
-    private val listeners =
-        hashMapOf<CloudService.Callback<*>, Pair<DatabaseReference, ValueEventListener>>()
     
     override suspend fun postWithIdGenerating(obj: Any?, vararg children: String): String {
         return suspendCoroutine { cont ->
@@ -38,53 +37,47 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
         }
     }
     
-    override fun postMultipleLevels(obj: Any?, vararg children: String) {
+    override fun post(obj: Any?, vararg children: String) {
         makeReference(*children).setValue(obj)
     }
     
-    override fun <T : Any> subscribeMultipleLevels(
-        callback: CloudService.Callback<T>,
-        clazz: Class<T>,
-        vararg children: String
-    ) {
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val result = snapshot.getValue(clazz)
-                if (result == null) callback.error("Data is null")
-                else callback.provide(result)
-            }
-            
-            override fun onCancelled(error: DatabaseError) {
-                callback.error(error.message)
-            }
-        }
-        val ref = makeReference(*children)
-        listeners[callback] = ref to listener
-        ref.addValueEventListener(listener)
-    }
-    
-    override fun <T : Any> subscribeToListMultipleLevels(
-        callback: CloudService.Callback<List<T>>,
-        clazz: Class<T>,
-        vararg children: String
-    ) {
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val list = mutableListOf<T>()
-                for (child in snapshot.children) {
-                    child.getValue(clazz)?.let { list.add(it) }
+    override fun <T : Any> subscribe(clazz: Class<T>, vararg children: String) =
+        callbackFlow {
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(clazz)?.let { trySend(it) }
+                        ?: throw IllegalStateException("Data is null")
                 }
-                callback.provide(list)
+                
+                override fun onCancelled(error: DatabaseError) {
+                    throw IllegalStateException(error.message)
+                }
             }
-            
-            override fun onCancelled(error: DatabaseError) {
-                callback.error(error.message)
-            }
+            val ref = makeReference(*children)
+            ref.addValueEventListener(listener)
+            awaitClose { ref.removeEventListener(listener) }
         }
-        val ref = makeReference(*children)
-        listeners[callback] = ref to listener
-        ref.addValueEventListener(listener)
-    }
+    
+    
+    override fun <T : Any> subscribeToList(clazz: Class<T>, vararg children: String) =
+        callbackFlow<List<T>> {
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<T>()
+                    for (child in snapshot.children) {
+                        child.getValue(clazz)?.let { list.add(it) }
+                    }
+                    trySend(list)
+                }
+                
+                override fun onCancelled(error: DatabaseError) {
+                    throw IllegalStateException(error.message)
+                }
+            }
+            val ref = makeReference(*children)
+            ref.addValueEventListener(listener)
+            awaitClose { ref.removeEventListener(listener) }
+        }
     
     override fun addItemToList(item: String, vararg children: String) {
         val ref = makeReference(*children)
@@ -94,11 +87,6 @@ class CloudServiceImpl(provideDatabase: ProvideDatabase) : CloudService {
     override fun removeListItem(itemId: String, vararg children: String) {
         val ref = makeReference(*children)
         ref.updateChildren(mapOf(itemId to null))
-    }
-    
-    override fun removeListener(callback: CloudService.Callback<*>) {
-        val refAndListenerPair = listeners.remove(callback)
-        refAndListenerPair?.first?.removeEventListener(refAndListenerPair.second)
     }
     
     private fun makeReference(vararg children: String): DatabaseReference {

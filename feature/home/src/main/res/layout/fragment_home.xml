@@ -5,17 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:orientation="vertical"
-    android:paddingHorizontal="16dp">
-
-    <TextView
-        android:id="@+id/network_state_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/dark_red"
-        android:gravity="center"
-        android:text="offline"
-        android:visibility="gone" />
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -33,9 +23,17 @@
         tools:listitem="@layout/topic_item" />
 
     <Button
+        android:id="@+id/to_profile_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/to_profile" />
+
+    <Button
         android:id="@+id/suggest_topic_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/suggest_a_topic" />
 

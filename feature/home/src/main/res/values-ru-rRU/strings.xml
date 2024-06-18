@@ -13,4 +13,6 @@
     <string name="suggest_successfully_sent">Спасибо за ваше предложение. Мы рассмотрим его в ближайшее время.</string>
     <string name="suggest_sending_failed">Не удалось отправить. Проверьте соединение и попробуйте снова.</string>
     <string name="connection_required">Для этого необходимо интернет соединение.</string>
+    <string name="to_profile">В профиль</string>
+    <string name="permissions_needed">Для дальнейшей работы приложения необходимы разрешения</string>
 </resources>

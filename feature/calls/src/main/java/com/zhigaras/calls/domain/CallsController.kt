@@ -8,10 +8,10 @@ import com.zhigaras.calls.domain.model.MySessionDescription
 import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
 import com.zhigaras.calls.webrtc.WebRtcClient
-import com.zhigaras.cloudservice.CloudService
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.NetworkHandler
 import com.zhigaras.core.NetworkState
+import com.zhigaras.core.ProvideUserId
 import com.zhigaras.messaging.domain.DataChannelCommunication
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
@@ -48,13 +48,16 @@ interface CallsController {
     
     fun removeUserFromWaitList(user: ReadyToCallUser)
     
+    fun isConnected(): Boolean
+    
     class Base(
         dispatchers: Dispatchers,
         private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
         private val messagingCommunication: DataChannelCommunication.Mutable,
-        private val webRtcClient: WebRtcClient
+        private val webRtcClient: WebRtcClient,
+        provideUserId: ProvideUserId
     ) : CallsController, InitCalls, Messaging {
         private var isConnected = false
         private var makingOffer = false
@@ -64,15 +67,12 @@ interface CallsController {
         private var user: ReadyToCallUser = ReadyToCallUser()
         private var opponent: ReadyToCallUser = ReadyToCallUser()
         private val scope = CoroutineScope(SupervisorJob() + dispatchers.default())
-        private val connectionEventCallback = object : CloudService.Callback<ConnectionData> {
-            override fun provide(data: ConnectionData) {
-                data.handle(this@Base)
-            }
-            
-            override fun error(message: String) {
-                throw Exception(message)
+        private val connectionEventsJob = scope.launch {
+            callsCloudService.observeUpdates(provideUserId.provide()).collect {
+                it.handle(this@Base)
             }
         }
+        
         private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
@@ -137,6 +137,8 @@ interface CallsController {
             webRtcClient.initNewConnection(observer)
             networkHandler.observeForever(networkStateObserver)
         }
+        
+        override fun isConnected() = isConnected
         
         override fun initLocalView(view: SurfaceViewRenderer) {
             webRtcClient.initLocalSurfaceView(view)
@@ -256,13 +258,10 @@ interface CallsController {
             remoteMediaStream?.videoTracks?.forEach { it.dispose() }
             remoteMediaStream?.audioTracks?.forEach { it.dispose() }
             webRtcClient.closeConnectionTotally(observer)
-            callsCloudService.removeCallback(connectionEventCallback)
+            connectionEventsJob.cancel()
             networkHandler.removeObserver(networkStateObserver)
+            callsCloudService.removeUserFromWaitList(user)
             scope.cancel()
-        }
-        
-        override fun subscribeToConnectionEvents(userId: String) {
-            callsCloudService.observeUpdates(userId, connectionEventCallback)
         }
         
         override fun sendMessage(text: String) {
@@ -282,6 +281,4 @@ interface InitCalls {
     fun initRemoteView(view: SurfaceViewRenderer)
     
     fun initUser(user: ReadyToCallUser)
-    
-    fun subscribeToConnectionEvents(userId: String)
 }

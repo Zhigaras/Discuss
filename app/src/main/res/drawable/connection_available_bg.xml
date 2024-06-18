@@ -5,6 +5,6 @@
         android:bottomLeftRadius="@dimen/connection_state_bg_radius"
         android:bottomRightRadius="@dimen/connection_state_bg_radius" />
     <gradient
-        android:endColor="@color/dark_green"
-        android:startColor="@color/light_green" />
+        android:endColor="@color/green2"
+        android:startColor="@color/green1" />
 </shape>

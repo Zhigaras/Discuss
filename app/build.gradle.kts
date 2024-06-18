@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":feature:login"))
     implementation(project(":feature:home"))
     implementation(project(":feature:calls"))
+    implementation(project(":feature:profile"))
     
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.appcompat)

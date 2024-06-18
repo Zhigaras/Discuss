@@ -24,6 +24,7 @@ class PeerConnectionObserveWrapper(
     }
     
     override fun removeObserver(observer: Observer<PeerConnectionState>) {
+//        scope.launch { communication.removeObserver(observer) }
         communication.removeObserver(observer)
     }
     

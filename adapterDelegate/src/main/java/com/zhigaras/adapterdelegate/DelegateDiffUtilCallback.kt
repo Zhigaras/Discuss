@@ -12,6 +12,6 @@ internal class DelegateDiffUtilCallback : DiffUtil.ItemCallback<ListItem>() {
     }
     
     override fun getChangePayload(oldItem: ListItem, newItem: ListItem): Payload<*> {
-        return oldItem.payload(newItem)
+        return newItem.payload(oldItem)
     }
 }

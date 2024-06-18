@@ -1,7 +1,6 @@
 package com.zhigaras.calls.ui
 
 import android.view.View
-import androidx.annotation.CallSuper
 import com.zhigaras.core.UiState
 import com.zhigaras.webrtc.R
 import com.zhigaras.webrtc.databinding.FragmentCallBinding
@@ -15,6 +14,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
             binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.connectionStateView.hide()
             binding.waitingView.startSearch()
+            binding.nextButton.isEnabled = false
         }
     }
     
@@ -24,6 +24,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
             binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.connectionStateView.hide()
             binding.waitingView.startWaiting()
+            binding.nextButton.isEnabled = false
         }
     }
     
@@ -32,6 +33,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         override fun update(binding: FragmentCallBinding) {
             binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.connectionStateView.show(R.string.interrupted_by_opponent)
+            binding.nextButton.isEnabled = true
         }
     }
     
@@ -40,6 +42,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         override fun update(binding: FragmentCallBinding) {
             binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.connectionStateView.show(R.string.check_connection)
+            binding.nextButton.isEnabled = false
         }
     }
     
@@ -48,6 +51,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         override fun update(binding: FragmentCallBinding) {
             binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.waitingView.startReconnect()
+            binding.nextButton.isEnabled = true
         }
     }
     
@@ -56,6 +60,7 @@ interface CallUiState : UiState<FragmentCallBinding> {
         override fun update(binding: FragmentCallBinding) {
             binding.remoteViewOverlay.visibility = View.VISIBLE
             binding.connectionStateView.show(R.string.connection_error, message)
+            binding.nextButton.isEnabled = true
         }
     }
     
@@ -66,7 +71,6 @@ interface CallUiState : UiState<FragmentCallBinding> {
         
         fun match(state: PeerConnectionState) = connectionState == state
         
-        @CallSuper
         override fun update(binding: FragmentCallBinding) {
             binding.connectionStateView.show(messageId)
         }
@@ -89,6 +93,7 @@ class Connecting : CallUiState.Connection() {
         super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
         binding.waitingView.startConnecting()
+        binding.nextButton.isEnabled = false
     }
 }
 
@@ -102,6 +107,7 @@ class Connected : CallUiState.Connection() {
         binding.remoteViewOverlay.visibility = View.GONE
         binding.connectionStateView.hide()
         binding.waitingView.stop()
+        binding.nextButton.isEnabled = true
     }
 }
 
@@ -113,6 +119,7 @@ class Disconnected : CallUiState.Connection() {
     override fun update(binding: FragmentCallBinding) {
         super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
+        binding.nextButton.isEnabled = true
     }
 }
 
@@ -124,6 +131,7 @@ class Failed : CallUiState.Connection() {
     override fun update(binding: FragmentCallBinding) {
         super.update(binding)
         binding.remoteViewOverlay.visibility = View.VISIBLE
+        binding.nextButton.isEnabled = true
     }
 }
 
@@ -132,8 +140,5 @@ class Closed : CallUiState.Connection() {
     override val connectionState = PeerConnectionState.CLOSED
     override val messageId = R.string.connection_closed
     
-    override fun update(binding: FragmentCallBinding) {
-        super.update(binding)
-        binding.remoteViewOverlay.visibility = View.VISIBLE
-    }
+    override fun update(binding: FragmentCallBinding) = Unit
 }

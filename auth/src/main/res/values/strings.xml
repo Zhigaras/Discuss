@@ -15,4 +15,5 @@
     <string name="no_such_user">There is no user corresponding to the given email address.</string>
     <string name="too_many_google_signIn_requests">Too many authorization cancellations via Google, the system blocked them for 24h. To restore dial the combination *#*#66382723#*#* in your phone.</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="logout_failed">Logging out failed. Check your connection.</string>
 </resources>
