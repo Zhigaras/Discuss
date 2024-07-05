@@ -84,9 +84,12 @@ fun webRtcModule() = module {
     factory {
         IceServersList(
             arrayListOf(
-                PeerConnection.IceServer.builder("turn:a.relay.metered.ca:443?transport=tcp")
-                    .setUsername("83eebabf8b4cce9d5dbcb649")
-                    .setPassword("2D7JvfkOQtBdYW3R").createIceServer()
+                PeerConnection.IceServer.builder("stun:freeturn.net:5349")
+                    .createIceServer(),
+                PeerConnection.IceServer.builder("turns:freeturn.tel:5349")
+                    .setUsername("free")
+                    .setPassword("free")
+                    .createIceServer()
             )
         )
     } bind IceServersList::class
