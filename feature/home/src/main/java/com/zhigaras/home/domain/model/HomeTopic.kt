@@ -26,13 +26,13 @@ class HomeTopic(
         return againstList.size == other.againstList.size
     }
     
-    override fun payload(other: ListItem): Payload<*> {
-        if (other !is HomeTopic) return Payload.None()
+    override fun payload(oldItem: ListItem): Payload<*> {
+        if (oldItem !is HomeTopic) return Payload.None()
         return when {
-            nameRu != other.nameRu -> return TitleChanged(other.nameRu)
-            supportList.size != other.supportList.size -> SupportListSizeChanged(other.supportList.size)
-            againstList.size != other.againstList.size -> AgainstListSizeChanged(other.againstList.size)
-            else -> super.payload(other)
+            nameRu != oldItem.nameRu -> return TitleChanged(nameRu)
+            supportList.size != oldItem.supportList.size -> SupportListSizeChanged(supportList.size)
+            againstList.size != oldItem.againstList.size -> AgainstListSizeChanged(againstList.size)
+            else -> super.payload(oldItem)
         }
     }
 }
