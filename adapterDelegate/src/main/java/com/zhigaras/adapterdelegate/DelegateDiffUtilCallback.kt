@@ -4,14 +4,14 @@ import androidx.recyclerview.widget.DiffUtil
 
 internal class DelegateDiffUtilCallback : DiffUtil.ItemCallback<ListItem>() {
     override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-        return newItem.areItemTheSame(oldItem)
+        return oldItem.areItemTheSame(newItem)
     }
     
     override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem): Boolean {
-        return newItem.areContentTheSame(oldItem)
+        return oldItem.areContentTheSame(newItem)
     }
     
     override fun getChangePayload(oldItem: ListItem, newItem: ListItem): Payload<*> {
-        return newItem.payload(oldItem)
+        return oldItem.payload(newItem)
     }
 }

@@ -3,7 +3,7 @@ package com.zhigaras.adapterdelegate
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 
-abstract class DelegateAdapter<M : ListItem, in VH : ViewHolderDelegate<M>> {
+abstract class AdapterDelegate<M : ListItem, in VH : ViewHolderDelegate<M>> {
     
     abstract fun viewType(): Int
     abstract fun createViewHolder(parent: ViewGroup): ViewHolderDelegate<M>

@@ -12,27 +12,18 @@ class HomeTopic(
     val supportList: Map<String, String> = emptyMap(),
     val againstList: Map<String, String> = emptyMap(),
 ) : ListItem {
-    override fun itemType() = 0
-    
-    override fun areItemTheSame(other: ListItem): Boolean {
-        if (other !is HomeTopic) return false
-        return id == other.id
+    override fun areItemTheSame(newItem: ListItem): Boolean {
+        if (newItem !is HomeTopic) return false
+        return id == newItem.id
     }
     
-    override fun areContentTheSame(other: ListItem): Boolean {
-        if (other !is HomeTopic) return false
-        if (nameRu != other.nameRu) return false
-        if (supportList.size != other.supportList.size) return false
-        return againstList.size == other.againstList.size
-    }
-    
-    override fun payload(oldItem: ListItem): Payload<*> {
-        if (oldItem !is HomeTopic) return Payload.None()
+    override fun payload(newItem: ListItem): Payload<*> {
+        if (newItem !is HomeTopic) return Payload.None()
         return when {
-            nameRu != oldItem.nameRu -> return TitleChanged(nameRu)
-            supportList.size != oldItem.supportList.size -> SupportListSizeChanged(supportList.size)
-            againstList.size != oldItem.againstList.size -> AgainstListSizeChanged(againstList.size)
-            else -> super.payload(oldItem)
+            nameRu != newItem.nameRu -> return TitleChanged(nameRu)
+            supportList.size != newItem.supportList.size -> SupportListSizeChanged(newItem.supportList.size)
+            againstList.size != newItem.againstList.size -> AgainstListSizeChanged(newItem.againstList.size)
+            else -> super.payload(newItem)
         }
     }
 }

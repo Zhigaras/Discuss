@@ -2,11 +2,11 @@ package com.zhigaras.adapterdelegate
 
 interface ListItem {
     
-    fun itemType(): Int
+    fun itemType(): Int = this::class.hashCode()
     
-    fun areItemTheSame(other: ListItem): Boolean
+    fun areItemTheSame(newItem: ListItem): Boolean
     
-    fun areContentTheSame(other: ListItem): Boolean
+    fun areContentTheSame(newItem: ListItem): Boolean = this == newItem
     
-    fun payload(oldItem: ListItem): Payload<*> = Payload.None()
+    fun payload(newItem: ListItem): Payload<*> = Payload.None()
 }

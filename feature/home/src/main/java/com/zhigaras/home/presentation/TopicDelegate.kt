@@ -2,7 +2,7 @@ package com.zhigaras.home.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.zhigaras.adapterdelegate.DelegateAdapter
+import com.zhigaras.adapterdelegate.AdapterDelegate
 import com.zhigaras.adapterdelegate.ViewHolderDelegate
 import com.zhigaras.calls.domain.model.DisputeParty
 import com.zhigaras.home.databinding.TopicItemBinding
@@ -10,12 +10,12 @@ import com.zhigaras.home.domain.model.HomeTopic
 
 class TopicDelegate(
     private val onClick: (Int, DisputeParty) -> Unit
-) : DelegateAdapter<HomeTopic, TopicDelegate.TopicViewHolder>() {
-    
+) : AdapterDelegate<HomeTopic, TopicDelegate.TopicViewHolder>() {
+
     inner class TopicViewHolder(
         private val binding: TopicItemBinding
     ) : ViewHolderDelegate<HomeTopic>(binding) {
-        
+
         override fun bind(item: HomeTopic) {
             binding.topicDescription.text = item.nameRu
             binding.supportCount.text = item.supportList.size.toString()
@@ -28,14 +28,10 @@ class TopicDelegate(
             }
         }
     }
-    
-    override fun viewType() = 0
-    
-    override fun createViewHolder(parent: ViewGroup): ViewHolderDelegate<HomeTopic> {
-        return TopicViewHolder(
-            TopicItemBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false
-            )
-        )
-    }
+
+    override fun viewType() = HomeTopic::class.hashCode()
+
+    override fun createViewHolder(parent: ViewGroup) = TopicViewHolder(
+        TopicItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    )
 }
