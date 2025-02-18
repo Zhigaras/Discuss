@@ -15,11 +15,11 @@ abstract class Message : ListItem {
         return this.uid == newItem.uid
     }
     
-    class Incoming(override val text: String) : Message() {
+    data class Incoming(override val text: String) : Message() {
         override val type = MessageType.INCOMING
     }
     
-    class Outgoing(override val text: String) : Message() {
+    data class Outgoing(override val text: String) : Message() {
         override val type = MessageType.OUTGOING
     }
 }

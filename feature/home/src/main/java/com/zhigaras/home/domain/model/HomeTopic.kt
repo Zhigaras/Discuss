@@ -6,7 +6,7 @@ import com.zhigaras.home.presentation.AgainstListSizeChanged
 import com.zhigaras.home.presentation.SupportListSizeChanged
 import com.zhigaras.home.presentation.TitleChanged
 
-class HomeTopic(
+data class HomeTopic(
     val id: Int = 0,
     val nameRu: String = "",
     val supportList: Map<String, String> = emptyMap(),
@@ -17,13 +17,15 @@ class HomeTopic(
         return id == newItem.id
     }
     
-    override fun payload(newItem: ListItem): Payload<*> {
-        if (newItem !is HomeTopic) return Payload.None()
-        return when {
-            nameRu != newItem.nameRu -> return TitleChanged(nameRu)
-            supportList.size != newItem.supportList.size -> SupportListSizeChanged(newItem.supportList.size)
-            againstList.size != newItem.againstList.size -> AgainstListSizeChanged(newItem.againstList.size)
+    override fun payload(newItem: ListItem): List<Payload<*>> {
+        if (newItem !is HomeTopic) return emptyList()
+        val payloads = mutableListOf<Payload<*>>()
+        when {
+            nameRu != newItem.nameRu -> payloads.add(TitleChanged(nameRu))
+            supportList.size != newItem.supportList.size -> payloads.add(SupportListSizeChanged(newItem.supportList.size))
+            againstList.size != newItem.againstList.size -> payloads.add(AgainstListSizeChanged(newItem.againstList.size))
             else -> super.payload(newItem)
         }
+        return payloads
     }
 }
