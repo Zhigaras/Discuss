@@ -16,8 +16,8 @@ ext {
             lificycle        : ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"),
             web_rtc          : ("io.getstream:stream-webrtc-android-ui:$web_rtc"),
             recycler_view    : ("androidx.recyclerview:recyclerview:$recycler_view"),
+            adapter_delegate : ("io.github.zhigaras:adapterdelegate:$adapter_delegate"),
 
-            adapter_delegate : project(":adapterDelegate"),
             auth             : project(":auth"),
             core             : project(":core"),
             cloudservice     : project(":cloudservice"),
