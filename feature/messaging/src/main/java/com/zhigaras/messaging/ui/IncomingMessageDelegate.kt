@@ -8,8 +8,7 @@ import com.zhigaras.messaging.databinding.IncomingMessageItemBinding
 import com.zhigaras.messaging.domain.model.Message
 import com.zhigaras.messaging.domain.model.MessageType
 
-class IncomingMessageDelegate :
-    AdapterDelegate<Message.Incoming, IncomingMessageDelegate.IncomingMessageViewHolder>() {
+class IncomingMessageDelegate : AdapterDelegate<Message.Incoming, IncomingMessageDelegate.IncomingMessageViewHolder>() {
 
     inner class IncomingMessageViewHolder(
         private val binding: IncomingMessageItemBinding
