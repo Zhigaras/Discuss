@@ -3,21 +3,21 @@ package com.zhigaras.profile.ui
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.profile.domain.NavigateToSignIn
-import com.zhigaras.profile.domain.ProfileCommunication
+import com.zhigaras.profile.domain.ProfileUiStateFlux
 import com.zhigaras.profile.domain.ProfileInteractor
 
 class ProfileViewModel(
     private val navigateToSignIn: NavigateToSignIn,
     private val profileInteractor: ProfileInteractor,
-    override val uiCommunication: ProfileCommunication.Mutable,
+    private val uiStateFlux: ProfileUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<ProfileUiState>(dispatchers) {
-    
+) : BaseViewModel<ProfileUiState>(dispatchers, uiStateFlux) {
+
     fun logout() {
-        uiCommunication.postUi(ProfileUiState.Progress())
+        uiStateFlux.post(ProfileUiState.Progress())
         scopeLaunch(
             onBackground = { profileInteractor.logout() },
-            onUi = { it.handle(uiCommunication, navigateToSignIn) }
+            onUi = { it.handle(uiStateFlux, navigateToSignIn) }
         )
     }
 }

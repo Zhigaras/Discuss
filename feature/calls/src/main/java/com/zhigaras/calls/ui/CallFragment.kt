@@ -17,14 +17,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 
-class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent {
+class CallFragment : BaseFragment<FragmentCallBinding, CallViewModel>(), AndroidScopeComponent {
     
-    private val viewModel by viewModel<CallViewModel>()
-    override val scope: Scope =
-        getKoin().createScope(CALL_FRAGMENT_SCOPE, named(CALL_FRAGMENT_SCOPE))
+    override val viewModel by viewModel<CallViewModel>()
+    override val scope: Scope = getKoin().createScope(CALL_FRAGMENT_SCOPE, named(CALL_FRAGMENT_SCOPE))
     
     override val canHandleBackPress = true
-    override val backPressedCallback = { viewModel.endConversation() }
+    override val backPressedCallback: () -> Unit = { viewModel.endConversation() }
     
     override fun onDestroy() {
         super.onDestroy()
@@ -41,11 +40,7 @@ class CallFragment : BaseFragment<FragmentCallBinding>(), AndroidScopeComponent 
         if (savedInstanceState == null) {
             getUserFromArgs()?.let { viewModel.lookForOpponent(it) }
         }
-        
-        viewModel.observe(this) {
-            it.update(binding)
-        }
-        
+
         binding.nextButton.setOnClickListener {
             viewModel.handleNextOpponentClick(getUserFromArgs()) {
                 EndConversationAlertDialog().apply {

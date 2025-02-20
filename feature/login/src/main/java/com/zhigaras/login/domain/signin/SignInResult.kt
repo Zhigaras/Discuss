@@ -11,7 +11,7 @@ import com.zhigaras.login.presentation.signin.SignInUiState
 interface SignInResult {
     
     suspend fun handle(
-        communication: SignInCommunication.Post,
+        communication: SignInUiStateFlux.Post,
         saveUserToCloud: SaveUserToCloud,
         navigateToHome: NavigateToHome
     )
@@ -23,7 +23,7 @@ interface SignInResult {
     ) : SignInResult {
         
         override suspend fun handle(
-            communication: SignInCommunication.Post,
+            communication: SignInUiStateFlux.Post,
             saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
@@ -35,7 +35,7 @@ interface SignInResult {
     object OneTapSignInLaunched : SignInResult {
         
         override suspend fun handle(
-            communication: SignInCommunication.Post,
+            communication: SignInUiStateFlux.Post,
             saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
@@ -45,11 +45,11 @@ interface SignInResult {
     class Error(@StringRes private val errorId: Int) : SignInResult {
         
         override suspend fun handle(
-            communication: SignInCommunication.Post,
+            communication: SignInUiStateFlux.Post,
             saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
-            communication.postUi(SignInUiState.SingleEventError(errorId))
+            communication.post(SignInUiState.SingleEventError(errorId))
         }
     }
 }

@@ -9,11 +9,9 @@ interface LoginRoutes : NavigateToSignUp, NavigateToHome {
 }
 
 interface NavigateToSignUp {
-    
-    fun navigateToSignUp(args: Bundle? = null)
+    suspend fun navigateToSignUp(args: Bundle? = null)
 }
 
 interface NavigateToHome {
-    
-    fun navigateToHome()
+    suspend fun navigateToHome()
 }

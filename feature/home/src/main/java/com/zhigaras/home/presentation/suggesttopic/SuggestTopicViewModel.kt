@@ -3,19 +3,19 @@ package com.zhigaras.home.presentation.suggesttopic
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.domain.SuggestTopic
-import com.zhigaras.home.domain.SuggestTopicCommunication
+import com.zhigaras.home.domain.SuggestTopicUiStateFlux
 
 class SuggestTopicViewModel(
     private val suggestTopic: SuggestTopic,
-    override val uiCommunication: SuggestTopicCommunication.Mutable,
+    private val uiStateFlux: SuggestTopicUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<SuggestTopicUiState>(dispatchers) {
-    
+) : BaseViewModel<SuggestTopicUiState>(dispatchers, uiStateFlux) {
+
     fun sendSuggestion(topic: String) {
-        uiCommunication.postUi(SuggestTopicUiState.Progress())
+        uiStateFlux.post(SuggestTopicUiState.Progress())
         scopeLaunch(
             onBackground = { suggestTopic.sendTopicSuggest(topic.trim()) },
-            onUi = { uiCommunication.postUi(it) }
+            onUi = { uiStateFlux.post(it) }
         )
     }
 }

@@ -4,26 +4,26 @@ import androidx.annotation.StringRes
 import com.zhigaras.profile.ui.ProfileUiState
 
 interface LogoutResult {
-    
-    fun handle(communication: ProfileCommunication.Post, navigateToSignIn: NavigateToSignIn)
-    
+
+    suspend fun handle(communication: ProfileUiStateFlux.Post, navigateToSignIn: NavigateToSignIn)
+
     class Success : LogoutResult {
-        override fun handle(
-            communication: ProfileCommunication.Post,
+        override suspend fun handle(
+            communication: ProfileUiStateFlux.Post,
             navigateToSignIn: NavigateToSignIn
         ) {
-            communication.postUi(ProfileUiState.Success())
+            communication.post(ProfileUiState.Success())
             navigateToSignIn.navigateToSignIn()
         }
     }
-    
+
     class Error(@StringRes private val messageId: Int) : LogoutResult {
-        
-        override fun handle(
-            communication: ProfileCommunication.Post,
+
+        override suspend fun handle(
+            communication: ProfileUiStateFlux.Post,
             navigateToSignIn: NavigateToSignIn
         ) {
-            communication.postUi(ProfileUiState.Error(messageId))
+            communication.post(ProfileUiState.Error(messageId))
         }
     }
 }

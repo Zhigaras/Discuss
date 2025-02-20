@@ -1,6 +1,6 @@
 package com.zhigaras.calls.ui
 
-import com.zhigaras.calls.domain.CallCommunication
+import com.zhigaras.calls.domain.CallUiStateFlux
 import com.zhigaras.calls.domain.CallRoutes
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.InitCalls
@@ -15,43 +15,42 @@ class CallViewModel(
     private val callsController: CallsController,
     private val matchingInteractor: MatchingInteractor,
     private val routes: CallRoutes,
-    override val uiCommunication: CallCommunication.Mutable,
+    private val uiStateFlux: CallUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<CallUiState>(dispatchers) {
-    
+) : BaseViewModel<CallUiState>(dispatchers, uiStateFlux) {
+
     fun init(localView: SurfaceViewRenderer, remoteView: SurfaceViewRenderer) {
         initCalls.initLocalView(localView)
         initCalls.initRemoteView(remoteView)
     }
-    
+
     fun handleNextOpponentClick(user: ReadyToCallUser?, showDialog: () -> Unit) {
         if (callsController.isConnected()) showDialog.invoke()
         else user?.let { nextOpponent(it) }
-        
     }
-    
+
     fun handleEndConversationClick(showDialog: () -> Unit) {
         if (callsController.isConnected()) showDialog.invoke()
         else endConversation()
     }
-    
+
     fun lookForOpponent(user: ReadyToCallUser) {
         initCalls.initUser(user)
-        uiCommunication.postUi(CallUiState.LookingForOpponent())
+        uiStateFlux.post(CallUiState.LookingForOpponent())
         scopeLaunch(
             onBackground = { matchingInteractor.checkMatching(user) },
-            onUi = { it.handle(callsController, matchingInteractor, uiCommunication) }
+            onUi = { it.handle(callsController, matchingInteractor, uiStateFlux) }
         )
     }
-    
+
     fun nextOpponent(user: ReadyToCallUser) {
         callsController.sendInterruptionToOpponent()
         callsController.closeCurrentConnection()
         callsController.createNewConnection()
         lookForOpponent(user)
     }
-    
-    fun endConversation() {
+
+    fun endConversation() = safeLaunch {
         callsController.sendInterruptionToOpponent()
         callsController.closeConnectionTotally()
         routes.goBack()

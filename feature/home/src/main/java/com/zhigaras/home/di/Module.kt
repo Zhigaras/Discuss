@@ -6,11 +6,11 @@ import com.zhigaras.cloudservice.ProvideDatabase
 import com.zhigaras.home.data.HomeCloudServiceImpl
 import com.zhigaras.home.domain.HomeCloudService
 import com.zhigaras.home.presentation.suggesttopic.SuggestTopicViewModel
-import com.zhigaras.home.domain.HomeCommunication
+import com.zhigaras.home.domain.HomeUiStateFlux
 import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.home.domain.SuggestTopic
-import com.zhigaras.home.domain.SuggestTopicCommunication
+import com.zhigaras.home.domain.SuggestTopicUiStateFlux
 import com.zhigaras.home.presentation.HomeViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -21,10 +21,10 @@ fun homeModule() = listOf(suggestTopicModule(), module {
     
     viewModelOf(::HomeViewModel)
     
-    factory { HomeCommunication.Base() } binds arrayOf(
-        HomeCommunication.Mutable::class,
-        HomeCommunication.Observe::class,
-        HomeCommunication.Post::class
+    factory { HomeUiStateFlux.Base() } binds arrayOf(
+        HomeUiStateFlux.Mutable::class,
+        HomeUiStateFlux.Observe::class,
+        HomeUiStateFlux.Post::class
     )
     
     factory { HomeInteractor.Base(get(), get()) } binds arrayOf(
@@ -45,9 +45,9 @@ fun suggestTopicModule() = module {
     
     viewModelOf(::SuggestTopicViewModel)
     
-    factory { SuggestTopicCommunication.Base() } binds arrayOf(
-        SuggestTopicCommunication.Mutable::class,
-        SuggestTopicCommunication.Observe::class,
-        SuggestTopicCommunication.Post::class
+    factory { SuggestTopicUiStateFlux.Base() } binds arrayOf(
+        SuggestTopicUiStateFlux.Mutable::class,
+        SuggestTopicUiStateFlux.Observe::class,
+        SuggestTopicUiStateFlux.Post::class
     )
 }

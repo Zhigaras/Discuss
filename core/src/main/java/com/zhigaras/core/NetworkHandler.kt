@@ -2,51 +2,37 @@ package com.zhigaras.core
 
 import android.net.ConnectivityManager
 import android.net.Network
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
+import kotlinx.coroutines.flow.FlowCollector
 
-interface NetworkHandler : NetworkCommunication.Observe, NetworkCommunication.ObserveForever,
-    NetworkCommunication.CurrentState {
-    
+interface NetworkHandler : NetworkStateFlux.Observe {
     class Base(
         connManager: ConnectivityManager,
-        private val communication: NetworkCommunication.Mutable
+        private val communication: NetworkStateFlux.Mutable
     ) : NetworkHandler {
-        
+
         private val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                communication.postBackground(NetworkState.Available())
+                communication.post(NetworkState.Available())
             }
-            
+
             override fun onLosing(network: Network, maxMsToLive: Int) {
-                communication.postBackground(NetworkState.Loosing())
+                communication.post(NetworkState.Loosing())
             }
-            
+
             override fun onLost(network: Network) {
-                communication.postBackground(NetworkState.Lost())
+                communication.post(NetworkState.Lost())
             }
-            
+
             override fun onUnavailable() {
-                communication.postBackground(NetworkState.Unavailable())
+                communication.post(NetworkState.Unavailable())
             }
         }
-        
+
         init {
             connManager.registerDefaultNetworkCallback(callback)
         }
-        
-        override fun observe(owner: LifecycleOwner, observer: Observer<NetworkState>) {
-            communication.observe(owner, observer)
-        }
-        
-        override fun observeForever(observer: Observer<NetworkState>) {
-            communication.observeForever(observer)
-        }
-        
-        override fun removeObserver(observer: Observer<NetworkState>) {
-            communication.removeObserver(observer)
-        }
-        
-        override fun current(): NetworkState? = communication.current()
+
+        override suspend fun collect(collector: FlowCollector<NetworkState>) = communication.collect(collector)
+        override fun current(): NetworkState = communication.current()
     }
 }

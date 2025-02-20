@@ -1,7 +1,7 @@
 package com.zhigaras.calls.di
 
 import com.zhigaras.calls.data.CallsCloudServiceImpl
-import com.zhigaras.calls.domain.CallCommunication
+import com.zhigaras.calls.domain.CallUiStateFlux
 import com.zhigaras.calls.domain.CallsCloudService
 import com.zhigaras.calls.domain.CallsController
 import com.zhigaras.calls.domain.InitCalls
@@ -40,10 +40,10 @@ fun callModule() = listOf(messagesModule(), module {
             Messaging::class
         )
         
-        scoped { CallCommunication.Base() } binds arrayOf(
-            CallCommunication.Mutable::class,
-            CallCommunication.Observe::class,
-            CallCommunication.Post::class
+        scoped { CallUiStateFlux.Base() } binds arrayOf(
+            CallUiStateFlux.Mutable::class,
+            CallUiStateFlux.Observe::class,
+            CallUiStateFlux.Post::class
         )
         
         scoped { EglBase.create().eglBaseContext } bind EglBase.Context::class
@@ -52,8 +52,8 @@ fun callModule() = listOf(messagesModule(), module {
     viewModel {
         val initCalls = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<InitCalls>()
         val callsController = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallsController>()
-        val communication = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallCommunication.Mutable>()
-        CallViewModel(initCalls, callsController, get(), get(), communication, get())
+        val uiStateFlux = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallUiStateFlux.Mutable>()
+        CallViewModel(initCalls, callsController, get(), get(), uiStateFlux, get())
     }
     
     factory {
@@ -66,8 +66,8 @@ fun callModule() = listOf(messagesModule(), module {
     factory { CallsCloudServiceImpl(get()) } bind CallsCloudService::class
     
     factory {
-        val communication = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallCommunication.Mutable>()
-        PeerConnectionCallback(communication)
+        val uiStateFlux = getKoin().getScope(CALL_FRAGMENT_SCOPE).get<CallUiStateFlux.Mutable>()
+        PeerConnectionCallback(uiStateFlux)
     } bind PeerConnectionCallback::class
 })
 

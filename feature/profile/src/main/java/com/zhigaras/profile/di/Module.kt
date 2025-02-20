@@ -1,7 +1,7 @@
 package com.zhigaras.profile.di
 
 import com.zhigaras.profile.data.ProfileRepositoryImpl
-import com.zhigaras.profile.domain.ProfileCommunication
+import com.zhigaras.profile.domain.ProfileUiStateFlux
 import com.zhigaras.profile.domain.ProfileInteractor
 import com.zhigaras.profile.domain.ProfileRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -14,10 +14,10 @@ fun profileModule() = module {
     
     viewModelOf(::ProfileViewModel)
     
-    factory { ProfileCommunication.Base() } binds arrayOf(
-        ProfileCommunication.Mutable::class,
-        ProfileCommunication.Observe::class,
-        ProfileCommunication.Post::class,
+    factory { ProfileUiStateFlux.Base() } binds arrayOf(
+        ProfileUiStateFlux.Mutable::class,
+        ProfileUiStateFlux.Observe::class,
+        ProfileUiStateFlux.Post::class,
     )
     
     factory { ProfileInteractor.Base(get()) } bind ProfileInteractor::class

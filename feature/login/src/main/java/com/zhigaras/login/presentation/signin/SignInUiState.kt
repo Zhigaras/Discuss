@@ -9,14 +9,17 @@ import com.zhigaras.login.R
 import com.zhigaras.login.databinding.FragmentSignInBinding
 
 interface SignInUiState : UiState<FragmentSignInBinding> {
-    
-    object Progress : SignInUiState {
-        
+
+    class Initial: SignInUiState {
+        override fun update(binding: FragmentSignInBinding) = Unit
+    }
+
+    class Progress : SignInUiState {
         override fun update(binding: FragmentSignInBinding) {
             binding.progressLayout.root.visibility = View.VISIBLE
         }
     }
-    
+
     class SingleEventError(@StringRes val messageId: Int) : SignInUiState,
         UiState.SingleEvent<FragmentSignInBinding>() {
         override val block: FragmentSignInBinding.() -> Unit = {
@@ -24,7 +27,7 @@ interface SignInUiState : UiState<FragmentSignInBinding> {
             Toast.makeText(root.context, messageId, Toast.LENGTH_LONG).show()
         }
     }
-    
+
     class PersistentError(@StringRes val messageId: Int) : SignInUiState {
         override fun update(binding: FragmentSignInBinding) {
             binding.progressLayout.root.visibility = View.GONE

@@ -5,9 +5,12 @@ import com.zhigaras.core.UiState
 import com.zhigaras.home.databinding.DialogSuggestTopicBinding
 
 interface SuggestTopicUiState : UiState<DialogSuggestTopicBinding> {
-    
+
+    class Initial : SuggestTopicUiState {
+        override fun update(binding: DialogSuggestTopicBinding) = Unit
+    }
+
     class Progress : SuggestTopicUiState {
-        
         override fun update(binding: DialogSuggestTopicBinding) {
             binding.initialView.visibility = View.VISIBLE
             binding.failedView.root.visibility = View.GONE
@@ -16,9 +19,8 @@ interface SuggestTopicUiState : UiState<DialogSuggestTopicBinding> {
             binding.progressBar.visibility = View.VISIBLE
         }
     }
-    
+
     class SuggestSuccessfullySent : SuggestTopicUiState {
-        
         override fun update(binding: DialogSuggestTopicBinding) {
             binding.failedView.root.visibility = View.GONE
             binding.successView.root.visibility = View.VISIBLE
@@ -26,9 +28,8 @@ interface SuggestTopicUiState : UiState<DialogSuggestTopicBinding> {
             binding.progressBar.visibility = View.GONE
         }
     }
-    
+
     class SuggestSendingFailed(private val msg: String?) : SuggestTopicUiState {
-        
         override fun update(binding: DialogSuggestTopicBinding) {
             binding.failedView.root.visibility = View.VISIBLE
             binding.successView.root.visibility = View.GONE

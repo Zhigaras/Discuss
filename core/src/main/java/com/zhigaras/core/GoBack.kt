@@ -1,6 +1,5 @@
 package com.zhigaras.core
 
 interface GoBack {
-    
-    fun goBack()
+    suspend fun goBack()
 }

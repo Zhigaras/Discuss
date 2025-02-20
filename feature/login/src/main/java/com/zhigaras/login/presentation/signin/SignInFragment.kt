@@ -12,22 +12,21 @@ import com.zhigaras.login.domain.LoginRoutes
 import com.zhigaras.login.presentation.resetpassword.ResetPasswordDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SignInFragment : BaseFragment<FragmentSignInBinding>() {
-    
-    private val viewModel by viewModel<SignInViewModel>()
-    
+class SignInFragment : BaseFragment<FragmentSignInBinding, SignInViewModel>() {
+
+    override val viewModel by viewModel<SignInViewModel>()
+
     override fun initBinding(inflater: LayoutInflater) = FragmentSignInBinding.inflate(inflater)
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val client = OneTapSignInClient(requireContext())
-        val signInWithGoogleLauncher =
-            registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-                viewModel.handleResult(AuthResultWrapper.Base(it), client)
-            }
-        
+        val signInWithGoogleLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            viewModel.handleResult(AuthResultWrapper.Base(it), client)
+        }
+
         val inputList = listOf(binding.emailInput.root, binding.passwordInput.root)
-        
+
         binding.signInWithPassword.setOnClickListener {
             val isAllValid = inputList.map { it.isValid() }.all { it }
             if (isAllValid) {
@@ -45,10 +44,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
         }
         binding.signInWithGoogle.setOnClickListener {
             viewModel.startGoogleSignIn(signInWithGoogleLauncher, client)
-        }
-        
-        viewModel.observe(this) {
-            it.update(binding)
         }
     }
 }

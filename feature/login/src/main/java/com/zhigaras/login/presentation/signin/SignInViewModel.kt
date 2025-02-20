@@ -10,7 +10,7 @@ import com.zhigaras.core.Dispatchers
 import com.zhigaras.home.domain.SaveUserToCloud
 import com.zhigaras.login.domain.NavigateToHome
 import com.zhigaras.login.domain.NavigateToSignUp
-import com.zhigaras.login.domain.signin.SignInCommunication
+import com.zhigaras.login.domain.signin.SignInUiStateFlux
 import com.zhigaras.login.domain.signin.SignInRepository
 
 class SignInViewModel(
@@ -18,38 +18,34 @@ class SignInViewModel(
     private val navigateToSignUp: NavigateToSignUp,
     private val saveUserToCloud: SaveUserToCloud,
     private val navigateToHome: NavigateToHome,
-    override val uiCommunication: SignInCommunication.Mutable,
+    private val uiStateFlux: SignInUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<SignInUiState>(dispatchers),
-    NavigateToSignUp {
-    
-    
+) : BaseViewModel<SignInUiState>(dispatchers, uiStateFlux) {
+
     fun signIn(email: String, password: String) {
-        uiCommunication.postUi(SignInUiState.Progress)
-        scopeLaunch({
-            signInRepository.signInWithEmailAndPassword(email, password)
-        }) {
-            it.handle(uiCommunication, saveUserToCloud, navigateToHome)
-        }
+        uiStateFlux.post(SignInUiState.Progress())
+        scopeLaunch(
+            onBackground = { signInRepository.signInWithEmailAndPassword(email, password) },
+            onUi = { it.handle(uiStateFlux, saveUserToCloud, navigateToHome) }
+        )
     }
-    
-    fun handleResult(authResult: AuthResultWrapper, client: OneTapSignInClient) = scopeLaunch({
-        signInRepository.handelOneTapSignInResult(authResult, client)
-    }) {
-        it.handle(uiCommunication, saveUserToCloud, navigateToHome)
-    }
-    
+
+    fun handleResult(authResult: AuthResultWrapper, client: OneTapSignInClient) = scopeLaunch(
+        onBackground = { signInRepository.handelOneTapSignInResult(authResult, client) },
+        onUi = { it.handle(uiStateFlux, saveUserToCloud, navigateToHome) }
+    )
+
     fun startGoogleSignIn(
         launcher: ActivityResultLauncher<IntentSenderRequest>,
         client: OneTapSignInClient
     ) {
-        uiCommunication.postUi(SignInUiState.Progress)
-        scopeLaunch({ signInRepository.handleOneTapSignInLaunch(launcher, client) }) {
-            it.handle(uiCommunication, saveUserToCloud, navigateToHome)
-        }
+        uiStateFlux.post(SignInUiState.Progress())
+        scopeLaunch(
+            onBackground = { signInRepository.handleOneTapSignInLaunch(launcher, client) },
+            onUi = { it.handle(uiStateFlux, saveUserToCloud, navigateToHome) })
     }
-    
-    override fun navigateToSignUp(args: Bundle?) {
+
+    fun navigateToSignUp(args: Bundle?) = safeLaunch {
         navigateToSignUp.navigateToSignUp(args)
     }
 }

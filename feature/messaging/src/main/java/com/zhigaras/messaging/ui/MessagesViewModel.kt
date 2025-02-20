@@ -1,24 +1,22 @@
 package com.zhigaras.messaging.ui
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.messaging.domain.MessagesInteractor
-import com.zhigaras.messaging.domain.MessagesUiStateCommunication
+import com.zhigaras.messaging.domain.MessagesUiStateFlux
+import kotlinx.coroutines.flow.FlowCollector
 
 class MessagesViewModel(
     private val messagesInteractor: MessagesInteractor,
-    override val uiCommunication: MessagesUiStateCommunication.Mutable,
+    private val uiStateFlux: MessagesUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<MessagesUiState>(dispatchers) {
-    
+) : BaseViewModel<MessagesUiState>(dispatchers, uiStateFlux) {
+
     fun sendMessage(text: String) {
-        messagesInteractor.sendMessage(text).let { uiCommunication.postBackground(it) }
+        messagesInteractor.sendMessage(text).let { uiStateFlux.post(it) }
     }
-    
-    override fun observe(owner: LifecycleOwner, observer: Observer<MessagesUiState>) {
-        messagesInteractor.observe(owner, uiCommunication)
-        super.observe(owner, observer)
+
+    override suspend fun observeUiState(collector: FlowCollector<MessagesUiState>): Nothing {
+        messagesInteractor.observe(uiStateFlux)
     }
 }

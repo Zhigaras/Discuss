@@ -9,34 +9,31 @@ import com.zhigaras.home.databinding.FragmentHomeBinding
 import com.zhigaras.home.presentation.suggesttopic.SuggestTopicBottomSheetDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>() {
-    
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
+
     override fun initBinding(inflater: LayoutInflater) = FragmentHomeBinding.inflate(inflater)
-    
-    private val viewModel by viewModel<HomeViewModel>()
+
+    override val viewModel by viewModel<HomeViewModel>()
     private val permissions = Permissions()
-    
+
     private val launcher = registerForActivityResult(CustomPermissionsContract()) {
         it.handle(requireContext(), viewModel)
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         val adapter = CompositeAdapter.Builder()
             .addDelegate(TopicDelegate { topicId, opinion ->
                 run { permissions.check(requireContext(), launcher, viewModel, topicId, opinion) }
             })
             .build()
         binding.topicsRv.adapter = adapter
-        viewModel.observe(this) {
-            it.update(binding)
-        }
-        
+
         binding.suggestTopicButton.setOnClickListener {
             SuggestTopicBottomSheetDialog().show(parentFragmentManager, null)
         }
-        
+
         binding.toProfileButton.setOnClickListener {
             viewModel.navigateToProfile()
         }
