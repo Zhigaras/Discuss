@@ -1,7 +1,5 @@
 package com.zhigaras.calls.domain
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
 import com.zhigaras.calls.domain.model.MySessionDescription
@@ -56,7 +54,7 @@ interface CallsController {
         private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
-        private val messagingCommunication: DataChannelStateFlux.Mutable,
+        private val messagingFlux: DataChannelStateFlux.Mutable,
         private val webRtcClient: WebRtcClient,
         provideUserId: ProvideUserId
     ) : CallsController, InitCalls, Messaging {
@@ -128,7 +126,7 @@ interface CallsController {
                         val data = buffer.data
                         val bytes = ByteArray(data.remaining())
                         data[bytes]
-                        messagingCommunication.post(String(bytes))
+                        messagingFlux.post(String(bytes))
                     }
                 })
             }
@@ -269,10 +267,10 @@ interface CallsController {
         }
 
         override suspend fun collect(collector: FlowCollector<String>): Nothing {
-            messagingCommunication.collect(collector)
+            messagingFlux.collect(collector)
         }
 
-        override fun current() = messagingCommunication.current()
+        override fun current() = messagingFlux.current()
     }
 }
 

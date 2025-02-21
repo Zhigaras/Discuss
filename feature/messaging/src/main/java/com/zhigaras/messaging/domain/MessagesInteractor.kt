@@ -7,7 +7,7 @@ import java.util.Collections
 interface MessagesInteractor {
 
     fun sendMessage(text: String): MessagesUiState
-    suspend fun observe(communication: MessagesUiStateFlux.Post): Nothing
+    suspend fun observe(flux: MessagesUiStateFlux.Post): Nothing
 
     class Base(private val messaging: Messaging) : MessagesInteractor {
 
@@ -19,10 +19,10 @@ interface MessagesInteractor {
             return MessagesUiState.MessageSent(messages.toList())
         }
 
-        override suspend fun observe(communication: MessagesUiStateFlux.Post): Nothing {
+        override suspend fun observe(flux: MessagesUiStateFlux.Post): Nothing {
             messaging.collect {
                 messages.add(Message.Incoming(it))
-                communication.post(MessagesUiState.MessageReceived(messages.toList()))
+                flux.post(MessagesUiState.MessageReceived(messages.toList()))
             }
         }
     }

@@ -9,21 +9,21 @@ import com.zhigaras.login.domain.UserMapper
 import com.zhigaras.login.presentation.signin.SignInUiState
 
 interface SignInResult {
-    
+
     suspend fun handle(
-        communication: SignInUiStateFlux.Post,
+        flux: SignInUiStateFlux.Post,
         saveUserToCloud: SaveUserToCloud,
         navigateToHome: NavigateToHome
     )
-    
+
     class Success(
         private val user: UserDto,
         private val showId: ShowId = ShowId(),
         private val userMapper: UserMapper = UserMapper()
     ) : SignInResult {
-        
+
         override suspend fun handle(
-            communication: SignInUiStateFlux.Post,
+            flux: SignInUiStateFlux.Post,
             saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
@@ -31,25 +31,25 @@ interface SignInResult {
             navigateToHome.navigateToHome()
         }
     }
-    
+
     object OneTapSignInLaunched : SignInResult {
-        
+
         override suspend fun handle(
-            communication: SignInUiStateFlux.Post,
+            flux: SignInUiStateFlux.Post,
             saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
         }
     }
-    
+
     class Error(@StringRes private val errorId: Int) : SignInResult {
-        
+
         override suspend fun handle(
-            communication: SignInUiStateFlux.Post,
+            flux: SignInUiStateFlux.Post,
             saveUserToCloud: SaveUserToCloud,
             navigateToHome: NavigateToHome
         ) {
-            communication.post(SignInUiState.SingleEventError(errorId))
+            flux.post(SignInUiState.SingleEventError(errorId))
         }
     }
 }

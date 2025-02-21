@@ -7,24 +7,24 @@ import kotlinx.coroutines.flow.FlowCollector
 interface NetworkHandler : NetworkStateFlux.Observe {
     class Base(
         connManager: ConnectivityManager,
-        private val communication: NetworkStateFlux.Mutable
+        private val flux: NetworkStateFlux.Mutable
     ) : NetworkHandler {
 
         private val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                communication.post(NetworkState.Available())
+                flux.post(NetworkState.Available())
             }
 
             override fun onLosing(network: Network, maxMsToLive: Int) {
-                communication.post(NetworkState.Loosing())
+                flux.post(NetworkState.Loosing())
             }
 
             override fun onLost(network: Network) {
-                communication.post(NetworkState.Lost())
+                flux.post(NetworkState.Lost())
             }
 
             override fun onUnavailable() {
-                communication.post(NetworkState.Unavailable())
+                flux.post(NetworkState.Unavailable())
             }
         }
 
@@ -32,7 +32,7 @@ interface NetworkHandler : NetworkStateFlux.Observe {
             connManager.registerDefaultNetworkCallback(callback)
         }
 
-        override suspend fun collect(collector: FlowCollector<NetworkState>) = communication.collect(collector)
-        override fun current(): NetworkState = communication.current()
+        override suspend fun collect(collector: FlowCollector<NetworkState>) = flux.collect(collector)
+        override fun current(): NetworkState = flux.current()
     }
 }

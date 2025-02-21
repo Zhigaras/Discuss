@@ -6,7 +6,7 @@ import com.zhigaras.discuss.presentation.MainNetworkUiState
 
 interface MainInteractor {
 
-    suspend fun observeNetwork(communication: MainUiStateFlux.Post): Nothing
+    suspend fun observeNetwork(flux: MainUiStateFlux.Post): Nothing
 
     class Base(private val networkHandler: NetworkHandler) : MainInteractor {
 
@@ -22,9 +22,9 @@ interface MainInteractor {
             fun state(networkState: NetworkState) = states.find { it.matches(networkState) }!!
         }
 
-        override suspend fun observeNetwork(communication: MainUiStateFlux.Post): Nothing = networkHandler.collect {
+        override suspend fun observeNetwork(flux: MainUiStateFlux.Post): Nothing = networkHandler.collect {
             val state = MainNetworkStateFactory().state(it)
-            communication.post(state)
+            flux.post(state)
         }
     }
 }

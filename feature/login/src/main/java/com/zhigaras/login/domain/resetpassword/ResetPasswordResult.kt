@@ -5,17 +5,17 @@ import com.zhigaras.login.presentation.resetpassword.ResetPasswordUiState
 
 interface ResetPasswordResult {
 
-    fun handle(communication: ResetPasswordUiStateFlux.Post)
+    fun handle(flux: ResetPasswordUiStateFlux.Post)
 
     object Success : ResetPasswordResult {
-        override fun handle(communication: ResetPasswordUiStateFlux.Post) {
-            communication.post(ResetPasswordUiState.Success())
+        override fun handle(flux: ResetPasswordUiStateFlux.Post) {
+            flux.post(ResetPasswordUiState.Success())
         }
     }
 
     class Error(@StringRes private val errorId: Int) : ResetPasswordResult {
-        override fun handle(communication: ResetPasswordUiStateFlux.Post) {
-            communication.post(ResetPasswordUiState.SingleEventError(errorId))
+        override fun handle(flux: ResetPasswordUiStateFlux.Post) {
+            flux.post(ResetPasswordUiState.SingleEventError(errorId))
         }
     }
 }

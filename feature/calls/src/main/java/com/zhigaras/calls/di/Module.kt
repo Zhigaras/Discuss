@@ -10,7 +10,7 @@ import com.zhigaras.calls.ui.CallViewModel
 import com.zhigaras.calls.webrtc.IceServersList
 import com.zhigaras.calls.webrtc.MyPeerConnectionFactory
 import com.zhigaras.calls.webrtc.PeerConnectionCallback
-import com.zhigaras.calls.webrtc.PeerConnectionCommunication
+import com.zhigaras.calls.webrtc.PeerConnectionStateFlux
 import com.zhigaras.calls.webrtc.PeerConnectionObserveWrapper
 import com.zhigaras.calls.webrtc.WebRtcClient
 import com.zhigaras.messaging.di.messagesModule
@@ -73,10 +73,10 @@ fun callModule() = listOf(messagesModule(), module {
 
 fun webRtcModule() = module {
     
-    factory { PeerConnectionCommunication.Base() } binds arrayOf(
-        PeerConnectionCommunication.Mutable::class,
-        PeerConnectionCommunication.Observe::class,
-        PeerConnectionCommunication.Post::class
+    factory { PeerConnectionStateFlux.Base() } binds arrayOf(
+        PeerConnectionStateFlux.Mutable::class,
+        PeerConnectionStateFlux.Observe::class,
+        PeerConnectionStateFlux.Post::class
     )
     
     factory { PeerConnectionObserveWrapper(get(), get()) }

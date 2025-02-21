@@ -15,14 +15,14 @@ import org.webrtc.PeerConnection.SignalingState
 
 class PeerConnectionObserveWrapper(
     dispatchers: Dispatchers,
-    private val communication: PeerConnectionCommunication.Mutable
-) : PeerConnectionCommunication.Observe {
+    private val flux: PeerConnectionStateFlux.Mutable
+) : PeerConnectionStateFlux.Observe {
 
     private val scope = CoroutineScope(dispatchers.main())
 
-    override suspend fun collect(collector: FlowCollector<PeerConnectionState>) = communication.collect(collector)
+    override suspend fun collect(collector: FlowCollector<PeerConnectionState>) = flux.collect(collector)
 
-    override fun current(): PeerConnectionState = communication.current()
+    override fun current(): PeerConnectionState = flux.current()
 
     fun provideObserver() = observer
 
@@ -30,47 +30,47 @@ class PeerConnectionObserveWrapper(
 
     private val observer = object : PeerConnection.Observer {
         override fun onSignalingChange(state: SignalingState) {
-            scope.launch { communication.post(PeerConnectionState.SignallingChanged(state)) }
+            scope.launch { flux.post(PeerConnectionState.SignallingChanged(state)) }
         }
 
         override fun onConnectionChange(newState: PeerConnection.PeerConnectionState) {
-            scope.launch { communication.post(PeerConnectionState.ConnectionChanged(newState)) }
+            scope.launch { flux.post(PeerConnectionState.ConnectionChanged(newState)) }
         }
 
         override fun onIceConnectionChange(newState: IceConnectionState) {
-            scope.launch { communication.post(PeerConnectionState.IceConnectionChanged(newState)) }
+            scope.launch { flux.post(PeerConnectionState.IceConnectionChanged(newState)) }
         }
 
         override fun onIceConnectionReceivingChange(p0: Boolean) = Unit
 
         override fun onIceGatheringChange(newState: IceGatheringState) {
-            scope.launch { communication.post(PeerConnectionState.IceGatheringChanged(newState)) }
+            scope.launch { flux.post(PeerConnectionState.IceGatheringChanged(newState)) }
         }
 
         override fun onIceCandidate(iceCandidate: IceCandidate) {
-            scope.launch { communication.post(PeerConnectionState.IceCandidateCreated(iceCandidate)) }
+            scope.launch { flux.post(PeerConnectionState.IceCandidateCreated(iceCandidate)) }
         }
 
         override fun onIceCandidatesRemoved(iceCandidates: Array<out IceCandidate>?) {
             scope.launch {
-                communication.post(PeerConnectionState.IceCandidatesRemoved(iceCandidates))
+                flux.post(PeerConnectionState.IceCandidatesRemoved(iceCandidates))
             }
         }
 
         override fun onAddStream(mediaStream: MediaStream) {
-            scope.launch { communication.post(PeerConnectionState.StreamAdded(mediaStream)) }
+            scope.launch { flux.post(PeerConnectionState.StreamAdded(mediaStream)) }
         }
 
         override fun onRemoveStream(mediaStream: MediaStream) {
-            scope.launch { communication.post(PeerConnectionState.StreamRemoved(mediaStream)) }
+            scope.launch { flux.post(PeerConnectionState.StreamRemoved(mediaStream)) }
         }
 
         override fun onDataChannel(dataChannel: DataChannel) {
-            scope.launch { communication.post(PeerConnectionState.DataChannelCreated(dataChannel)) }
+            scope.launch { flux.post(PeerConnectionState.DataChannelCreated(dataChannel)) }
         }
 
         override fun onRenegotiationNeeded() {
-            scope.launch { communication.post(PeerConnectionState.RenegotiationNeeded()) }
+            scope.launch { flux.post(PeerConnectionState.RenegotiationNeeded()) }
         }
     }
 }

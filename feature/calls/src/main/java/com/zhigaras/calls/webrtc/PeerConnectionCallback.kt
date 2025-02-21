@@ -11,7 +11,7 @@ import com.zhigaras.calls.ui.New
 import org.webrtc.PeerConnection.PeerConnectionState
 
 class PeerConnectionCallback(
-    private val communication: CallUiStateFlux.Post
+    private val flux: CallUiStateFlux.Post
 ) : (PeerConnectionState) -> Unit {
 
     inner class Factory {
@@ -21,12 +21,12 @@ class PeerConnectionCallback(
 
     override fun invoke(newState: PeerConnectionState) {
         val state = Factory().state(newState)
-        communication.post(state)
+        flux.post(state)
     }
 
-    fun postInterrupted() = communication.post(CallUiState.InterruptedByOpponent())
+    fun postInterrupted() = flux.post(CallUiState.InterruptedByOpponent())
 
-    fun postCheckConnection() = communication.post(CallUiState.CheckConnection())
+    fun postCheckConnection() = flux.post(CallUiState.CheckConnection())
 
-    fun postTryingToReconnect() = communication.post(CallUiState.TryingToReconnect())
+    fun postTryingToReconnect() = flux.post(CallUiState.TryingToReconnect())
 }

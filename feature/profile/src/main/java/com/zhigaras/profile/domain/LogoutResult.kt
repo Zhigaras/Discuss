@@ -5,14 +5,14 @@ import com.zhigaras.profile.ui.ProfileUiState
 
 interface LogoutResult {
 
-    suspend fun handle(communication: ProfileUiStateFlux.Post, navigateToSignIn: NavigateToSignIn)
+    suspend fun handle(flux: ProfileUiStateFlux.Post, navigateToSignIn: NavigateToSignIn)
 
     class Success : LogoutResult {
         override suspend fun handle(
-            communication: ProfileUiStateFlux.Post,
+            flux: ProfileUiStateFlux.Post,
             navigateToSignIn: NavigateToSignIn
         ) {
-            communication.post(ProfileUiState.Success())
+            flux.post(ProfileUiState.Success())
             navigateToSignIn.navigateToSignIn()
         }
     }
@@ -20,10 +20,10 @@ interface LogoutResult {
     class Error(@StringRes private val messageId: Int) : LogoutResult {
 
         override suspend fun handle(
-            communication: ProfileUiStateFlux.Post,
+            flux: ProfileUiStateFlux.Post,
             navigateToSignIn: NavigateToSignIn
         ) {
-            communication.post(ProfileUiState.Error(messageId))
+            flux.post(ProfileUiState.Error(messageId))
         }
     }
 }
