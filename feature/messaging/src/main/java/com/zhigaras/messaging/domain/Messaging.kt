@@ -1,7 +1,5 @@
 package com.zhigaras.messaging.domain
 
-interface Messaging : DataChannelCommunication.Observe {
-    
+interface Messaging : DataChannelStateFlux.Observe {
     fun sendMessage(text: String)
-    
 }

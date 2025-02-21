@@ -1,7 +1,7 @@
 package com.zhigaras.calls.webrtc
 
 import android.app.Application
-import androidx.lifecycle.Observer
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.webrtc.AudioTrack
@@ -39,13 +39,13 @@ class WebRtcClient(
     private var localStream: MediaStream = peerConnectionFactory.createLocalMediaStream()
     private var localView: SurfaceViewRenderer? = null
     
-    fun initNewConnection(observer: Observer<PeerConnectionState>) {
+    fun initNewConnection(observer: FlowCollector<PeerConnectionState>) {
         peerConnection = peerConnectionFactory.createPeerConnection(
             iceServers.provide(),
             peerConnectionObserver.provideObserver()
         )
         dataChannel = peerConnection?.createDataChannel("messaging", DataChannel.Init())
-        peerConnectionObserver.observeForever(observer)
+//        peerConnectionObserver.collect(observer)
     }
     
     fun initLocalSurfaceView(view: SurfaceViewRenderer) {
@@ -139,7 +139,7 @@ class WebRtcClient(
         dataChannel?.send(DataChannel.Buffer(buffer, false))
     }
     
-    fun closeCurrentConnection(observer: Observer<PeerConnectionState>) {
+    fun closeCurrentConnection() {
         peerConnection?.close()
         dataChannel?.unregisterObserver()
         dataChannel?.close()
@@ -147,8 +147,8 @@ class WebRtcClient(
 //        peerConnectionObserver.removeObserver(observer)
     }
     
-    fun closeConnectionTotally(observer: Observer<PeerConnectionState>) {
-        closeCurrentConnection(observer)
+    fun closeConnectionTotally() {
+        closeCurrentConnection()
         localVideoTrack?.removeSink(localView)
         localView?.release()
         localView = null
@@ -156,6 +156,5 @@ class WebRtcClient(
         localVideoSource.dispose()
         localAudioSource.dispose()
         localStream.dispose()
-        peerConnectionObserver.closeConnection()
     }
 }

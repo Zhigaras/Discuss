@@ -8,7 +8,7 @@ interface MatchingResult {
     suspend fun handle(
         callsController: CallsController,
         matchingInteractor: MatchingInteractor,
-        communication: CallCommunication.Post,
+        flux: CallUiStateFlux.Post,
     )
     
     class OpponentFound(private val opponent: ReadyToCallUser) : MatchingResult {
@@ -16,7 +16,7 @@ interface MatchingResult {
         override suspend fun handle(
             callsController: CallsController,
             matchingInteractor: MatchingInteractor,
-            communication: CallCommunication.Post
+            flux: CallUiStateFlux.Post
         ) {
             callsController.removeUserFromWaitList(opponent)
             callsController.sendInitialOffer(opponent)
@@ -28,9 +28,9 @@ interface MatchingResult {
         override suspend fun handle(
             callsController: CallsController,
             matchingInteractor: MatchingInteractor,
-            communication: CallCommunication.Post
+            flux: CallUiStateFlux.Post
         ) {
-            communication.postUi(CallUiState.WaitingForOpponent())
+            flux.post(CallUiState.WaitingForOpponent())
             matchingInteractor.addUserToWaitList(user)
         }
     }
@@ -40,9 +40,9 @@ interface MatchingResult {
         override suspend fun handle(
             callsController: CallsController,
             matchingInteractor: MatchingInteractor,
-            communication: CallCommunication.Post
+            flux: CallUiStateFlux.Post
         ) {
-            communication.postUi(CallUiState.Error(message))
+            flux.post(CallUiState.Error(message))
         }
     }
 }

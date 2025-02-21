@@ -2,23 +2,21 @@ package com.zhigaras.login.presentation.resetpassword
 
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.login.domain.resetpassword.ResetPasswordCommunication
+import com.zhigaras.login.domain.resetpassword.ResetPasswordUiStateFlux
 import com.zhigaras.login.domain.resetpassword.ResetPasswordRepository
 
 class ResetPasswordViewModel(
     private val resetPasswordRepository: ResetPasswordRepository,
-    override val uiCommunication: ResetPasswordCommunication.Mutable,
+    private val uiStateFlux: ResetPasswordUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<ResetPasswordUiState>(dispatchers) {
-    
+) : BaseViewModel<ResetPasswordUiState>(dispatchers, uiStateFlux) {
+
     fun resetPassword(email: String) {
-        uiCommunication.postUi(ResetPasswordUiState.Progress)
-        scopeLaunch({
-            resetPasswordRepository.resetPassword(email)
-        }) {
-            it.handle(uiCommunication)
-        }
+        uiStateFlux.post(ResetPasswordUiState.Progress())
+        scopeLaunch(
+            onBackground = { resetPasswordRepository.resetPassword(email) },
+            onUi = { it.handle(uiStateFlux) })
     }
-    
-    fun setInitialState() = uiCommunication.postUi(ResetPasswordUiState.Initial)
+
+    fun setInitialState() = uiStateFlux.post(ResetPasswordUiState.Initial())
 }

@@ -1,7 +1,7 @@
 package com.zhigaras.messaging.di
 
-import com.zhigaras.messaging.domain.DataChannelCommunication
-import com.zhigaras.messaging.domain.MessagesUiStateCommunication
+import com.zhigaras.messaging.domain.DataChannelStateFlux
+import com.zhigaras.messaging.domain.MessagesUiStateFlux
 import com.zhigaras.messaging.ui.MessagesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.binds
@@ -11,15 +11,15 @@ fun messagesModule() = module {
     
     viewModelOf(::MessagesViewModel)
     
-    factory { MessagesUiStateCommunication.Base() } binds arrayOf(
-        MessagesUiStateCommunication.Mutable::class,
-        MessagesUiStateCommunication.Observe::class,
-        MessagesUiStateCommunication.Post::class,
+    factory { MessagesUiStateFlux.Base() } binds arrayOf(
+        MessagesUiStateFlux.Mutable::class,
+        MessagesUiStateFlux.Observe::class,
+        MessagesUiStateFlux.Post::class,
     )
     
-    factory { DataChannelCommunication.Base() } binds arrayOf(
-        DataChannelCommunication.Observe::class,
-        DataChannelCommunication.Post::class,
-        DataChannelCommunication.Mutable::class
+    factory { DataChannelStateFlux.Base() } binds arrayOf(
+        DataChannelStateFlux.Observe::class,
+        DataChannelStateFlux.Post::class,
+        DataChannelStateFlux.Mutable::class
     )
 }

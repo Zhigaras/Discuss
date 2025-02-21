@@ -1,40 +1,33 @@
 package com.zhigaras.discuss.presentation
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
-import com.zhigaras.core.NavigationCommunication
+import com.zhigaras.core.NavigationFlux
 import com.zhigaras.core.Screen
 import com.zhigaras.discuss.domain.MainInteractor
-import com.zhigaras.discuss.domain.MainUiStateCommunication
+import com.zhigaras.discuss.domain.MainUiStateFlux
 import com.zhigaras.discuss.domain.NavigateToSignIn
 import com.zhigaras.login.domain.IsUserAuthorized
 import com.zhigaras.login.domain.NavigateToHome
+import kotlinx.coroutines.flow.FlowCollector
 
 class MainViewModel(
     private val mainInteractor: MainInteractor,
-    private val navigationCommunication: NavigationCommunication.Observe,
+    private val navigationFlux: NavigationFlux.Observe,
     private val isUserAuthorized: IsUserAuthorized,
     private val navigateToSignIn: NavigateToSignIn,
     private val navigateToHome: NavigateToHome,
-    override val uiCommunication: MainUiStateCommunication.Mutable,
+    private val uiStateFlux: MainUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<MainUiState>(dispatchers) {
-    
-    fun observeNavigation(owner: LifecycleOwner, observer: Observer<Screen>) {
-        navigationCommunication.observe(owner, observer)
-    }
-    
-    fun observeNetworkState(owner: LifecycleOwner, observer: Observer<MainUiState>) {
-        uiCommunication.observe(owner, observer)
-    }
-    
-    fun init(isFirstRun: Boolean, owner: LifecycleOwner) {
+) : BaseViewModel<MainUiState>(dispatchers, uiStateFlux) {
+
+    suspend fun observeNavigation(collector: FlowCollector<Screen>) = navigationFlux.collect(collector)
+
+    suspend fun init(isFirstRun: Boolean): Nothing {
         if (isFirstRun) {
             if (isUserAuthorized.isAuthorized()) navigateToHome.navigateToHome()
             else navigateToSignIn.navigateToSignIn()
         }
-        mainInteractor.observeNetwork(owner, uiCommunication)
+        mainInteractor.observeNetwork(uiStateFlux)
     }
 }

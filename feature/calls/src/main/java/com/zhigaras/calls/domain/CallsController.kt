@@ -1,7 +1,5 @@
 package com.zhigaras.calls.domain
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.zhigaras.calls.domain.model.ConnectionData
 import com.zhigaras.calls.domain.model.MyIceCandidate
 import com.zhigaras.calls.domain.model.MySessionDescription
@@ -12,11 +10,12 @@ import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.NetworkHandler
 import com.zhigaras.core.NetworkState
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.messaging.domain.DataChannelCommunication
+import com.zhigaras.messaging.domain.DataChannelStateFlux
 import com.zhigaras.messaging.domain.Messaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
@@ -55,7 +54,7 @@ interface CallsController {
         private val networkHandler: NetworkHandler,
         private val callsCloudService: CallsCloudService,
         private val peerConnectionCallback: PeerConnectionCallback,
-        private val messagingCommunication: DataChannelCommunication.Mutable,
+        private val messagingFlux: DataChannelStateFlux.Mutable,
         private val webRtcClient: WebRtcClient,
         provideUserId: ProvideUserId
     ) : CallsController, InitCalls, Messaging {
@@ -73,10 +72,10 @@ interface CallsController {
             }
         }
         
-        private val observer = Observer<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
+        private val observer = FlowCollector<com.zhigaras.calls.webrtc.PeerConnectionState> { state ->
             state.handle(ConnectionStateHandler())
         }
-        private val networkStateObserver = Observer<NetworkState> {
+        private val networkStateObserver = FlowCollector<NetworkState> {
             when (it) {
                 is NetworkState.Available -> {
                     val connState = webRtcClient.provideConnectionState()
@@ -127,7 +126,7 @@ interface CallsController {
                         val data = buffer.data
                         val bytes = ByteArray(data.remaining())
                         data[bytes]
-                        messagingCommunication.postBackground(String(bytes))
+                        messagingFlux.post(String(bytes))
                     }
                 })
             }
@@ -135,7 +134,7 @@ interface CallsController {
         
         init {
             webRtcClient.initNewConnection(observer)
-            networkHandler.observeForever(networkStateObserver)
+            scope.launch { networkHandler.collect(networkStateObserver) }
         }
         
         override fun isConnected() = isConnected
@@ -249,7 +248,7 @@ interface CallsController {
             commonCloseStuff()
             remoteMediaStream?.videoTracks?.forEach { it.removeSink(remoteView) }
             remoteView?.clearImage()
-            webRtcClient.closeCurrentConnection(observer)
+            webRtcClient.closeCurrentConnection()
         }
         
         override fun closeConnectionTotally() {
@@ -257,9 +256,8 @@ interface CallsController {
             releaseRemoteView()
             remoteMediaStream?.videoTracks?.forEach { it.dispose() }
             remoteMediaStream?.audioTracks?.forEach { it.dispose() }
-            webRtcClient.closeConnectionTotally(observer)
+            webRtcClient.closeConnectionTotally()
             connectionEventsJob.cancel()
-            networkHandler.removeObserver(networkStateObserver)
             callsCloudService.removeUserFromWaitList(user)
             scope.cancel()
         }
@@ -267,10 +265,12 @@ interface CallsController {
         override fun sendMessage(text: String) {
             webRtcClient.sendMessage(text)
         }
-        
-        override fun observe(owner: LifecycleOwner, observer: Observer<String>) {
-            messagingCommunication.observe(owner, observer)
+
+        override suspend fun collect(collector: FlowCollector<String>): Nothing {
+            messagingFlux.collect(collector)
         }
+
+        override fun current() = messagingFlux.current()
     }
 }
 

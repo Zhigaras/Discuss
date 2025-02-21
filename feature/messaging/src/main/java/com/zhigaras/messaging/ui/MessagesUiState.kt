@@ -6,8 +6,13 @@ import com.zhigaras.messaging.databinding.MessageLayoutBinding
 import com.zhigaras.messaging.domain.model.Message
 
 interface MessagesUiState : UiState<MessageLayoutBinding> {
-    
+
     fun handle(adapter: CompositeAdapter)
+
+    class Initial: MessagesUiState {
+        override fun update(binding: MessageLayoutBinding) = Unit
+        override fun handle(adapter: CompositeAdapter) = Unit
+    }
     
     // TODO: the same implementation. remove one if will remain the same
     class MessageReceived(private val data: List<Message>) : MessagesUiState {

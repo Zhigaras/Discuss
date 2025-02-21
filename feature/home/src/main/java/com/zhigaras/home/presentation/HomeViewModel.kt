@@ -8,7 +8,7 @@ import com.zhigaras.calls.domain.model.ReadyToCallUser
 import com.zhigaras.core.BaseViewModel
 import com.zhigaras.core.Dispatchers
 import com.zhigaras.core.ProvideUserId
-import com.zhigaras.home.domain.HomeCommunication
+import com.zhigaras.home.domain.HomeUiStateFlux
 import com.zhigaras.home.domain.HomeInteractor
 import com.zhigaras.home.domain.NavigateToCall
 import com.zhigaras.home.domain.NavigateToProfile
@@ -20,31 +20,30 @@ class HomeViewModel(
     private val navigateToProfile: NavigateToProfile,
     private val provideUserId: ProvideUserId,
     private val homeInteractor: HomeInteractor,
-    override val uiCommunication: HomeCommunication.Mutable,
+    private val uiStateFlux: HomeUiStateFlux.Mutable,
     dispatchers: Dispatchers
-) : BaseViewModel<HomeUiState>(dispatchers), NavigateToProfile {
+) : BaseViewModel<HomeUiState>(dispatchers, uiStateFlux) {
     private val topicsFlowJob = viewModelScope.launch {
         homeInteractor.subscribeToTopics().catch {
-            uiCommunication.postBackground(HomeUiState.DataError(it.message!!)) // TODO: escape of !!
+            uiStateFlux.post(HomeUiState.DataError(it.message!!)) // TODO: escape of !!
         }.collect {
-            uiCommunication.postBackground(HomeUiState.NewTopicList(it))
+            uiStateFlux.post(HomeUiState.NewTopicList(it))
         }
     }
-    
-    fun navigateToCall(topicId: Int, disputeParty: DisputeParty) {
+
+    fun navigateToCall(topicId: Int, disputeParty: DisputeParty) = safeLaunch {
         if (homeInteractor.isOnline()) {
             val user = ReadyToCallUser(provideUserId.provide(), topicId, disputeParty)
             navigateToCall.navigateToCall(bundleOf(CallRoutes.READY_TO_CALL_USER_KEY to user))
         } else {
-            uiCommunication.postBackground(HomeUiState.CantGoToCall())
+            uiStateFlux.post(HomeUiState.CantGoToCall())
         }
-        
     }
-    
-    override fun navigateToProfile() {
+
+    fun navigateToProfile() = safeLaunch {
         navigateToProfile.navigateToProfile()
     }
-    
+
     override fun onCleared() {
         topicsFlowJob.cancel()
         super.onCleared()

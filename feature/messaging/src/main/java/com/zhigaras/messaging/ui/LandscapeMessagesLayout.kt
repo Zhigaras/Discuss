@@ -7,23 +7,25 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.zhigaras.adapterdelegate.CompositeAdapter
 import com.zhigaras.core.viewModel
 import com.zhigaras.messaging.R
+import kotlinx.coroutines.launch
 
 open class LandscapeMessagesLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
-    
+
     private val messagesRv: RecyclerView by lazy { findViewById(R.id.messages_rv) }
     private val editText: AppCompatEditText by lazy { findViewById(R.id.new_message_edit_text) }
     private val sendButton: ImageView by lazy { findViewById(R.id.send_message_button) }
-    
+
     private val viewModel: MessagesViewModel by viewModel()
-    
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         val adapter = CompositeAdapter.Builder()
@@ -31,8 +33,8 @@ open class LandscapeMessagesLayout @JvmOverloads constructor(
             .addDelegate(OutgoingMessageDelegate())
             .build()
         messagesRv.adapter = adapter
-        viewModel.observe(findViewTreeLifecycleOwner() ?: return) {// TODO: fix return!!!
-            it.handle(adapter)
+        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+            viewModel.observeUiState { it.handle(adapter) }
         }
         val textWatcher = MessageTextWatcher {
             sendButton.isVisible = it.isNotBlank()
